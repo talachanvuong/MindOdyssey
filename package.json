@@ -1,0 +1,17 @@
+{
+  "name": "mind-odyssey",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "fe": "cd frontend && npm run dev",
+    "be": "cd backend && npm run dev",
+    "dev": "concurrently \"npm run fe\" \"npm run be\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
