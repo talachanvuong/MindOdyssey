@@ -19,6 +19,7 @@
     "vite": "^6.0.1"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "socket.io-client": "^4.8.1"
   }
 }
