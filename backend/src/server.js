@@ -1,11 +1,15 @@
+import 'dotenv/config'
 import express from 'express'
+import { createServer } from 'http'
+import apiConfig from './config/apiConfig.js'
+import socketConfig from './config/socketConfig.js'
+
+// Create api
 const app = express()
-const port = 3000
+apiConfig(app)
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+// Create socket
+const server = createServer(app)
+socketConfig(server)
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+server.listen(process.env.SERVER_PORT)
