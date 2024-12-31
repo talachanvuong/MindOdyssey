@@ -43,7 +43,8 @@ CREATE TABLE "documents" (
   "created_at" TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP),
   "last_updated" TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP),
   "is_approved" BOOLEAN NOT NULL DEFAULT false,
-  "admin_id" INT
+  "admin_id" INT,
+  "reject_reason" VARCHAR(2048)
 );
 
 CREATE TABLE "questions" (
