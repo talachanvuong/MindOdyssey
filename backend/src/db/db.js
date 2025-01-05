@@ -1,11 +1,12 @@
 import pg from 'pg'
+import envConfig from '../config/envConfig.js'
 
 const client = new pg.Client({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASS,
-  port: process.env.DB_PORT,
+  user: envConfig.dbUser,
+  host: envConfig.dbHost,
+  database: envConfig.dbName,
+  password: envConfig.dbPass,
+  port: envConfig.dbPort,
 })
 
 await client.connect().catch((err) => console.error(err))

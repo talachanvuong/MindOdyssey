@@ -1,7 +1,7 @@
-import 'dotenv/config'
 import express from 'express'
 import { createServer } from 'http'
 import apiConfig from './config/apiConfig.js'
+import envConfig from './config/envConfig.js'
 import socketConfig from './config/socketConfig.js'
 
 // Create api
@@ -12,4 +12,4 @@ apiConfig(app)
 const server = createServer(app)
 socketConfig(server)
 
-server.listen(process.env.SERVER_PORT)
+server.listen(envConfig.serverPort)
