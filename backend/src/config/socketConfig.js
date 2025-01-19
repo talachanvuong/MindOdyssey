@@ -4,6 +4,7 @@ export default (server) => {
   const io = new Server(server, {
     cors: {
       origin: '*',
+      credentials: true
     },
   })
 }
