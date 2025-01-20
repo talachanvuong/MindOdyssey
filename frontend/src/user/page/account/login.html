@@ -5,8 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Đăng nhập</title>
   </head>
-  <body>
-    <h1 class="bg-red-500">Đây là đăng nhập</h1>
+  <body class="flex flex-col ">
+    
+    <!-- header -->
+    <header class="bg-cyan-300 h-16">
+    </header>
+
+    <!-- login form -->
+    <main class="flex flex-col items-center mt-5  justify-center">
+      <p class="text-3xl">LOGIN NOW</p>
+      <form class=" w-full mt-5 p-5 justify-center flex flex-col sm:border sm:border-black sm:rounded-lg sm:shadow-lg sm:w-4/12">
+          <label class="text-xs">Email</label>
+          <input placeholder="Enter your email" class="border rounded-md bg-stone-100  ">
+          <br>
+          <label class="text-xs">Password</label>
+          <input placeholder="Enter your password" class="border rounded-md bg-stone-100 ">
+          <br>
+          <a href="#" class="text-sm" >Password Forget?</a>
+          <button class="bg-orange-300 rounded-md text-xl pt-2 pb-2 hover:bg-orange-400">
+            LOGIN
+          </button>
+          <div class="text-xs  items-center justify-center flex ">
+            <p class="inline">You haven't have an account yet?</p>
+            <a href="#" class="inline text-blue-500 hover:underline ml-2">  Register now</a>
+          </div>
+      </form>
+    </main>
     <script type="module" src="../../js/account/login.js"></script>
   </body>
 </html>
