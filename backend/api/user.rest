@@ -1,0 +1,32 @@
+@host = http://localhost:{{$dotenv SERVER_PORT}}/api
+
+### Login
+POST {{host}}/user/login
+Content-Type: application/json
+
+{
+    "email": "",
+    "password": ""
+}
+
+### Verify email
+POST {{host}}/user/verifyemail
+Content-Type: application/json
+
+{
+    "email": ""
+}
+
+### Register
+POST {{host}}/user/register
+Content-Type: application/json
+Cookie: accessToken=
+
+{
+    "display_name": "",
+    "password": ""
+}
+
+### Get refresh token
+POST {{host}}/user/refreshtoken
+Content-Type: application/json
