@@ -1,6 +1,6 @@
 import client from '../db/db.js'
+import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
 import { requiredValidate, titleCourseValidate } from '../utils/validate.js'
-import { MESSAGE } from '../utils/constant.js'
 
 /**
  * Create a new course.
@@ -29,7 +29,7 @@ export const createCourse = async (req, res) => {
       [title]
     )
     if (existedCourse.rowCount > 0) {
-      return res.status(400).json({ message: MESSAGE.COURSE.EXISTED })
+      return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.COURSE.EXISTED)
     }
 
     // Insert new course
@@ -38,10 +38,14 @@ export const createCourse = async (req, res) => {
        VALUES ($1);`,
       [title]
     )
-    return res.status(201).json({ message: MESSAGE.COURSE.CREATE_SUCCESS })
+    return sendResponse(res, STATUS_CODE.CREATED, MESSAGE.COURSE.CREATE_SUCCESS)
   } catch (error) {
     console.log('Error createCourse: ', error.message)
-    return res.status(500).json({ message: MESSAGE.SERVER.ERROR })
+    return sendResponse(
+      res,
+      STATUS_CODE.INTERNAL_SERVER_ERROR,
+      MESSAGE.SERVER.ERROR
+    )
   }
 }
 
@@ -58,9 +62,18 @@ export const getCourses = async (req, res) => {
        WHERE title ILIKE $1;`,
       !keyword ? ['%%'] : [`%${keyword}%`]
     )
-    return res.status(200).json(result.rows)
+    return sendResponse(
+      res,
+      STATUS_CODE.SUCCESS,
+      MESSAGE.COURSE.GET_SUCCESS,
+      result.rows
+    )
   } catch (error) {
     console.log('Error getCourses: ', error.message)
-    return res.status(500).json({ message: MESSAGE.SERVER.ERROR })
+    return sendResponse(
+      res,
+      STATUS_CODE.INTERNAL_SERVER_ERROR,
+      MESSAGE.SERVER.ERROR
+    )
   }
 }
