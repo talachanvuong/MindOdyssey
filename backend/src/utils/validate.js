@@ -28,3 +28,11 @@ export const passwordValidate = (text) => {
     return 'Password must be between 8 and 32 characters long!'
   }
 }
+
+export const titleCourseValidate = (text) => {
+  const minLength = 8
+  const maxLength = 256
+  if (text.length < minLength || text.length > maxLength) {
+    return 'Title must be between 8 and 256 characters long!'
+  }
+}
