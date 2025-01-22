@@ -1,3 +1,5 @@
+
+
 export const MESSAGE = {
   VALIDATE: {
     REQUIRED: 'Missing required field!',
@@ -10,6 +12,36 @@ export const MESSAGE = {
     EXISTED: 'Course already exists!',
     CREATE_SUCCESS: 'Create course successfully!',
     GET_SUCCESS: 'Get courses successfully!',
+  },
+  USER: {
+    EXISTED: 'User already exists!',    
+    NOT_FOUND: 'User not found!',
+    REGISTER_SUCCESS: 'User registered successfully!',
+    SEND_EMAIL_SUCCESS: 'Send email successfully!',
+    LOGIN_SUCCESS: 'User login successfully!',
+    WRONG_PASSWORD: 'Wrong password!',
+    GET_INFO_SUCCESS: 'Get user information successfully!',
+    UPDATE_SUCCESS: 'Update user successfully!',
+    RESET_PASSWORD_SUCCESS: 'Reset password successfully!',
+    CHANGE_PASSWORD_SUCCESS: 'Change password successfully!',
+    LOGOUT_SUCCESS: 'Logout and delete refresh token successfully!',
+    PASSWORD_NOT_MATCH: 'Password does not match!',
+    SAME_DISPLAY_NAME: 'New display name must be different from the old one!',
+    SAME_PASSWORD: 'New password must be different from the old one!',
+  },
+  AUTH: {
+    ACCESS_TOKEN:{
+      MISSING: 'Access token missing!',
+      INVALID: 'Invalid access token!',
+      EXPIRED: 'Access token expired!',
+    },
+    REFRESH_TOKEN: {
+      MISSING: 'Refresh token missing!',
+      NOT_FOUND: 'Refresh token not found!',
+      INVALID: 'Invalid refresh token!',
+      EXPIRED: 'Refresh token expired!',
+      SUCCESS: 'Refresh token successfully!',
+    },
   },
   SERVER: {
     ERROR: 'Internal server error!',
