@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import nm from 'nodemailer'
 import envConfig from '../config/envConfig.js'
 import client from '../db/db.js'
+import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
 import {
   displayNameValidate,
   emailValidate,
@@ -60,24 +61,24 @@ export const login = async (req, res) => {
   // Check validation
   const requiredError = requiredValidate([email, password])
   if (requiredError) {
-    return res.status(400).json({ message: requiredError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.REQUIRED)
   }
 
   const emailError = emailValidate(email)
   if (emailError) {
-    return res.status(400).json({ message: emailError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.EMAIL)
   }
 
   const passwordError = passwordValidate(password)
   if (passwordError) {
-    return res.status(400).json({ message: passwordError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.PASSWORD)
   }
 
   try {
     // Check exist user
     const userExist = await isUserExist(email)
     if (!userExist) {
-      return res.status(400).json({ messsage: 'User is not found!' })
+      return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.NOT_FOUND)
     }
 
     const query = `
@@ -92,7 +93,7 @@ export const login = async (req, res) => {
     // Check correct password
     const isMatchedPassword = await bcrypt.compare(password, hashedPassword)
     if (!isMatchedPassword) {
-      return res.status(400).json({ messsage: 'Wrong password!' })
+      return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.WRONG_PASSWORD)
     }
 
     // Create token
@@ -129,10 +130,10 @@ export const login = async (req, res) => {
       sameSite: 'strict',
       maxAge: 31556952000,
     })
-    return res.status(200).json({ message: 'Login succesfully!' })
+    return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.LOGIN_SUCCESS)
   } catch (error) {
     console.error('Error login:', error.message)
-    return res.status(500).json({ message: 'Internal server error!' })
+    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
   }
 }
 
@@ -142,19 +143,19 @@ export const verifyEmail = async (req, res) => {
   // Check validation
   const requiredError = requiredValidate([email])
   if (requiredError) {
-    return res.status(400).json({ message: requiredError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.REQUIRED)
   }
 
   const emailError = emailValidate(email)
   if (emailError) {
-    return res.status(400).json({ message: emailError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.EMAIL)
   }
 
   try {
     // Check exist user
     const userExist = await isUserExist(email)
     if (userExist) {
-      return res.status(400).json({ message: 'User already exists!' })
+      return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.EXISTED)
     }
 
     const registerToken = jwt.sign(
@@ -183,31 +184,35 @@ export const verifyEmail = async (req, res) => {
       </div>
     `
     await sendEmail(email, subject, text, html)
-    return res.status(200).json({ message: 'Send email successfully!' })
+    return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.SEND_EMAIL_SUCCESS)
   } catch (error) {
     console.error('Error verifyEmail:', error.message)
-    res.status(500).json({ message: 'Internal server error!' })
+    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
   }
 }
 
 export const register = async (req, res) => {
   const { email } = req.user
-  const { display_name, password } = req.body
+  const { display_name, password,confirmPassword } = req.body
 
   // Check validation
-  const requiredError = requiredValidate([display_name, password])
+  const requiredError = requiredValidate([display_name, password, confirmPassword])
   if (requiredError) {
-    return res.status(400).json({ message: requiredError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.REQUIRED)
   }
 
   const displayNameError = displayNameValidate(display_name)
   if (displayNameError) {
-    return res.status(400).json({ message: displayNameError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.DISPLAY_NAME)
   }
-
+  
   const passwordError = passwordValidate(password)
   if (passwordError) {
-    return res.status(400).json({ message: passwordError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.PASSWORD)
+  }
+
+  if (password !== cormfirmPassword) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.PASSWORD_NOT_MATCH)
   }
 
   try {
@@ -223,10 +228,10 @@ export const register = async (req, res) => {
       path: '/',
       sameSite: 'strict',
     })
-    return res.status(201).json({ message: 'User registered successfully!' })
+    return sendResponse(res, STATUS_CODE.CREATED, MESSAGE.USER.REGISTER_SUCCESS)
   } catch (error) {
     console.error('Error register:', error.message)
-    res.status(500).json({ message: 'Internal server error!' })
+    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
   }
 }
 
@@ -241,12 +246,10 @@ export const getInfo = async (req, res) => {
       WHERE user_id = $1;
     `
     const result = await client.query(query, [user_id])
-    return res
-      .status(200)
-      .json({ message: 'Show info successfully', info: result.rows[0] })
+    return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.GET_INFO_SUCCESS, result.rows[0])
   } catch (error) {
     console.error('Error getInfo:', error.message)
-    return res.status(500).json({ message: 'Internal server error!' })
+    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
   }
 }
 
@@ -258,12 +261,12 @@ export const update = async (req, res) => {
   // Check validation
   const requiredError = requiredValidate([new_display_name])
   if (requiredError) {
-    return res.status(400).json({ message: requiredError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.REQUIRED)
   }
 
   const newDisplayNameError = displayNameValidate(new_display_name)
   if (newDisplayNameError) {
-    return res.status(400).json({ message: newDisplayNameError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.DISPLAY_NAME)
   }
 
   try {
@@ -274,9 +277,7 @@ export const update = async (req, res) => {
     `
     const result = await client.query(query, [user_id])
     if (result.rows[0].display_name === new_display_name) {
-      return res
-        .status(400)
-        .json({ message: 'New display name is the same as old display name!' })
+      return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.SAME_DISPLAY_NAME)
     }
 
     const queryUpdate = `
@@ -285,10 +286,10 @@ export const update = async (req, res) => {
       WHERE user_id = $2;
     `
     await client.query(queryUpdate, [new_display_name, user_id])
-    return res.status(200).json({ message: 'Update user successfully!' })
+    return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.UPDATE_SUCCESS)
   } catch (error) {
     console.error('Error update:', error.message)
-    return res.status(500).json({ message: 'Internal server error!' })
+    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
   }
 }
 
@@ -299,19 +300,19 @@ export const forgetPassword = async (req, res) => {
   // Check validation
   const requiredError = requiredValidate([email])
   if (requiredError) {
-    return res.status(400).json({ message: requiredError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.REQUIRED)
   }
 
   const emailError = emailValidate(email)
   if (emailError) {
-    return res.status(400).json({ message: emailError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.EMAIL)
   }
 
   try {
     // Check exist user
     const userExist = await isUserExist(email)
     if (!userExist) {
-      return res.status(400).json({ message: 'User is not found!' })
+      return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.NOT_FOUND)
     }
 
     // Create token and send email
@@ -339,10 +340,10 @@ export const forgetPassword = async (req, res) => {
     </div>`
 
     await sendEmail(email, subject, text, html)
-    return res.status(200).json({ message: 'Send email successfully!' })
+    return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.SEND_EMAIL_SUCCESS)
   } catch (error) {
     console.error('Error forgetPassword:', error.message)
-    res.status(500).json({ message: 'Internal server error!' })
+    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
   }
 }
 
@@ -353,16 +354,16 @@ export const resetPassword = async (req, res) => {
   // Check validation
   const requiredError = requiredValidate([newPassword, confirmNewPassword])
   if (requiredError) {
-    return res.status(400).json({ message: requiredError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.REQUIRED)
   }
 
   const newPasswordError = passwordValidate(newPassword)
   if (newPasswordError) {
-    return res.status(400).json({ message: newPasswordError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.PASSWORD)
   }
 
   if (newPassword !== confirmNewPassword) {
-    return res.status(400).json({ message: 'Password is not match!' })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.PASSWORD_NOT_MATCH)
   }
 
   try {
@@ -380,10 +381,10 @@ export const resetPassword = async (req, res) => {
       path: '/',
       sameSite: 'strict',
     })
-    return res.status(201).json({ message: 'Reset password successfully!' })
+    return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.RESET_PASSWORD_SUCCESS)
   } catch (error) {
     console.error('Error resetPassword:', error.message)
-    res.status(500).json({ message: 'Internal server error!' })
+    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
   }
 }
 
@@ -398,27 +399,25 @@ export const changePassword = async (req, res) => {
     confirmNewPassword,
   ])
   if (requiredError) {
-    return res.status(400).json({ message: requiredError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.REQUIRED)
   }
 
   const oldPasswordError = passwordValidate(oldPassword)
   if (oldPasswordError) {
-    return res.status(400).json({ message: oldPasswordError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.PASSWORD)
   }
 
   const newPasswordError = passwordValidate(newPassword)
   if (newPasswordError) {
-    return res.status(400).json({ message: newPasswordError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.PASSWORD)
   }
 
   if (newPassword === oldPassword) {
-    return res
-      .status(400)
-      .json({ message: 'New password can not be the same as old password!' })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.SAME_PASSWORD)
   }
 
   if (newPassword !== confirmNewPassword) {
-    return res.status(400).json({ message: 'Password is not match!' })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.PASSWORD_NOT_MATCH)
   }
 
   try {
@@ -431,7 +430,7 @@ export const changePassword = async (req, res) => {
     const hashedPassword = result.rows[0].password
     const isMatchedPassword = await bcrypt.compare(oldPassword, hashedPassword)
     if (!isMatchedPassword) {
-      return res.status(401).json({ messsage: 'Old Password is incorrect!' })
+      return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.WRONG_PASSWORD)
     }
 
     const hashedNewPassword = await bcrypt.hash(newPassword, 10)
@@ -441,10 +440,10 @@ export const changePassword = async (req, res) => {
       WHERE user_id = $1;
     `
     await client.query(queryUpdate, [user_id, hashedNewPassword])
-    return res.status(201).json({ message: 'Change password successfully!' })
+    return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.CHANGE_PASSWORD_SUCCESS)
   } catch (error) {
     console.error('Error changePassword:', error.message)
-    res.status(500).json({ message: 'Internal server error!' })
+    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
   }
 }
 
@@ -453,7 +452,7 @@ export const logout = async (req, res) => {
   const refreshToken = req.cookies?.refreshToken
 
   if (!refreshToken) {
-    return res.status(400).json({ message: 'Refresh token is required!' })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.AUTH.REFRESH_TOKEN.MISSING)
   }
 
   try {
@@ -465,7 +464,7 @@ export const logout = async (req, res) => {
     `
     const result = await client.query(queryCheckRefreshToken, [refreshToken])
     if (result.rowCount === 0) {
-      return res.status(400).json({ message: 'Invalid Token!' })
+      return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.AUTH.REFRESH_TOKEN.NOT_FOUND)
     }
 
     const queryDeleteRefreshToken = `
@@ -486,12 +485,10 @@ export const logout = async (req, res) => {
       path: '/',
       sameSite: 'strict',
     })
-    return res
-      .status(200)
-      .json({ message: 'Logout and delete refresh token successfully!' })
+    return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.LOGOUT_SUCCESS)
   } catch (error) {
     console.error('Error logout:', error.message)
-    res.status(500).json({ message: 'Internal server error!' })
+    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
   }
 }
 
