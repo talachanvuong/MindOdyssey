@@ -1,26 +1,30 @@
 import jwt from 'jsonwebtoken'
 import envConfig from '../config/envConfig.js'
 import client from '../db/db.js'
+import { MESSAGE,STATUS_CODE,sendResponse } from '../utils/constant.js'
 
 const verifyUser = (req, res, next) => {
   const token = req.cookies?.accessToken
-
   if (!token) {
-    return res.status(401).json({ message: 'Token missing!' })
+    return sendResponse(res, STATUS_CODE.UNAUTHORIZED, MESSAGE.AUTH.ACCESS_TOKEN.MISSING)
   }
 
   try {
     jwt.verify(token, envConfig.accessTokenSecretKey, (error, decoded) => {
       if (error) {
-        return res.status(400).json({ message: 'Invalid token!' })
+        if (error.name === 'TokenExpiredError') {
+          return sendResponse(res, STATUS_CODE.UNAUTHORIZED, MESSAGE.AUTH.ACCESS_TOKEN.EXPIRED)
+        }
+        if (error.name === 'JsonWebTokenError') {
+          return sendResponse(res, STATUS_CODE.UNAUTHORIZED, MESSAGE.AUTH.ACCESS_TOKEN.INVALID)
+        }
       }
-
-      req.user = decoded
+      req.user = decoded;
       next()
-    })
+    })    
   } catch (error) {
     console.error('Error:', error)
-    res.status(500).json({ message: 'Internal server error!' })
+    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
   }
 }
 
@@ -28,13 +32,18 @@ const verifyEmail = (req, res, next) => {
   const token = req.query.token
 
   if (!token) {
-    return res.status(401).json({ message: 'Token missing!' })
+    return sendResponse(res, STATUS_CODE.UNAUTHORIZED, MESSAGE.AUTH.ACCESS_TOKEN.MISSING)
   }
 
   try {
     jwt.verify(token, envConfig.accessTokenSecretKey, (error, decoded) => {
       if (error) {
-        return res.status(400).json({ message: 'Invalid token!' })
+        if (error.name === 'TokenExpiredError') {
+          return sendResponse(res, STATUS_CODE.UNAUTHORIZED, MESSAGE.AUTH.ACCESS_TOKEN.EXPIRED)
+        }
+        if (error.name === 'JsonWebTokenError') {
+          return sendResponse(res, STATUS_CODE.UNAUTHORIZED, MESSAGE.AUTH.ACCESS_TOKEN.INVALID)
+        }
       }
 
       req.user = decoded
@@ -43,7 +52,7 @@ const verifyEmail = (req, res, next) => {
     })
   } catch (error) {
     console.error('Error:', error)
-    res.status(500).json({ message: 'Internal server error!' })
+    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
   }
 }
 
@@ -51,7 +60,7 @@ const postRefreshToken = async (req, res) => {
   const refreshToken = req.cookies?.refreshToken
 
   if (!refreshToken) {
-    return res.status(400).json({ message: 'Refresh token is required!' })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.AUTH.REFRESH_TOKEN.MISSING)
   }
 
   try {
@@ -63,18 +72,18 @@ const postRefreshToken = async (req, res) => {
     `
     const result = await client.query(queryCheckRefreshToken, [refreshToken])
     if (result.rowCount === 0) {
-      return res.status(400).json({ message: 'Invalid token!' })
+      return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.AUTH.REFRESH_TOKEN.NOT_FOUND)
     }
 
-    jwt.verify(
-      refreshToken,
-      envConfig.refreshTokenSecretKey,
-      (error, decoded) => {
-        if (error) {
-          return res
-            .status(400)
-            .json({ message: 'Invalid or expired refresh token!' })
+    jwt.verify(refreshToken,envConfig.refreshTokenSecretKey,(error, decoded) => {
+      if (error) {
+        if (error.name === 'TokenExpiredError') {
+          return sendResponse(res, STATUS_CODE.UNAUTHORIZED, MESSAGE.AUTH.REFRESH_TOKEN.EXPIRED)
         }
+        if (error.name === 'JsonWebTokenError') {
+          return sendResponse(res, STATUS_CODE.UNAUTHORIZED, MESSAGE.AUTH.REFRESH_TOKEN.INVALID)
+        }
+      }
 
         const newAccessToken = jwt.sign(
           { email: decoded.email, user_id: decoded.user_id },
@@ -89,12 +98,12 @@ const postRefreshToken = async (req, res) => {
           sameSite: 'strict',
           maxAge: 3600000,
         })
-        res.status(200).json({ message: 'Refresh token successfully!' })
+        return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.AUTH.REFRESH_TOKEN.SUCCESS)
       }
     )
   } catch (error) {
     console.error('Error:', error)
-    res.status(500).json({ message: 'Internal server error!' })
+    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
   }
 }
 
