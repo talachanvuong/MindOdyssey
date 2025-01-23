@@ -1,30 +1,49 @@
 import jwt from 'jsonwebtoken'
 import envConfig from '../config/envConfig.js'
 import client from '../db/db.js'
-import { MESSAGE,STATUS_CODE,sendResponse } from '../utils/constant.js'
+import { MESSAGE, STATUS_CODE, sendResponse } from '../utils/constant.js'
 
 const verifyUser = (req, res, next) => {
   const token = req.cookies?.accessToken
+
   if (!token) {
-    return sendResponse(res, STATUS_CODE.UNAUTHORIZED, MESSAGE.AUTH.ACCESS_TOKEN.MISSING)
+    return sendResponse(
+      res,
+      STATUS_CODE.UNAUTHORIZED,
+      MESSAGE.AUTH.ACCESS_TOKEN.MISSING
+    )
   }
 
   try {
     jwt.verify(token, envConfig.accessTokenSecretKey, (error, decoded) => {
       if (error) {
         if (error.name === 'TokenExpiredError') {
-          return sendResponse(res, STATUS_CODE.UNAUTHORIZED, MESSAGE.AUTH.ACCESS_TOKEN.EXPIRED)
+          return sendResponse(
+            res,
+            STATUS_CODE.UNAUTHORIZED,
+            MESSAGE.AUTH.ACCESS_TOKEN.EXPIRED
+          )
         }
+
         if (error.name === 'JsonWebTokenError') {
-          return sendResponse(res, STATUS_CODE.UNAUTHORIZED, MESSAGE.AUTH.ACCESS_TOKEN.INVALID)
+          return sendResponse(
+            res,
+            STATUS_CODE.UNAUTHORIZED,
+            MESSAGE.AUTH.ACCESS_TOKEN.INVALID
+          )
         }
       }
-      req.user = decoded;
+
+      req.user = decoded
       next()
-    })    
+    })
   } catch (error) {
     console.error('Error:', error)
-    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
+    return sendResponse(
+      res,
+      STATUS_CODE.INTERNAL_SERVER_ERROR,
+      MESSAGE.SERVER.ERROR
+    )
   }
 }
 
@@ -32,17 +51,30 @@ const verifyEmail = (req, res, next) => {
   const token = req.query.token
 
   if (!token) {
-    return sendResponse(res, STATUS_CODE.UNAUTHORIZED, MESSAGE.AUTH.ACCESS_TOKEN.MISSING)
+    return sendResponse(
+      res,
+      STATUS_CODE.UNAUTHORIZED,
+      MESSAGE.AUTH.ACCESS_TOKEN.MISSING
+    )
   }
 
   try {
     jwt.verify(token, envConfig.accessTokenSecretKey, (error, decoded) => {
       if (error) {
         if (error.name === 'TokenExpiredError') {
-          return sendResponse(res, STATUS_CODE.UNAUTHORIZED, MESSAGE.AUTH.ACCESS_TOKEN.EXPIRED)
+          return sendResponse(
+            res,
+            STATUS_CODE.UNAUTHORIZED,
+            MESSAGE.AUTH.ACCESS_TOKEN.EXPIRED
+          )
         }
+
         if (error.name === 'JsonWebTokenError') {
-          return sendResponse(res, STATUS_CODE.UNAUTHORIZED, MESSAGE.AUTH.ACCESS_TOKEN.INVALID)
+          return sendResponse(
+            res,
+            STATUS_CODE.UNAUTHORIZED,
+            MESSAGE.AUTH.ACCESS_TOKEN.INVALID
+          )
         }
       }
 
@@ -52,7 +84,11 @@ const verifyEmail = (req, res, next) => {
     })
   } catch (error) {
     console.error('Error:', error)
-    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
+    return sendResponse(
+      res,
+      STATUS_CODE.INTERNAL_SERVER_ERROR,
+      MESSAGE.SERVER.ERROR
+    )
   }
 }
 
@@ -60,7 +96,11 @@ const postRefreshToken = async (req, res) => {
   const refreshToken = req.cookies?.refreshToken
 
   if (!refreshToken) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.AUTH.REFRESH_TOKEN.MISSING)
+    return sendResponse(
+      res,
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.AUTH.REFRESH_TOKEN.MISSING
+    )
   }
 
   try {
@@ -72,18 +112,33 @@ const postRefreshToken = async (req, res) => {
     `
     const result = await client.query(queryCheckRefreshToken, [refreshToken])
     if (result.rowCount === 0) {
-      return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.AUTH.REFRESH_TOKEN.NOT_FOUND)
+      return sendResponse(
+        res,
+        STATUS_CODE.BAD_REQUEST,
+        MESSAGE.AUTH.REFRESH_TOKEN.NOT_FOUND
+      )
     }
 
-    jwt.verify(refreshToken,envConfig.refreshTokenSecretKey,(error, decoded) => {
-      if (error) {
-        if (error.name === 'TokenExpiredError') {
-          return sendResponse(res, STATUS_CODE.UNAUTHORIZED, MESSAGE.AUTH.REFRESH_TOKEN.EXPIRED)
+    jwt.verify(
+      refreshToken,
+      envConfig.refreshTokenSecretKey,
+      (error, decoded) => {
+        if (error) {
+          if (error.name === 'TokenExpiredError') {
+            return sendResponse(
+              res,
+              STATUS_CODE.UNAUTHORIZED,
+              MESSAGE.AUTH.REFRESH_TOKEN.EXPIRED
+            )
+          }
+          if (error.name === 'JsonWebTokenError') {
+            return sendResponse(
+              res,
+              STATUS_CODE.UNAUTHORIZED,
+              MESSAGE.AUTH.REFRESH_TOKEN.INVALID
+            )
+          }
         }
-        if (error.name === 'JsonWebTokenError') {
-          return sendResponse(res, STATUS_CODE.UNAUTHORIZED, MESSAGE.AUTH.REFRESH_TOKEN.INVALID)
-        }
-      }
 
         const newAccessToken = jwt.sign(
           { email: decoded.email, user_id: decoded.user_id },
@@ -98,12 +153,20 @@ const postRefreshToken = async (req, res) => {
           sameSite: 'strict',
           maxAge: 3600000,
         })
-        return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.AUTH.REFRESH_TOKEN.SUCCESS)
+        return sendResponse(
+          res,
+          STATUS_CODE.SUCCESS,
+          MESSAGE.AUTH.REFRESH_TOKEN.SUCCESS
+        )
       }
     )
   } catch (error) {
     console.error('Error:', error)
-    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
+    return sendResponse(
+      res,
+      STATUS_CODE.INTERNAL_SERVER_ERROR,
+      MESSAGE.SERVER.ERROR
+    )
   }
 }
 

@@ -1,13 +1,14 @@
 import cp from 'cookie-parser'
 import cors from 'cors'
 import { json, urlencoded } from 'express'
-import routesConfig from './routesConfig.js'
 import envConfig from '../config/envConfig.js'
+import routesConfig from './routesConfig.js'
+
 export default (app) => {
   app.use(
     cors({
-      origin: envConfig.frontendUrl, 
-      credentials: true,   
+      origin: envConfig.frontendUrl,
+      credentials: true,
     })
   )
   app.use(json())

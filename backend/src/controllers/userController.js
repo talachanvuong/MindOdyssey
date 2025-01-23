@@ -15,8 +15,8 @@ import {
 const isUserExist = async (email) => {
   try {
     const query = `
-        SELECT 1 
-        FROM users 
+        SELECT 1
+        FROM users
         WHERE email = $1
         LIMIT 1;
     `
@@ -61,17 +61,17 @@ export const login = async (req, res) => {
   // Check validation
   const requiredError = requiredValidate([email, password])
   if (requiredError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.REQUIRED)
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, requiredError)
   }
 
   const emailError = emailValidate(email)
   if (emailError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.EMAIL)
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, emailError)
   }
 
   const passwordError = passwordValidate(password)
   if (passwordError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.PASSWORD)
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, passwordError)
   }
 
   try {
@@ -82,7 +82,7 @@ export const login = async (req, res) => {
     }
 
     const query = `
-      SELECT password, user_id 
+      SELECT password, user_id
       FROM users
       WHERE email = $1;
     `
@@ -93,7 +93,11 @@ export const login = async (req, res) => {
     // Check correct password
     const isMatchedPassword = await bcrypt.compare(password, hashedPassword)
     if (!isMatchedPassword) {
-      return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.WRONG_PASSWORD)
+      return sendResponse(
+        res,
+        STATUS_CODE.BAD_REQUEST,
+        MESSAGE.USER.WRONG_PASSWORD
+      )
     }
 
     // Create token
@@ -133,7 +137,11 @@ export const login = async (req, res) => {
     return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.LOGIN_SUCCESS)
   } catch (error) {
     console.error('Error login:', error.message)
-    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
+    return sendResponse(
+      res,
+      STATUS_CODE.INTERNAL_SERVER_ERROR,
+      MESSAGE.SERVER.ERROR
+    )
   }
 }
 
@@ -143,12 +151,12 @@ export const verifyEmail = async (req, res) => {
   // Check validation
   const requiredError = requiredValidate([email])
   if (requiredError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.REQUIRED)
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, requiredError)
   }
 
   const emailError = emailValidate(email)
   if (emailError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.EMAIL)
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, emailError)
   }
 
   try {
@@ -161,9 +169,7 @@ export const verifyEmail = async (req, res) => {
     const registerToken = jwt.sign(
       { email: email },
       envConfig.accessTokenSecretKey,
-      {
-        expiresIn: '5m',
-      }
+      { expiresIn: '5m' }
     )
     const linkRegister = `${req.protocol}://${req.get(
       'host'
@@ -184,41 +190,57 @@ export const verifyEmail = async (req, res) => {
       </div>
     `
     await sendEmail(email, subject, text, html)
-    return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.SEND_EMAIL_SUCCESS)
+    return sendResponse(
+      res,
+      STATUS_CODE.SUCCESS,
+      MESSAGE.USER.SEND_EMAIL_SUCCESS
+    )
   } catch (error) {
     console.error('Error verifyEmail:', error.message)
-    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
+    return sendResponse(
+      res,
+      STATUS_CODE.INTERNAL_SERVER_ERROR,
+      MESSAGE.SERVER.ERROR
+    )
   }
 }
 
 export const register = async (req, res) => {
   const { email } = req.user
-  const { display_name, password,confirmPassword } = req.body
+  const { display_name, password, confirmPassword } = req.body
 
   // Check validation
-  const requiredError = requiredValidate([display_name, password, confirmPassword])
+  const requiredError = requiredValidate([
+    display_name,
+    password,
+    confirmPassword,
+  ])
   if (requiredError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.REQUIRED)
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, requiredError)
   }
 
   const displayNameError = displayNameValidate(display_name)
   if (displayNameError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.DISPLAY_NAME)
-  }
-  
-  const passwordError = passwordValidate(password)
-  if (passwordError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.PASSWORD)
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, displayNameError)
   }
 
-  if (password !== cormfirmPassword) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.PASSWORD_NOT_MATCH)
+  const passwordError = passwordValidate(password)
+  if (passwordError) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, passwordError)
+  }
+
+  if (password !== confirmPassword) {
+    return sendResponse(
+      res,
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.USER.PASSWORD_NOT_MATCH
+    )
   }
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10)
     const query = `
-      INSERT INTO users (email, password, display_name) 
+      INSERT INTO users (email, password, display_name)
       VALUES ($1, $2, $3);
     `
     await client.query(query, [email, hashedPassword, display_name])
@@ -231,7 +253,11 @@ export const register = async (req, res) => {
     return sendResponse(res, STATUS_CODE.CREATED, MESSAGE.USER.REGISTER_SUCCESS)
   } catch (error) {
     console.error('Error register:', error.message)
-    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
+    return sendResponse(
+      res,
+      STATUS_CODE.INTERNAL_SERVER_ERROR,
+      MESSAGE.SERVER.ERROR
+    )
   }
 }
 
@@ -246,10 +272,19 @@ export const getInfo = async (req, res) => {
       WHERE user_id = $1;
     `
     const result = await client.query(query, [user_id])
-    return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.GET_INFO_SUCCESS, result.rows[0])
+    return sendResponse(
+      res,
+      STATUS_CODE.SUCCESS,
+      MESSAGE.USER.GET_INFO_SUCCESS,
+      result.rows[0]
+    )
   } catch (error) {
     console.error('Error getInfo:', error.message)
-    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
+    return sendResponse(
+      res,
+      STATUS_CODE.INTERNAL_SERVER_ERROR,
+      MESSAGE.SERVER.ERROR
+    )
   }
 }
 
@@ -261,12 +296,12 @@ export const update = async (req, res) => {
   // Check validation
   const requiredError = requiredValidate([new_display_name])
   if (requiredError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.REQUIRED)
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, requiredError)
   }
 
   const newDisplayNameError = displayNameValidate(new_display_name)
   if (newDisplayNameError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.DISPLAY_NAME)
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, newDisplayNameError)
   }
 
   try {
@@ -277,7 +312,11 @@ export const update = async (req, res) => {
     `
     const result = await client.query(query, [user_id])
     if (result.rows[0].display_name === new_display_name) {
-      return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.SAME_DISPLAY_NAME)
+      return sendResponse(
+        res,
+        STATUS_CODE.BAD_REQUEST,
+        MESSAGE.USER.SAME_DISPLAY_NAME
+      )
     }
 
     const queryUpdate = `
@@ -289,7 +328,11 @@ export const update = async (req, res) => {
     return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.UPDATE_SUCCESS)
   } catch (error) {
     console.error('Error update:', error.message)
-    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
+    return sendResponse(
+      res,
+      STATUS_CODE.INTERNAL_SERVER_ERROR,
+      MESSAGE.SERVER.ERROR
+    )
   }
 }
 
@@ -300,12 +343,12 @@ export const forgetPassword = async (req, res) => {
   // Check validation
   const requiredError = requiredValidate([email])
   if (requiredError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.REQUIRED)
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, requiredError)
   }
 
   const emailError = emailValidate(email)
   if (emailError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.EMAIL)
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, emailError)
   }
 
   try {
@@ -338,12 +381,19 @@ export const forgetPassword = async (req, res) => {
       <p style="text-align: center; font-size: 12px; color: #888; margin-top: 20px;">Nếu bạn không yêu cầu khôi phục mật khẩu, vui lòng bỏ qua email này.</p>
       <p style="text-align: center; font-size: 12px; color: #888;">&copy; 2025 MindOdysey. All rights reserved.</p>
     </div>`
-
     await sendEmail(email, subject, text, html)
-    return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.SEND_EMAIL_SUCCESS)
+    return sendResponse(
+      res,
+      STATUS_CODE.SUCCESS,
+      MESSAGE.USER.SEND_EMAIL_SUCCESS
+    )
   } catch (error) {
     console.error('Error forgetPassword:', error.message)
-    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
+    return sendResponse(
+      res,
+      STATUS_CODE.INTERNAL_SERVER_ERROR,
+      MESSAGE.SERVER.ERROR
+    )
   }
 }
 
@@ -354,37 +404,48 @@ export const resetPassword = async (req, res) => {
   // Check validation
   const requiredError = requiredValidate([newPassword, confirmNewPassword])
   if (requiredError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.REQUIRED)
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, requiredError)
   }
 
   const newPasswordError = passwordValidate(newPassword)
   if (newPasswordError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.PASSWORD)
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, newPasswordError)
   }
 
   if (newPassword !== confirmNewPassword) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.PASSWORD_NOT_MATCH)
+    return sendResponse(
+      res,
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.USER.PASSWORD_NOT_MATCH
+    )
   }
 
   try {
     const hashedPassword = await bcrypt.hash(newPassword, 10)
     const query = `
-      UPDATE users 
+      UPDATE users
       SET password = $2
       WHERE email = $1;
     `
     await client.query(query, [email, hashedPassword])
-
     res.clearCookie('accessToken', {
       httpOnly: true,
       secure: false,
       path: '/',
       sameSite: 'strict',
     })
-    return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.RESET_PASSWORD_SUCCESS)
+    return sendResponse(
+      res,
+      STATUS_CODE.SUCCESS,
+      MESSAGE.USER.RESET_PASSWORD_SUCCESS
+    )
   } catch (error) {
     console.error('Error resetPassword:', error.message)
-    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
+    return sendResponse(
+      res,
+      STATUS_CODE.INTERNAL_SERVER_ERROR,
+      MESSAGE.SERVER.ERROR
+    )
   }
 }
 
@@ -399,25 +460,33 @@ export const changePassword = async (req, res) => {
     confirmNewPassword,
   ])
   if (requiredError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.REQUIRED)
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, requiredError)
   }
 
   const oldPasswordError = passwordValidate(oldPassword)
   if (oldPasswordError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.PASSWORD)
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, oldPasswordError)
   }
 
   const newPasswordError = passwordValidate(newPassword)
   if (newPasswordError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.VALIDATE.PASSWORD)
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, newPasswordError)
   }
 
   if (newPassword === oldPassword) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.SAME_PASSWORD)
+    return sendResponse(
+      res,
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.USER.SAME_PASSWORD
+    )
   }
 
   if (newPassword !== confirmNewPassword) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.PASSWORD_NOT_MATCH)
+    return sendResponse(
+      res,
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.USER.PASSWORD_NOT_MATCH
+    )
   }
 
   try {
@@ -430,7 +499,11 @@ export const changePassword = async (req, res) => {
     const hashedPassword = result.rows[0].password
     const isMatchedPassword = await bcrypt.compare(oldPassword, hashedPassword)
     if (!isMatchedPassword) {
-      return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.WRONG_PASSWORD)
+      return sendResponse(
+        res,
+        STATUS_CODE.BAD_REQUEST,
+        MESSAGE.USER.WRONG_PASSWORD
+      )
     }
 
     const hashedNewPassword = await bcrypt.hash(newPassword, 10)
@@ -440,10 +513,18 @@ export const changePassword = async (req, res) => {
       WHERE user_id = $1;
     `
     await client.query(queryUpdate, [user_id, hashedNewPassword])
-    return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.CHANGE_PASSWORD_SUCCESS)
+    return sendResponse(
+      res,
+      STATUS_CODE.SUCCESS,
+      MESSAGE.USER.CHANGE_PASSWORD_SUCCESS
+    )
   } catch (error) {
     console.error('Error changePassword:', error.message)
-    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
+    return sendResponse(
+      res,
+      STATUS_CODE.INTERNAL_SERVER_ERROR,
+      MESSAGE.SERVER.ERROR
+    )
   }
 }
 
@@ -452,7 +533,11 @@ export const logout = async (req, res) => {
   const refreshToken = req.cookies?.refreshToken
 
   if (!refreshToken) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.AUTH.REFRESH_TOKEN.MISSING)
+    return sendResponse(
+      res,
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.AUTH.REFRESH_TOKEN.MISSING
+    )
   }
 
   try {
@@ -464,7 +549,11 @@ export const logout = async (req, res) => {
     `
     const result = await client.query(queryCheckRefreshToken, [refreshToken])
     if (result.rowCount === 0) {
-      return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.AUTH.REFRESH_TOKEN.NOT_FOUND)
+      return sendResponse(
+        res,
+        STATUS_CODE.BAD_REQUEST,
+        MESSAGE.AUTH.REFRESH_TOKEN.NOT_FOUND
+      )
     }
 
     const queryDeleteRefreshToken = `
@@ -472,7 +561,6 @@ export const logout = async (req, res) => {
       WHERE token = $1;
     `
     await client.query(queryDeleteRefreshToken, [refreshToken])
-
     res.clearCookie('accessToken', {
       httpOnly: true,
       secure: false,
@@ -488,13 +576,25 @@ export const logout = async (req, res) => {
     return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.LOGOUT_SUCCESS)
   } catch (error) {
     console.error('Error logout:', error.message)
-    return sendResponse(res, STATUS_CODE.INTERNAL_SERVER_ERROR, MESSAGE.SERVER.ERROR)
+    return sendResponse(
+      res,
+      STATUS_CODE.INTERNAL_SERVER_ERROR,
+      MESSAGE.SERVER.ERROR
+    )
   }
 }
 
 export const setCookieRegister = (req, res) => {
   const token = req.token
 
+  if (!token) {
+    return sendResponse(
+      res,
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.AUTH.ACCESS_TOKEN.MISSING
+    )
+  }
+
   res.cookie('accessToken', token, {
     httpOnly: true,
     secure: false,
@@ -503,12 +603,20 @@ export const setCookieRegister = (req, res) => {
     maxAge: 300000,
   })
 
-  res.redirect(`${envConfig.frontendUrl}${envConfig.registerPath}`)
+  return res.redirect(`${envConfig.frontendUrl}${envConfig.registerPath}`)
 }
 
 export const setCookieForgetPass = (req, res) => {
   const token = req.token
 
+  if (!token) {
+    return sendResponse(
+      res,
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.AUTH.ACCESS_TOKEN.MISSING
+    )
+  }
+
   res.cookie('accessToken', token, {
     httpOnly: true,
     secure: false,
@@ -517,5 +625,5 @@ export const setCookieForgetPass = (req, res) => {
     maxAge: 300000,
   })
 
-  res.redirect(`${envConfig.frontendUrl}${envConfig.forgetPassPath}`)
+  return res.redirect(`${envConfig.frontendUrl}${envConfig.forgetPassPath}`)
 }

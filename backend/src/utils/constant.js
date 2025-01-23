@@ -1,5 +1,3 @@
-
-
 export const MESSAGE = {
   VALIDATE: {
     REQUIRED: 'Missing required field!',
@@ -14,7 +12,7 @@ export const MESSAGE = {
     GET_SUCCESS: 'Get courses successfully!',
   },
   USER: {
-    EXISTED: 'User already exists!',    
+    EXISTED: 'User already exists!',
     NOT_FOUND: 'User not found!',
     REGISTER_SUCCESS: 'User registered successfully!',
     SEND_EMAIL_SUCCESS: 'Send email successfully!',
@@ -30,7 +28,7 @@ export const MESSAGE = {
     SAME_PASSWORD: 'New password must be different from the old one!',
   },
   AUTH: {
-    ACCESS_TOKEN:{
+    ACCESS_TOKEN: {
       MISSING: 'Access token missing!',
       INVALID: 'Invalid access token!',
       EXPIRED: 'Access token expired!',

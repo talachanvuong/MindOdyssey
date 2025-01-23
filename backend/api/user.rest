@@ -12,7 +12,6 @@ Content-Type: application/json
 ### Logout
 POST {{host}}/user/logout
 Content-Type: application/json
-Cookie: refreshToken=
 
 ### Verify email
 POST {{host}}/user/verifyemail
@@ -44,7 +43,6 @@ Content-Type: application/json
 ### Reset password
 POST {{host}}/user/resetpassword
 Content-Type: application/json
-Cookie: accessToken=
 
 {
     "newPassword": "",
@@ -54,7 +52,6 @@ Cookie: accessToken=
 ### Change password
 POST {{host}}/user/changepassword
 Content-Type: application/json
-Cookie: accessToken=
 
 {
     "oldPassword": "",
@@ -62,23 +59,18 @@ Cookie: accessToken=
     "confirmNewPassword": ""
 }
 
-### Update user info
+### Update info
 PATCH {{host}}/user/update
 Content-Type: application/json
-Cookie: accessToken=
 
 {
     "new_display_name": ""
 }
 
-### Get user info
+### Get info
 GET {{host}}/user/showinfo
 Content-Type: application/json
-Cookie: accessToken=
-
 
 ### Refresh token
 POST {{host}}/user/refreshtoken
 Content-Type: application/json
-Cookie: refreshToken=
-
