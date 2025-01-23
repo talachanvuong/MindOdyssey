@@ -11,12 +11,12 @@ export const createCourse = async (req, res) => {
   // Check validation
   const requiredError = requiredValidate([title])
   if (requiredError) {
-    return res.status(400).json({ message: requiredError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, requiredError)
   }
 
   const titleError = titleCourseValidate(title)
   if (titleError) {
-    return res.status(400).json({ message: titleError })
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, titleError)
   }
 
   try {
