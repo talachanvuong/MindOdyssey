@@ -4,10 +4,17 @@ export const MESSAGE = {
     DISPLAY_NAME: 'Display name must be between 8 and 64 characters long!',
     EMAIL: 'Invalid email address!',
     PASSWORD: 'Password must be between 8 and 32 characters long!',
-    TITLE_COURSE: 'Title must be between 8 and 256 characters long!',
+    TITLE: 'Title must be between 8 and 256 characters long!',
+    CONTENT: 'Content must be less than 4096 characters long!',
+    ATTACHMENT: 'Size must be less than 5 MB!',
+    DESCRIPTION: 'Desciption must be les than 2048 characters long!',
+    TIME_PER_QUESTION:
+      'The allowed time for each question must be between 30 seconds and 3 minutes!',
+    REASON: 'Reason must be less than 2048 characters long!',
   },
   COURSE: {
     EXISTED: 'Course already exists!',
+    NOT_FOUND: 'Course not found!',
     CREATE_SUCCESS: 'Create course successfully!',
     GET_SUCCESS: 'Get courses successfully!',
   },

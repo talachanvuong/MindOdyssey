@@ -1,6 +1,6 @@
 import client from '../db/db.js'
 import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
-import { requiredValidate, titleCourseValidate } from '../utils/validate.js'
+import { requiredValidate, titleValidate } from '../utils/validate.js'
 
 /**
  * Create a new course.
@@ -14,7 +14,7 @@ export const createCourse = async (req, res) => {
     return sendResponse(res, STATUS_CODE.BAD_REQUEST, requiredError)
   }
 
-  const titleError = titleCourseValidate(title)
+  const titleError = titleValidate(title)
   if (titleError) {
     return sendResponse(res, STATUS_CODE.BAD_REQUEST, titleError)
   }
