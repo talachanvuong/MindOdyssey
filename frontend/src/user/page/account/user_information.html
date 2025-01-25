@@ -1,119 +1,145 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body class="bg-stone-200 relative">
+  </head>
+  <body class="relative bg-stone-200">
     <!-- header -->
-    <header class="bg-cyan-300 h-16 flex flex-row justify-between p-2">
-        <button id="open_Menu_Btn">
-            <img src="../img/menu.png" class="h-5/6">
-        </button>
-        <button id="open_Setting_Btn">
-            <img src="../img/setting.png" class="h-5/6">
-        </button>
-
+    <header class="flex h-16 flex-row justify-between bg-cyan-300 p-2">
+      <button id="open_Menu_Btn">
+        <img src="../img/menu.png" class="h-5/6" />
+      </button>
+      <button id="open_Setting_Btn">
+        <img src="../img/setting.png" class="h-5/6" />
+      </button>
     </header>
 
     <!-- main -->
-    <main class="flex flex-col mt-5  sm:flex-row  sm:mx-32 min-h-screen">
+    <main class="mt-5 flex min-h-screen flex-col sm:mx-32 sm:flex-row">
+      <!-- name and image -->
+      <div
+        id="user_zone"
+        class="mx-5 flex h-40 -translate-y-5 scale-90 flex-row justify-between rounded-xl bg-cyan-300 opacity-0 shadow-xl sm:h-fit sm:w-2/3 sm:flex-col sm:pb-8"
+      >
+        <img
+          src="../img/user.png"
+          class="mx-auto my-auto h-2/3 sm:my-2 sm:h-20"
+        />
+        <div
+          class="my-1.5 w-4/6 text-4xl font-bold sm:mx-auto sm:border-t-4 sm:border-black sm:text-xl"
+        >
+          <p class="text-center">Nguyen Nhat Khang</p>
+        </div>
+      </div>
 
-        <!-- name and image -->
-        <div id="user_zone" class=" opacity-0 scale-90 -translate-y-5 bg-cyan-300 shadow-xl h-40 mx-5 rounded-xl flex flex-row justify-between sm:flex-col sm:w-2/3 sm:h-fit sm:pb-8">
-            <img src="../img/user.png" class=" my-auto mx-auto h-2/3 sm:h-20 sm:my-2">
-            <div class=" w-4/6 text-4xl my-1.5 sm:text-xl sm:mx-auto font-bold sm:border-t-4 sm:border-black"><p class="text-center">Nguyen Nhat Khang</p></div>
+      <!-- detail information -->
+      <div
+        id="detail_zone"
+        class="m-5 h-full scale-90 rounded-xl bg-white p-3 opacity-0 shadow-xl sm:mt-0"
+      >
+        <!-- email -->
+        <div class="mb-3">
+          <p class="ml-3">Email</p>
+          <p class="rounded-md bg-stone-300 p-1">nhatkhang25092005@gmail.com</p>
         </div>
 
-        <!-- detail information -->
-         <div id="detail_zone" class="opacity-0 scale-90 h-full shadow-xl bg-white m-5 rounded-xl p-3 sm:mt-0">
-
-            <!-- email -->
-            <div class="mb-3">
-                <p class="ml-3">Email</p>
-                <p class="bg-stone-300 p-1 rounded-md">nhatkhang25092005@gmail.com</p>
-            </div>
-
-            <!-- name -->
-             <div class="mb-3">
-                <p class="ml-3">Name</p>
-                <p class="bg-stone-300 p-1 rounded-md">Nguyen Nhat Khang</p>
-             </div>
-
-             <!-- extend information -->
-            <div class="grid grid-cols-2 gap-5 sm:grid-cols-4">
-
-                <!-- completed document -->
-                <a href="#" id="completed_doc" class="duration-500">
-                    <div class="bg-yellow-300 rounded-xl shadow-lg flex flex-col p-2">
-                        <img src="../img/completed_document.png" class="m-auto h-5/6">
-                    </div>
-                    <p class="text-center font-bold">Completed document</p>
-                </a>
-
-                <!-- Uploaded document -->
-                <a href="#" id="uploaded_doc" class="duration-500">
-                    <div class="rounded-xl shadow-xl bg-purple-500 flex flex-col">
-                        <img src="../img/uploaded_doc.png" class="m-auto h-5/6 p-2">
-                    </div>
-                    <p class="text-center font-bold">Uploaded Document</p>
-                </a>
-
-                <!-- History area -->
-                <a href="#" id="history" class="duration-500">
-                    <div class="bg-red-400 shadow-xl rounded-xl flex flex-col">
-                        <img src="../img/history.png" class="h-5/6 m-auto p-2">
-                    </div>
-                    <p class="text-center font-bold">History area</p>
-                </a>
-            </div>
+        <!-- name -->
+        <div class="mb-3">
+          <p class="ml-3">Name</p>
+          <p class="rounded-md bg-stone-300 p-1">Nguyen Nhat Khang</p>
         </div>
+
+        <!-- extend information -->
+        <div class="grid grid-cols-2 gap-5 sm:grid-cols-4">
+          <!-- completed document -->
+          <a href="#" id="completed_doc" class="duration-500">
+            <div class="flex flex-col rounded-xl bg-yellow-300 p-2 shadow-lg">
+              <img src="../img/completed_document.png" class="m-auto h-5/6" />
+            </div>
+            <p class="text-center font-bold">Completed document</p>
+          </a>
+
+          <!-- Uploaded document -->
+          <a href="#" id="uploaded_doc" class="duration-500">
+            <div class="flex flex-col rounded-xl bg-purple-500 shadow-xl">
+              <img src="../img/uploaded_doc.png" class="m-auto h-5/6 p-2" />
+            </div>
+            <p class="text-center font-bold">Uploaded Document</p>
+          </a>
+
+          <!-- History area -->
+          <a href="#" id="history" class="duration-500">
+            <div class="flex flex-col rounded-xl bg-red-400 shadow-xl">
+              <img src="../img/history.png" class="m-auto h-5/6 p-2" />
+            </div>
+            <p class="text-center font-bold">History area</p>
+          </a>
+        </div>
+      </div>
     </main>
 
     <!-- popup menu -->
-    <div class="hidden origin-top scale-y-0 opacity-0 h-[20%] w-1/2 bg-stone-400 justify-between flex rounded-xl shadow-xl flex-col flex-3 p-2  absolute top-14 left-2" id="menu" >
-       <button class="h-[30%] flex p-1 flex-row gap-4  bg-white rounded-xl">
-            <img src="../img/home.png" class="h-full">
-            <p class="my-auto text-center font-bold">back to lobby</p>
-       </button>
-        <button class="h-[30%] flex p-1 flex-row gap-4 bg-white rounded-xl">
-            <img src="../img/combat.png" class="h-full">
-            <p class="my-auto font-bold">area</p>
-        </button>
-        <button class="h-[30%] flex p-1 flex-row gap-4 bg-white rounded-xl">
-            <img src="../img/create_doc.png" class="h-full">
-            <p class="my-auto font-bold">create doc</p>
-        </button>
+    <div
+      class="flex-3 absolute left-2 top-14 flex hidden h-[20%] w-1/2 origin-top scale-y-0 flex-col justify-between rounded-xl bg-stone-400 p-2 opacity-0 shadow-xl"
+      id="menu"
+    >
+      <button class="flex h-[30%] flex-row gap-4 rounded-xl bg-white p-1">
+        <img src="../img/home.png" class="h-full" />
+        <p class="my-auto text-center font-bold">back to lobby</p>
+      </button>
+      <button class="flex h-[30%] flex-row gap-4 rounded-xl bg-white p-1">
+        <img src="../img/combat.png" class="h-full" />
+        <p class="my-auto font-bold">area</p>
+      </button>
+      <button class="flex h-[30%] flex-row gap-4 rounded-xl bg-white p-1">
+        <img src="../img/create_doc.png" class="h-full" />
+        <p class="my-auto font-bold">create doc</p>
+      </button>
     </div>
 
     <!-- popup setting -->
-     <div id="setting" class="hidden scale-y-0 origin-top opacity-0 shadow-2xl absolute top-14 right-2 w-1/2 rounded-xl pt-2 bg-stone-200">
-        <p class="font-bold text-center">Cài đặt hiển thị trang cá nhân</p>
-        <ul class="flex flex-col gap-2 p-2">
-            <li class="rounded-xl shadow-xl flex flex-row bg-white justify-between p-2">
-                <label for="completed_doc">Tài liệu đã làm</label>
-                <input type="checkbox" id="completed_doc_check" class="h-5 w-5 m-1">
-            </li>
-            <li class="rounded-xl shadow-xl flex flex-row bg-white justify-between p-2">
-               <label for="uploaded_doc">Tài liệu đã đăng tải</label>
-                <input type="checkbox" id="uploaded_doc_check" class="h-5 w-5 m-1">
-            </li>
-            <li class="rounded-xl shadow-xl flex flex-row bg-white justify-between p-2">
-                <label for="history">Lịch sử đấu</label>
-                <input type="checkbox" id="history_check" class="h-5 w-5 m-1">
-            </li>
-            <a href="change_pass.html" class="rounded-xl shadow-xl bg-white p-2">Đổi mật khẩu</a>
+    <div
+      id="setting"
+      class="absolute right-2 top-14 hidden w-1/2 origin-top scale-y-0 rounded-xl bg-stone-200 pt-2 opacity-0 shadow-2xl"
+    >
+      <p class="text-center font-bold">Cài đặt hiển thị trang cá nhân</p>
+      <ul class="flex flex-col gap-2 p-2">
+        <li
+          class="flex flex-row justify-between rounded-xl bg-white p-2 shadow-xl"
+        >
+          <label for="completed_doc">Tài liệu đã làm</label>
+          <input type="checkbox" id="completed_doc_check" class="m-1 h-5 w-5" />
+        </li>
+        <li
+          class="flex flex-row justify-between rounded-xl bg-white p-2 shadow-xl"
+        >
+          <label for="uploaded_doc">Tài liệu đã đăng tải</label>
+          <input type="checkbox" id="uploaded_doc_check" class="m-1 h-5 w-5" />
+        </li>
+        <li
+          class="flex flex-row justify-between rounded-xl bg-white p-2 shadow-xl"
+        >
+          <label for="history">Lịch sử đấu</label>
+          <input type="checkbox" id="history_check" class="m-1 h-5 w-5" />
+        </li>
+        <a href="change_pass.html" class="rounded-xl bg-white p-2 shadow-xl"
+          >Đổi mật khẩu</a
+        >
 
-            <button id="button"  class="border border-black  mx-auto my-3 bg-blue-500 px-5 py-3 rounded-xl shadow-2xl font-bold">Xác nhận</button>
-        </ul>
-        
-     </div>
+        <button
+          id="button"
+          class="mx-auto my-3 rounded-xl border border-black bg-blue-500 px-5 py-3 font-bold shadow-2xl"
+        >
+          Xác nhận
+        </button>
+      </ul>
+    </div>
 
-
-    <footer class="bg-cyan-300 h-20 flex flex-col items-center">
-        <p class="text-4xl font-bold">About Us: Group 1</p>
+    <footer class="flex h-20 flex-col items-center bg-cyan-300">
+      <p class="text-4xl font-bold">About Us: Group 1</p>
     </footer>
     <script type="module" src="../../js/account/user_information.js"></script>
-</body>
+  </body>
 </html>

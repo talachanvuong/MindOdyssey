@@ -6,53 +6,95 @@
     <title>Đăng nhập</title>
   </head>
   <body class="flex flex-col items-center justify-center">
-    
     <!-- header -->
-    <header class="bg-cyan-300 h-16 p-2 w-full">
+    <header class="h-16 w-full bg-cyan-300 p-2">
       <a href="../home.html">
-        <img src="../img/back.png" class="h-12">
+        <img src="../img/back.png" class="h-12" />
       </a>
     </header>
 
     <!-- login form -->
-    <main class="opacity-0 -translate-y-12 flex flex-col items-center mt-5  justify-center w-full" id="main">
+    <main
+      class="mt-5 flex w-full -translate-y-12 flex-col items-center justify-center opacity-0"
+      id="main"
+    >
       <p class="text-3xl">LOGIN NOW</p>
-      <form class=" w-full mt-5 p-5 justify-center flex flex-col sm:border  sm:rounded-lg sm:shadow-lg sm:w-4/12">
-          <label class="text-xs">Email</label>
-          <input placeholder="Enter your email" class="border rounded-md bg-stone-100  ">
-          <br>
-          <label class="text-xs">Password</label>
-          <input placeholder="Enter your password" class="border rounded-md bg-stone-100 ">
-          <br>
-          <button type="button"  class="text-sm text-left hover:underline"  id="openPopUp">Password Forget?</button>
-          <button class="bg-orange-300 rounded-md text-xl pt-2 pb-2 hover:bg-orange-400">
-            LOGIN
-          </button>
-          <div class="text-xs  items-center justify-center flex ">
-            <p class="inline">You haven't have an account yet?</p>
-            <a href="register.html" class="inline text-blue-500 hover:underline ml-2">  Register now</a>
-          </div>
+      <form
+        class="mt-5 flex w-full flex-col justify-center p-5 sm:w-4/12 sm:rounded-lg sm:border sm:shadow-lg"
+      >
+        <label class="text-xs">Email</label>
+        <input
+          placeholder="Enter your email"
+          class="rounded-md border bg-stone-100"
+        />
+        <br />
+        <label class="text-xs">Password</label>
+        <input
+          placeholder="Enter your password"
+          class="rounded-md border bg-stone-100"
+        />
+        <br />
+        <button
+          type="button"
+          class="text-left text-sm hover:underline"
+          id="openPopUp"
+        >
+          Password Forget?
+        </button>
+        <button
+          class="rounded-md bg-orange-300 pb-2 pt-2 text-xl hover:bg-orange-400"
+        >
+          LOGIN
+        </button>
+        <div class="flex items-center justify-center text-xs">
+          <p class="inline">You haven't have an account yet?</p>
+          <a
+            href="register.html"
+            class="ml-2 inline text-blue-500 hover:underline"
+          >
+            Register now</a
+          >
+        </div>
       </form>
     </main>
 
     <!-- popup Forget Password -->
-    <div class="hidden opacity-0 bg-opacity-50 inset-0 h-full w-full bg-black fixed flex items-center justify-center" id="popupModal">
-      <div class=" h-5/6 w-11/12 bg-white  relative rounded-md flex flex-col -translate-y-3 duration-700 sm:w-2/5" id="popup_content">
-        <button id="cancle"><img class="absolute h-6 top-2 right-2" src="../img/close.png"></button>
-        <div class="w-11/12 h-4/6   flex flex-col items-center  mt-10 mx-auto">
-          <p class="mt-5 text-2xl text-center">Get Your Password Back</p>
-          <form class="flex w-full flex-col  mt-10">
-              <label class="text-left ml-2 ">Enter Your Email</label>
-              <input class="border mx-3 pl-2 rounded-md bg-stone-100 sm:py-2" placeholder="your email">
-              <button class="bg-blue-200 rounded-xl w-1/2 mx-auto mt-10 py-2 text-blue-500">Send email now!</button>
-              <button type="button" class="bg-orange-300 rounded-xl text-xl mt-4 w-1/2 mx-auto py-1 mb-3" id="closeBtn"> Back</button>
+    <div
+      class="fixed inset-0 flex hidden h-full w-full items-center justify-center bg-black bg-opacity-50 opacity-0"
+      id="popupModal"
+    >
+      <div
+        class="relative flex h-5/6 w-11/12 -translate-y-3 flex-col rounded-md bg-white duration-700 sm:w-2/5"
+        id="popup_content"
+      >
+        <button id="cancle">
+          <img class="absolute right-2 top-2 h-6" src="../img/close.png" />
+        </button>
+        <div class="mx-auto mt-10 flex h-4/6 w-11/12 flex-col items-center">
+          <p class="mt-5 text-center text-2xl">Get Your Password Back</p>
+          <form class="mt-10 flex w-full flex-col">
+            <label class="ml-2 text-left">Enter Your Email</label>
+            <input
+              class="mx-3 rounded-md border bg-stone-100 pl-2 sm:py-2"
+              placeholder="your email"
+            />
+            <button
+              class="mx-auto mt-10 w-1/2 rounded-xl bg-blue-200 py-2 text-blue-500"
+            >
+              Send email now!
+            </button>
+            <button
+              type="button"
+              class="mx-auto mb-3 mt-4 w-1/2 rounded-xl bg-orange-300 py-1 text-xl"
+              id="closeBtn"
+            >
+              Back
+            </button>
           </form>
         </div>
       </div>
     </div>
 
-   
-    
     <script type="module" src="../../js/account/login.js"></script>
   </body>
 </html>
