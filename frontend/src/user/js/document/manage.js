@@ -1,3 +1,4 @@
+import '../../../style.css'
 document.addEventListener("DOMContentLoaded", function () {
     const docList = document.getElementById("document-list");
     const pagination = document.getElementById("pagination");
