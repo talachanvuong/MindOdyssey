@@ -31,20 +31,20 @@ document.addEventListener('DOMContentLoaded', () => {
   // Close all popups
   function closeAllPopups() {
     // Hide menu popup
-    if (!menu.classList.contains('hidden')) {
+    if (!menu.classList.contains('invisible')) {
       menu.classList.add('opacity-0', 'scale-y-0')
       menu.classList.remove('scale-y-100')
       setTimeout(() => {
-        menu.classList.add('hidden')
+        menu.classList.add('invisible')
       }, 500)
     }
 
     // Hide setting popup
-    if (!setting.classList.contains('hidden')) {
+    if (!setting.classList.contains('invisible')) {
       setting.classList.add('opacity-0', 'scale-y-0')
       setting.classList.remove('scale-y-100')
       setTimeout(() => {
-        setting.classList.add('hidden')
+        setting.classList.add('invisible')
       }, 500)
     }
   }
@@ -54,10 +54,10 @@ document.addEventListener('DOMContentLoaded', () => {
     event.stopPropagation() // Ngăn chặn sự kiện click lan ra ngoài
 
     // Đóng popup khác (nếu có)
-    if (!setting.classList.contains('hidden')) closeAllPopups()
+    if (!setting.classList.contains('invisible')) closeAllPopups()
 
-    if (menu.classList.contains('hidden')) {
-      menu.classList.remove('hidden')
+    if (menu.classList.contains('invisible')) {
+      menu.classList.remove('invisible')
       setTimeout(() => {
         menu.classList.remove('opacity-0', 'scale-y-0')
         menu.classList.add('scale-y-100', 'duration-500')
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
       menu.classList.add('opacity-0', 'scale-y-0')
       menu.classList.remove('scale-y-100')
       setTimeout(() => {
-        menu.classList.add('hidden')
+        menu.classList.add('invisible')
       }, 500)
     }
   }
@@ -76,10 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
     event.stopPropagation() // Ngăn chặn sự kiện click lan ra ngoài
 
     // Đóng popup khác (nếu có)
-    if (!menu.classList.contains('hidden')) closeAllPopups()
+    if (!menu.classList.contains('invisible')) closeAllPopups()
 
-    if (setting.classList.contains('hidden')) {
-      setting.classList.remove('hidden')
+    if (setting.classList.contains('invisible')) {
+      setting.classList.remove('invisible')
       setTimeout(() => {
         setting.classList.remove('opacity-0', 'scale-y-0')
         setting.classList.add('scale-y-100', 'duration-500')
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setting.classList.add('opacity-0', 'scale-y-0')
       setting.classList.remove('scale-y-100')
       setTimeout(() => {
-        setting.classList.add('hidden')
+        setting.classList.add('invisible')
       }, 500)
     }
   }
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const element = document.getElementById(elementId)
       if (element) {
         if (checkbox.checked) {
-          element.classList.remove('hidden')
+          element.classList.remove('invisible')
           setTimeout(() => {
             element.classList.remove('opacity-0', 'scale-0')
             element.classList.add('opacity-100', 'scale-100')
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
           element.classList.add('opacity-0', 'scale-0')
           element.classList.remove('opacity-100', 'scale-100')
           setTimeout(() => {
-            element.classList.add('hidden')
+            element.classList.add('invisible')
           }, 300)
         }
       }

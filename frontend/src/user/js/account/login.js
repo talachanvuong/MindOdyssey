@@ -16,12 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
   //Open Popup
   function toggleModal(event) {
     event.preventDefault()
-    popupModal.classList.remove('hidden')
+    popupModal.classList.remove('invisible')
     setTimeout(() => {
       popupModal.classList.remove('opacity-0')
       popupModal.classList.add('opacity-100', 'duration-700')
-      popup_content.classList.remove('-translate-y-3')
-      popup_content.classList.add('translate-y-3')
+      content.classList.remove('-translate-y-3')
+      content.classList.add('translate-y-3')
     }, 100)
   }
 
@@ -30,10 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault()
     popupModal.classList.remove('opacity-100')
     popupModal.classList.add('opacity-0', 'duration-700')
-    popup_content.classList.remove('translate-y-3')
-    popup_content.classList.add('-translate-y-3')
+    content.classList.remove('translate-y-3')
+    content.classList.add('-translate-y-3')
     setTimeout(() => {
-      popupModal.classList.add('hidden')
+      popupModal.classList.add('invisible')
     }, 700)
   }
 
@@ -43,10 +43,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (event.target === popupModal) {
       popupModal.classList.remove('opacity-100')
       popupModal.classList.add('opacity-0', 'duration-700')
-      popup_content.classList.remove('translate-y-3')
-      popup_content.classList.add('-translate-y-3')
+      content.classList.remove('translate-y-3')
+      content.classList.add('-translate-y-3')
       setTimeout(() => {
-        popupModal.classList.add('hidden')
+        popupModal.classList.add('invisible')
       }, 700)
     }
   }
