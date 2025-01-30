@@ -146,19 +146,19 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   filterButton.addEventListener('click', () => {
-    timeFilterModal.classList.toggle('hidden')
+    timeFilterModal.classList.toggle('invisible')
   })
 
   applyFilter.addEventListener('click', () => {
     const startDate = startDateInput.value
     console.log(`Áp dụng bộ lọc từ ${startDate}`)
 
-    timeFilterModal.classList.add('hidden')
+    timeFilterModal.classList.add('invisible')
   })
 
   // Đóng modal
   closeModal.addEventListener('click', () => {
-    timeFilterModal.classList.add('hidden')
+    timeFilterModal.classList.add('invisible')
   })
 
   searchInput.addEventListener('input', () => {
