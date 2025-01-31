@@ -10,3 +10,13 @@ Content-Type: application/json
     "total_questions": 0,
     "course": 0
 }
+
+### Create question
+POST {{host}}/document/question
+Content-Type: application/json
+
+{
+    "order": 0,
+    "correct": "",
+    "document": 0
+}
