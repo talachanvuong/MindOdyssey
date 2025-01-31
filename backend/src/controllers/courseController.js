@@ -1,15 +1,10 @@
-import Joi from 'joi'
-import client from '../db/db.js'
+import {
+  insertCourse,
+  isCourseExistByTitle,
+  selectCourses,
+} from '../services/courseService.js'
+import { createCourseShema, getCoursesShema } from '../shemas/courseShema.js'
 import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
-
-// Schema
-const createCourseShema = Joi.object({
-  title: Joi.string().trim().min(8).max(256).required(),
-})
-
-const getCoursesShema = Joi.object({
-  keyword: Joi.string().trim().allow(''),
-})
 
 /**
  * Create a new course.
@@ -24,23 +19,13 @@ export const createCourse = async (req, res) => {
   }
 
   // Check course exist
-  const existedCourse = await client.query(
-    `SELECT 1
-     FROM courses
-     WHERE title ILIKE $1
-     LIMIT 1;`,
-    [title]
-  )
-  if (existedCourse.rowCount > 0) {
+  const existedCourse = await isCourseExistByTitle(title)
+  if (existedCourse) {
     return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.COURSE.EXISTED)
   }
 
   // Insert new course
-  await client.query(
-    `INSERT INTO courses (title)
-     VALUES ($1);`,
-    [title]
-  )
+  await insertCourse(title)
   return sendResponse(res, STATUS_CODE.CREATED, MESSAGE.COURSE.CREATE_SUCCESS)
 }
 
@@ -56,16 +41,12 @@ export const getCourses = async (req, res) => {
     return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
   }
 
-  const result = await client.query(
-    `SELECT course_id, title
-     FROM courses
-     WHERE title ILIKE $1;`,
-    !keyword ? ['%%'] : [`%${keyword}%`]
-  )
+  // Get courses
+  const courses = await selectCourses(keyword)
   return sendResponse(
     res,
     STATUS_CODE.SUCCESS,
     MESSAGE.COURSE.GET_SUCCESS,
-    result.rows
+    courses
   )
 }
