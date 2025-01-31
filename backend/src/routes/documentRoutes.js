@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import {
+  createContent,
   createDocument,
   createQuestion,
 } from '../controllers/documentController.js'
@@ -18,6 +19,12 @@ router.post(
   '/question',
   authMiddleware.verifyUser,
   asyncHandler(createQuestion),
+  errorHandler
+)
+router.post(
+  '/content',
+  authMiddleware.verifyUser,
+  asyncHandler(createContent),
   errorHandler
 )
 

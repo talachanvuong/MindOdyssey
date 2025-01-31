@@ -25,9 +25,15 @@ export const MESSAGE = {
   },
   QUESTION: {
     EXISTED_ORDER: 'Order already exists!',
+    NOT_FOUND: 'Question not found!',
     EXCEEDED: 'Exceeded total questions!',
     CREATE_SUCCESS: 'Create question successfully!',
     GET_SUCCESS: 'Get question successfully!',
+  },
+  CONTENT: {
+    EXISTED_TYPE: 'Type already exists!',
+    CREATE_SUCCESS: 'Create content successfully!',
+    GET_SUCCESS: 'Get content successfully!',
   },
   USER: {
     EXISTED: 'User already exists!',

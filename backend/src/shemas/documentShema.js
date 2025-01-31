@@ -15,3 +15,13 @@ export const createQuestionShema = Joi.object({
     .required(),
   document: Joi.number().integer().strict().min(1).required(),
 })
+
+export const createContentShema = Joi.object({
+  text: Joi.string().trim().max(4096),
+  attachment: Joi.string().trim().max(4096),
+  type: Joi.string()
+    .trim()
+    .pattern(/^[ABCDQ]$/)
+    .required(),
+  question: Joi.number().integer().strict().min(1).required(),
+}).or('text', 'attachment')

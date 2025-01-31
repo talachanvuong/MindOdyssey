@@ -20,3 +20,14 @@ Content-Type: application/json
     "correct": "",
     "document": 0
 }
+
+### Create content
+POST {{host}}/document/content
+Content-Type: application/json
+
+{
+    "text": "",
+    "attachment": "",
+    "type": "",
+    "question": 0
+}

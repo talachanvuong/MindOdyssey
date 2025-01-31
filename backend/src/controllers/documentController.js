@@ -1,12 +1,16 @@
 import { isCourseExistById } from '../services/courseService.js'
 import {
+  insertContent,
   insertDocument,
   insertQuestion,
   isDocumentExist,
   isOrderExist,
   isQuestionExceed,
+  isQuestionExist,
+  isTypeExist,
 } from '../services/documentService.js'
 import {
+  createContentShema,
   createDocumentShema,
   createQuestionShema,
 } from '../shemas/documentShema.js'
@@ -77,4 +81,41 @@ export const createQuestion = async (req, res) => {
   // Insert new question
   await insertQuestion(order, correct, document)
   return sendResponse(res, STATUS_CODE.CREATED, MESSAGE.QUESTION.CREATE_SUCCESS)
+}
+
+/**
+ * Create a new content.
+ */
+export const createContent = async (req, res) => {
+  const { error, value } = createContentShema.validate(req.body)
+  const { text, attachment, type, question } = value
+
+  // Check validation
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+  }
+
+  // Check question exist
+  const existedQuestion = await isQuestionExist(question)
+  if (!existedQuestion) {
+    return sendResponse(
+      res,
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.QUESTION.NOT_FOUND
+    )
+  }
+
+  // Check type exist
+  const existedType = await isTypeExist(type, question)
+  if (existedType) {
+    return sendResponse(
+      res,
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.CONTENT.EXISTED_TYPE
+    )
+  }
+
+  // Insert new content
+  await insertContent(text, attachment, type, question)
+  return sendResponse(res, STATUS_CODE.CREATED, MESSAGE.CONTENT.CREATE_SUCCESS)
 }

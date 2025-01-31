@@ -48,6 +48,35 @@ export const isQuestionExceed = async (document_id) => {
 }
 
 /**
+ * Check question exist.
+ */
+export const isQuestionExist = async (question_id) => {
+  const result = await client.query(
+    `SELECT 1
+     FROM questions
+     WHERE question_id = $1
+     LIMIT 1;`,
+    [question_id]
+  )
+  return result.rowCount > 0
+}
+
+/**
+ * Check type exist.
+ */
+export const isTypeExist = async (type, question_id) => {
+  const result = await client.query(
+    `SELECT 1
+     FROM contents
+     WHERE question_id = $2
+     AND type = $1
+     LIMIT 1;`,
+    [type, question_id]
+  )
+  return result.rowCount > 0
+}
+
+/**
  * Insert new document.
  */
 export const insertDocument = async (
@@ -72,5 +101,16 @@ export const insertQuestion = async (order, correct_answer, document_id) => {
     `INSERT INTO questions ("order", correct_answer, document_id)
      VALUES ($1, $2, $3);`,
     [order, correct_answer, document_id]
+  )
+}
+
+/**
+ * Insert new content.
+ */
+export const insertContent = async (text, attachment, type, question_id) => {
+  await client.query(
+    `INSERT INTO contents (text, attachment, type, question_id)
+     VALUES ($1, $2, $3, $4);`,
+    [text, attachment, type, question_id]
   )
 }
