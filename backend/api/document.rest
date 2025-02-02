@@ -7,27 +7,37 @@ Content-Type: application/json
 {
     "title": "",
     "description": "",
-    "total_questions": 0,
-    "course": 0
-}
-
-### Create question
-POST {{host}}/document/question
-Content-Type: application/json
-
-{
-    "order": 0,
-    "correct": "",
-    "document": 0
-}
-
-### Create content
-POST {{host}}/document/content
-Content-Type: application/json
-
-{
-    "text": "",
-    "attachment": "",
-    "type": "",
-    "question": 0
+    "course": 0,
+    "questions": [
+        {
+            "content": [
+                {
+                    "text": "",
+                    "attachment": "",
+                    "type": "Q"
+                },
+                {
+                    "text": "",
+                    "attachment": "",
+                    "type": "A"
+                },
+                {
+                    "text": "",
+                    "attachment": "",
+                    "type": "B"
+                },
+                {
+                    "text": "",
+                    "attachment": "",
+                    "type": "C"
+                },
+                {
+                    "text": "",
+                    "attachment": "",
+                    "type": "D"
+                }
+            ],
+            "correct": ""
+        }
+    ]
 }
