@@ -1,0 +1,43 @@
+@host = http://localhost:{{$dotenv SERVER_PORT}}/api
+
+### Create document
+POST {{host}}/document/create
+Content-Type: application/json
+
+{
+    "title": "",
+    "description": "",
+    "course": 0,
+    "questions": [
+        {
+            "content": [
+                {
+                    "text": "",
+                    "attachment": "",
+                    "type": "Q"
+                },
+                {
+                    "text": "",
+                    "attachment": "",
+                    "type": "A"
+                },
+                {
+                    "text": "",
+                    "attachment": "",
+                    "type": "B"
+                },
+                {
+                    "text": "",
+                    "attachment": "",
+                    "type": "C"
+                },
+                {
+                    "text": "",
+                    "attachment": "",
+                    "type": "D"
+                }
+            ],
+            "correct": ""
+        }
+    ]
+}

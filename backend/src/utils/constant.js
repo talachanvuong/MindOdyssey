@@ -18,6 +18,23 @@ export const MESSAGE = {
     CREATE_SUCCESS: 'Create course successfully!',
     GET_SUCCESS: 'Get courses successfully!',
   },
+  DOCUMENT: {
+    NOT_FOUND: 'Document not found!',
+    CREATE_SUCCESS: 'Create document successfully!',
+    GET_SUCCESS: 'Get document successfully!',
+  },
+  QUESTION: {
+    EXISTED_ORDER: 'Order already exists!',
+    NOT_FOUND: 'Question not found!',
+    EXCEEDED: 'Exceeded total questions!',
+    CREATE_SUCCESS: 'Create question successfully!',
+    GET_SUCCESS: 'Get question successfully!',
+  },
+  CONTENT: {
+    EXISTED_TYPE: 'Type already exists!',
+    CREATE_SUCCESS: 'Create content successfully!',
+    GET_SUCCESS: 'Get content successfully!',
+  },
   USER: {
     EXISTED: 'User already exists!',
     NOT_FOUND: 'User not found!',
