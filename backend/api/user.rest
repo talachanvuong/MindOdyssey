@@ -1,0 +1,76 @@
+@host = http://localhost:{{$dotenv SERVER_PORT}}/api
+
+### Login
+POST {{host}}/user/login
+Content-Type: application/json
+
+{
+    "email": "",
+    "password": ""
+}
+
+### Logout
+POST {{host}}/user/logout
+Content-Type: application/json
+
+### Verify email
+POST {{host}}/user/verifyemail
+Content-Type: application/json
+
+{
+    "email": ""
+}
+
+### Register
+POST {{host}}/user/register
+Content-Type: application/json
+Cookie: accessToken=
+
+{
+    "display_name": "",
+    "password": "",
+    "confirmPassword": ""
+}
+
+### Forget password
+POST {{host}}/user/forgetpassword
+Content-Type: application/json
+
+{
+    "email": ""
+}
+
+### Reset password
+POST {{host}}/user/resetpassword
+Content-Type: application/json
+
+{
+    "newPassword": "",
+    "confirmNewPassword": ""
+}
+
+### Change password
+POST {{host}}/user/changepassword
+Content-Type: application/json
+
+{
+    "oldPassword": "",
+    "newPassword": "",
+    "confirmNewPassword": ""
+}
+
+### Update info
+PATCH {{host}}/user/update
+Content-Type: application/json
+
+{
+    "new_display_name": ""
+}
+
+### Get info
+GET {{host}}/user/showinfo
+Content-Type: application/json
+
+### Refresh token
+POST {{host}}/user/refreshtoken
+Content-Type: application/json
