@@ -3,9 +3,12 @@ import {
   rollbackTransaction,
   startTransaction,
 } from '../db/db.js'
-import { destroyCloudinary } from '../services/cloudinaryService.js'
+import {
+  destroyCloudinary,
+  restoreCloudinary,
+} from '../services/cloudinaryService.js'
 
-export const transactionHandler = (fn) => async (req, res, next) => {
+export const uploadTransactionHandler = (fn) => async (req, res, next) => {
   // For cloudinary
   const uploadedImages = []
 
@@ -14,9 +17,26 @@ export const transactionHandler = (fn) => async (req, res, next) => {
     await fn(uploadedImages, req, res, next)
     await commitTransaction()
   } catch (err) {
-    for (let i = 0; i < uploadedImages.length; i++) {
-      const uploadedImage = uploadedImages[i]
+    for (const uploadedImage of uploadedImages) {
       await destroyCloudinary(uploadedImage)
+    }
+
+    await rollbackTransaction()
+    next(err)
+  }
+}
+
+export const destroyTransactionHandler = (fn) => async (req, res, next) => {
+  // For cloudinary
+  const destroyedImages = []
+
+  try {
+    await startTransaction()
+    await fn(destroyedImages, req, res, next)
+    await commitTransaction()
+  } catch (err) {
+    for (const destroyedImage of destroyedImages) {
+      await restoreCloudinary(destroyedImage)
     }
 
     await rollbackTransaction()

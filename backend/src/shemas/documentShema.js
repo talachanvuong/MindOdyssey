@@ -38,3 +38,11 @@ export const createDocumentShema = Joi.object({
     .min(1)
     .required(),
 })
+
+export const getDocumentDetailShema = Joi.object({
+  document: Joi.number().integer().strict().min(1).required(),
+})
+
+export const removeDocumentShema = Joi.object({
+  document: Joi.number().integer().strict().min(1).required(),
+})

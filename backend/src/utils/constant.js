@@ -22,6 +22,7 @@ export const MESSAGE = {
     NOT_FOUND: 'Document not found!',
     CREATE_SUCCESS: 'Create document successfully!',
     GET_SUCCESS: 'Get document successfully!',
+    REMOVE_SUCCESS: 'Remove document successfully!',
   },
   QUESTION: {
     EXISTED_ORDER: 'Order already exists!',

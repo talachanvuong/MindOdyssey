@@ -1,7 +1,7 @@
-@host = http://localhost:{{$dotenv SERVER_PORT}}/api
+@host = http://localhost:{{$dotenv SERVER_PORT}}/api/document
 
 ### Create document
-POST {{host}}/document/create
+POST {{host}}
 Content-Type: application/json
 
 {
@@ -40,4 +40,20 @@ Content-Type: application/json
             "correct": ""
         }
     ]
+}
+
+### Get document detail
+GET {{host}}/detail
+Content-Type: application/json
+
+{
+    "document": 0
+}
+
+### Remove document
+DELETE {{host}}
+Content-Type: application/json
+
+{
+    "document": 0
 }
