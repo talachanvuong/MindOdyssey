@@ -15,10 +15,10 @@ import {
   selectQuestions,
 } from '../services/documentService.js'
 import {
-  createDocumentShema,
-  getDocumentDetailShema,
-  removeDocumentShema,
-} from '../shemas/documentShema.js'
+  createDocumentSchema,
+  getDocumentDetailSchema,
+  removeDocumentSchema,
+} from '../schemas/documentSchema.js'
 import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
 import { timeConvert } from '../utils/convert.js'
 
@@ -27,7 +27,7 @@ import { timeConvert } from '../utils/convert.js'
  */
 export const createDocument = async (uploadedImages, req, res) => {
   const { user_id } = req.user
-  const { error, value } = createDocumentShema.validate(req.body)
+  const { error, value } = createDocumentSchema.validate(req.body)
   const { title, description, course, questions } = value
   const totalQuestions = questions.length
 
@@ -88,7 +88,7 @@ export const createDocument = async (uploadedImages, req, res) => {
  * Get the details of a document.
  */
 export const getDocumentDetail = async (req, res) => {
-  const { error, value } = getDocumentDetailShema.validate(req.body)
+  const { error, value } = getDocumentDetailSchema.validate(req.body)
   const { document } = value
   const result = {}
 
@@ -157,7 +157,7 @@ export const getDocumentDetail = async (req, res) => {
  */
 export const removeDocument = async (destroyedImages, req, res) => {
   const { user_id } = req.user
-  const { error, value } = removeDocumentShema.validate(req.body)
+  const { error, value } = removeDocumentSchema.validate(req.body)
   const { document } = value
 
   // Check validation
