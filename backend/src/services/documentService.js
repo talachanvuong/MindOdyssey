@@ -137,3 +137,14 @@ export const selectContents = async (question_id) => {
   )
   return result.rows
 }
+
+/**
+ * Delete a document.
+ */
+export const deleteDocument = async (document_id) => {
+  await client.query(
+    `DELETE FROM documents
+     WHERE document_id = $1;`,
+    [document_id]
+  )
+}

@@ -1,6 +1,10 @@
-import { uploadCloudinary } from '../services/cloudinaryService.js'
+import {
+  destroyCloudinary,
+  uploadCloudinary,
+} from '../services/cloudinaryService.js'
 import { isCourseExistById } from '../services/courseService.js'
 import {
+  deleteDocument,
   insertContent,
   insertDocument,
   insertQuestion,
@@ -12,6 +16,7 @@ import {
 import {
   createDocumentShema,
   getDocumentDetailShema,
+  removeDocumentShema,
 } from '../shemas/documentShema.js'
 import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
 import { timeConvert } from '../utils/convert.js'
@@ -56,10 +61,10 @@ export const createDocument = async (uploadedImages, req, res) => {
     )
 
     for (const content of question.content) {
-      // Upload cloudinary
+      // Upload attachment to cloudinary
       const attachment = await uploadCloudinary(content.attachment)
 
-      // Store uploaded image public_id
+      // Store public_id of uploaded images
       if (attachment) {
         uploadedImages.push(attachment.public_id)
       }
@@ -115,7 +120,7 @@ export const getDocumentDetail = async (req, res) => {
   result.reject_reason = resultDocument.reject_reason
   result.questions = []
 
-  // Get question detail
+  // Get questions detail
   const resultQuestions = await selectQuestions(document)
   for (let i = 0; i < resultQuestions.length; i++) {
     const resultQuestion = resultQuestions[i]
@@ -125,7 +130,7 @@ export const getDocumentDetail = async (req, res) => {
       correct: resultQuestion.correct_answer,
     })
 
-    // Get content detail
+    // Get contents detail
     const resultContents = await selectContents(resultQuestion.question_id)
     for (const resultContent of resultContents) {
       result.questions[i].content.push({
@@ -144,4 +149,47 @@ export const getDocumentDetail = async (req, res) => {
     MESSAGE.DOCUMENT.GET_SUCCESS,
     result
   )
+}
+
+/**
+ * Remove a document.
+ */
+export const removeDocument = async (destroyedImages, req, res) => {
+  const { error, value } = removeDocumentShema.validate(req.body)
+  const { document } = value
+
+  // Check validation
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+  }
+
+  // Check document exist
+  const existedDocument = await isDocumentExist(document)
+  if (!existedDocument) {
+    return sendResponse(
+      res,
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.DOCUMENT.NOT_FOUND
+    )
+  }
+
+  // Get questions detail
+  const resultQuestions = await selectQuestions(document)
+  for (const resultQuestion of resultQuestions) {
+    // Get contents detail
+    const resultContents = await selectContents(resultQuestion.question_id)
+    for (const resultContent of resultContents) {
+      // Remove attachment in cloudinary
+      if (resultContent.attachment) {
+        await destroyCloudinary(resultContent.attachment_id).then(() =>
+          // Store public_id of destroyed images
+          destroyedImages.push(resultContent.attachment_id)
+        )
+      }
+    }
+  }
+
+  // Delete document in database
+  await deleteDocument(document)
+  return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.DOCUMENT.REMOVE_SUCCESS)
 }
