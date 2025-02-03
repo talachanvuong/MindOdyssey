@@ -23,6 +23,7 @@ export const MESSAGE = {
     CREATE_SUCCESS: 'Create document successfully!',
     GET_SUCCESS: 'Get document successfully!',
     REMOVE_SUCCESS: 'Remove document successfully!',
+    INVALID_AUTHOR: 'Invalid author!',
   },
   QUESTION: {
     EXISTED_ORDER: 'Order already exists!',

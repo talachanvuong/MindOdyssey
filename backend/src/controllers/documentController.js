@@ -8,6 +8,7 @@ import {
   insertContent,
   insertDocument,
   insertQuestion,
+  isDocumentAuthor,
   isDocumentExist,
   selectContents,
   selectDocument,
@@ -155,6 +156,7 @@ export const getDocumentDetail = async (req, res) => {
  * Remove a document.
  */
 export const removeDocument = async (destroyedImages, req, res) => {
+  const { user_id } = req.user
   const { error, value } = removeDocumentShema.validate(req.body)
   const { document } = value
 
@@ -170,6 +172,16 @@ export const removeDocument = async (destroyedImages, req, res) => {
       res,
       STATUS_CODE.BAD_REQUEST,
       MESSAGE.DOCUMENT.NOT_FOUND
+    )
+  }
+
+  // Check document author
+  const validAuthor = await isDocumentAuthor(user_id, document)
+  if (!validAuthor) {
+    return sendResponse(
+      res,
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.DOCUMENT.INVALID_AUTHOR
     )
   }
 
