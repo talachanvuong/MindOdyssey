@@ -1,7 +1,7 @@
-@host = http://localhost:{{$dotenv SERVER_PORT}}/api
+@host = http://localhost:{{$dotenv SERVER_PORT}}/api/user
 
 ### Login
-POST {{host}}/user/login
+POST {{host}}/login
 Content-Type: application/json
 
 {
@@ -10,11 +10,11 @@ Content-Type: application/json
 }
 
 ### Logout
-POST {{host}}/user/logout
+POST {{host}}/logout
 Content-Type: application/json
 
 ### Verify email
-POST {{host}}/user/verifyemail
+POST {{host}}/verifyemail
 Content-Type: application/json
 
 {
@@ -22,7 +22,7 @@ Content-Type: application/json
 }
 
 ### Register
-POST {{host}}/user/register
+POST {{host}}/register
 Content-Type: application/json
 Cookie: accessToken=
 
@@ -33,7 +33,7 @@ Cookie: accessToken=
 }
 
 ### Forget password
-POST {{host}}/user/forgetpassword
+POST {{host}}/forgetpassword
 Content-Type: application/json
 
 {
@@ -41,7 +41,7 @@ Content-Type: application/json
 }
 
 ### Reset password
-POST {{host}}/user/resetpassword
+POST {{host}}/resetpassword
 Content-Type: application/json
 
 {
@@ -50,7 +50,7 @@ Content-Type: application/json
 }
 
 ### Change password
-POST {{host}}/user/changepassword
+POST {{host}}/changepassword
 Content-Type: application/json
 
 {
@@ -60,7 +60,7 @@ Content-Type: application/json
 }
 
 ### Update info
-PATCH {{host}}/user/update
+PATCH {{host}}/update
 Content-Type: application/json
 
 {
@@ -68,9 +68,9 @@ Content-Type: application/json
 }
 
 ### Get info
-GET {{host}}/user/showinfo
+GET {{host}}/showinfo
 Content-Type: application/json
 
 ### Refresh token
-POST {{host}}/user/refreshtoken
+POST {{host}}/refreshtoken
 Content-Type: application/json
