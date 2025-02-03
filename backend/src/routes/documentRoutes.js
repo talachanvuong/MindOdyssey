@@ -1,5 +1,9 @@
 import { Router } from 'express'
-import { createDocument } from '../controllers/documentController.js'
+import {
+  createDocument,
+  getDocumentDetail,
+} from '../controllers/documentController.js'
+import { asyncHandler } from '../middleware/asyncMiddleware.js'
 import authMiddleware from '../middleware/authMiddleware.js'
 import { errorHandler } from '../middleware/errorMiddleware.js'
 import { mutexLockHandler } from '../middleware/mutexLockMiddleware.js'
@@ -11,6 +15,13 @@ router.post(
   authMiddleware.verifyUser,
   mutexLockHandler,
   transactionHandler(createDocument),
+  errorHandler
+)
+router.get(
+  '/detail',
+  authMiddleware.verifyUser,
+  mutexLockHandler,
+  asyncHandler(getDocumentDetail),
   errorHandler
 )
 

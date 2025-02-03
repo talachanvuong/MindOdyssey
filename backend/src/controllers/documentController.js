@@ -4,9 +4,17 @@ import {
   insertContent,
   insertDocument,
   insertQuestion,
+  isDocumentExist,
+  selectContents,
+  selectDocument,
+  selectQuestions,
 } from '../services/documentService.js'
-import { createDocumentShema } from '../shemas/documentShema.js'
+import {
+  createDocumentShema,
+  getDocumentDetailShema,
+} from '../shemas/documentShema.js'
 import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
+import { timeConvert } from '../utils/convert.js'
 
 /**
  * Create a new document.
@@ -47,9 +55,7 @@ export const createDocument = async (uploadedImages, req, res) => {
       document_id
     )
 
-    for (let j = 0; j < question.content.length; j++) {
-      const content = question.content[j]
-
+    for (const content of question.content) {
       // Upload cloudinary
       const attachment = await uploadCloudinary(content.attachment)
 
@@ -70,4 +76,72 @@ export const createDocument = async (uploadedImages, req, res) => {
   }
 
   return sendResponse(res, STATUS_CODE.CREATED, MESSAGE.DOCUMENT.CREATE_SUCCESS)
+}
+
+/**
+ * Get the details of a document.
+ */
+export const getDocumentDetail = async (req, res) => {
+  const { error, value } = getDocumentDetailShema.validate(req.body)
+  const { document } = value
+  const result = {}
+
+  // Check validation
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+  }
+
+  // Check document exist
+  const existedDocument = await isDocumentExist(document)
+  if (!existedDocument) {
+    return sendResponse(
+      res,
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.DOCUMENT.NOT_FOUND
+    )
+  }
+
+  // Get document detail
+  const resultDocument = await selectDocument(document)
+  result.title = resultDocument.title
+  result.description = resultDocument.description
+  result.total_questions = resultDocument.total_questions
+  result.course = resultDocument.course
+  result.author = resultDocument.author
+  result.created_at = timeConvert(resultDocument.created_at)
+  result.last_updated = timeConvert(resultDocument.last_updated)
+  result.status = resultDocument.status
+  result.reviewer = resultDocument.reviewer
+  result.reject_reason = resultDocument.reject_reason
+  result.questions = []
+
+  // Get question detail
+  const resultQuestions = await selectQuestions(document)
+  for (let i = 0; i < resultQuestions.length; i++) {
+    const resultQuestion = resultQuestions[i]
+    result.questions.push({
+      id: resultQuestion.question_id,
+      content: [],
+      correct: resultQuestion.correct_answer,
+    })
+
+    // Get content detail
+    const resultContents = await selectContents(resultQuestion.question_id)
+    for (const resultContent of resultContents) {
+      result.questions[i].content.push({
+        id: resultContent.content_id,
+        text: resultContent.text,
+        attachment: resultContent.attachment,
+        attachment_id: resultContent.attachment_id,
+        type: resultContent.type,
+      })
+    }
+  }
+
+  return sendResponse(
+    res,
+    STATUS_CODE.SUCCESS,
+    MESSAGE.DOCUMENT.GET_SUCCESS,
+    result
+  )
 }
