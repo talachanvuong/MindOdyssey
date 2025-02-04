@@ -1,9 +1,9 @@
 import Joi from 'joi'
 
-export const createCourseShema = Joi.object({
+export const createCourseSchema = Joi.object({
   title: Joi.string().trim().min(8).max(256).required(),
 })
 
-export const getCoursesShema = Joi.object({
+export const getCoursesSchema = Joi.object({
   keyword: Joi.string().trim().allow(''),
 })

@@ -148,3 +148,18 @@ export const deleteDocument = async (document_id) => {
     [document_id]
   )
 }
+
+/**
+ * Check author of document.
+ */
+export const isDocumentAuthor = async (user_id, document_id) => {
+  const result = await client.query(
+    `SELECT 1
+     FROM documents
+     WHERE user_id = $1
+     AND document_id = $2
+     LIMIT 1;`,
+    [user_id, document_id]
+  )
+  return result.rowCount > 0
+}

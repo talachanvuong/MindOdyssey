@@ -3,14 +3,14 @@ import {
   isCourseExistByTitle,
   selectCourses,
 } from '../services/courseService.js'
-import { createCourseShema, getCoursesShema } from '../shemas/courseShema.js'
+import { createCourseSchema, getCoursesSchema } from '../schemas/courseSchema.js'
 import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
 
 /**
  * Create a new course.
  */
 export const createCourse = async (req, res) => {
-  const { error, value } = createCourseShema.validate(req.body)
+  const { error, value } = createCourseSchema.validate(req.body)
   const { title } = value
 
   // Check validation
@@ -33,7 +33,7 @@ export const createCourse = async (req, res) => {
  * Get list of courses.
  */
 export const getCourses = async (req, res) => {
-  const { error, value } = getCoursesShema.validate(req.query)
+  const { error, value } = getCoursesSchema.validate(req.query)
   const { keyword } = value
 
   // Check validation
