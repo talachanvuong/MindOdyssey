@@ -76,3 +76,90 @@ export const insertContent = async (
     [text, attachment, attachment_id, type, question_id]
   )
 }
+
+/**
+ * Select a document.
+ */
+export const selectDocument = async (document_id) => {
+  const result = await client.query(
+    `SELECT
+      d.title,
+      d.description,
+      d.total_questions,
+      c.title as course,
+      d.user_id as author,
+      d.created_at,
+      d.last_updated,
+      d.status,
+      a.display_name as reviewer,
+      d.reject_reason
+     FROM documents as d
+     INNER JOIN courses as c
+     ON d.course_id = c.course_id
+     LEFT OUTER JOIN admins as a
+     ON d.admin_id = a.admin_id
+     WHERE document_id = $1;`,
+    [document_id]
+  )
+  return result.rows[0]
+}
+
+/**
+ * Select questions.
+ */
+export const selectQuestions = async (document_id) => {
+  const result = await client.query(
+    `SELECT
+      question_id,
+      correct_answer
+     FROM questions
+     WHERE document_id = $1
+     ORDER BY "order" ASC;`,
+    [document_id]
+  )
+  return result.rows
+}
+
+/**
+ * Select contents.
+ */
+export const selectContents = async (question_id) => {
+  const result = await client.query(
+    `SELECT
+      content_id,
+      text,
+      attachment,
+      attachment_id,
+      type
+     FROM contents
+     WHERE question_id = $1;`,
+    [question_id]
+  )
+  return result.rows
+}
+
+/**
+ * Delete a document.
+ */
+export const deleteDocument = async (document_id) => {
+  await client.query(
+    `DELETE FROM documents
+     WHERE document_id = $1;`,
+    [document_id]
+  )
+}
+
+/**
+ * Check author of document.
+ */
+export const isDocumentAuthor = async (user_id, document_id) => {
+  const result = await client.query(
+    `SELECT 1
+     FROM documents
+     WHERE user_id = $1
+     AND document_id = $2
+     LIMIT 1;`,
+    [user_id, document_id]
+  )
+  return result.rowCount > 0
+}

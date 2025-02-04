@@ -7,7 +7,7 @@ const maxBase64Length = Math.ceil((maxFileSize * 4) / 3)
 // Only allow image/audio
 const mimeTypePattern = /^data:(image|audio)\/([a-zA-Z0-9\-+]+);base64,/
 
-export const createDocumentShema = Joi.object({
+export const createDocumentSchema = Joi.object({
   title: Joi.string().trim().min(8).max(256).required(),
   description: Joi.string().trim().max(2048),
   course: Joi.number().integer().strict().min(1).required(),
@@ -37,4 +37,12 @@ export const createDocumentShema = Joi.object({
     )
     .min(1)
     .required(),
+})
+
+export const getDocumentDetailSchema = Joi.object({
+  document: Joi.number().integer().strict().min(1).required(),
+})
+
+export const removeDocumentSchema = Joi.object({
+  document: Joi.number().integer().strict().min(1).required(),
 })

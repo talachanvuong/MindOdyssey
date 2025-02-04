@@ -22,6 +22,8 @@ export const MESSAGE = {
     NOT_FOUND: 'Document not found!',
     CREATE_SUCCESS: 'Create document successfully!',
     GET_SUCCESS: 'Get document successfully!',
+    REMOVE_SUCCESS: 'Remove document successfully!',
+    INVALID_AUTHOR: 'Invalid author!',
   },
   QUESTION: {
     EXISTED_ORDER: 'Order already exists!',
@@ -67,6 +69,7 @@ export const MESSAGE = {
   },
   SERVER: {
     ERROR: 'Internal server error!',
+    PROCCESSING: 'Request is already being processed!',
   },
 }
 
