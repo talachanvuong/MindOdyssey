@@ -43,6 +43,7 @@ Content-Type: application/json
 ### Reset password
 POST {{host}}/resetpassword
 Content-Type: application/json
+Cookie: accessToken=
 
 {
     "newPassword": "",
