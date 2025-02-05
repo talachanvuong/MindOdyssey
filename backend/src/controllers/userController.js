@@ -57,7 +57,7 @@ const sendEmail = async (email, subject, text, html) => {
 // Login user and send token
 export const login = async (req, res) => {
   const { email, password } = req.body
-
+  console.log(email,password)
   // Check validation
   const requiredError = requiredValidate([email, password])
   if (requiredError) {

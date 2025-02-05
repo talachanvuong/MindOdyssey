@@ -5,8 +5,8 @@ POST {{host}}/login
 Content-Type: application/json
 
 {
-    "email": "",
-    "password": ""
+    "email": "@vaa.edu.vn",
+    "password": "00000000"
 }
 
 ### Logout
@@ -18,18 +18,18 @@ POST {{host}}/verifyemail
 Content-Type: application/json
 
 {
-    "email": ""
+    "email": "2331540085@vaa.edu.vn"
 }
 
 ### Register
 POST {{host}}/register
 Content-Type: application/json
-Cookie: accessToken=
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjIzMzE1NDAwODVAdmFhLmVkdS52biIsImlhdCI6MTczODc2NTkwNiwiZXhwIjoxNzM4NzY2MjA2fQ.y40j8MILP7EvoHXUirjj1ojv8c2BSrt1h2g7FTXQOR4
 
 {
-    "display_name": "",
-    "password": "",
-    "confirmPassword": ""
+    "display_name": "khang2509",
+    "password": "00000000",
+    "confirmPassword": "00000000"
 }
 
 ### Forget password

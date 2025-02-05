@@ -2,8 +2,8 @@ export const MESSAGE = {
   VALIDATE: {
     REQUIRED: 'Missing required field!',
     DISPLAY_NAME: 'Display name must be between 8 and 64 characters long!',
-    EMAIL: 'Invalid email address!',
-    PASSWORD: 'Password must be between 8 and 32 characters long!',
+    EMAIL: 'Invalid email address!',//đã làm
+    PASSWORD: 'Password must be between 8 and 32 characters long!',//đã làm cho login
     TITLE: 'Title must be between 8 and 256 characters long!',
     CONTENT: 'Content must be less than 4096 characters long!',
     ATTACHMENT: 'Size must be less than 5 MB!',
@@ -38,12 +38,12 @@ export const MESSAGE = {
     GET_SUCCESS: 'Get content successfully!',
   },
   USER: {
-    EXISTED: 'User already exists!',
-    NOT_FOUND: 'User not found!',
+    EXISTED: 'User already exists!',//đã làm
+    NOT_FOUND: 'User not found!',//đã làm
     REGISTER_SUCCESS: 'User registered successfully!',
-    SEND_EMAIL_SUCCESS: 'Send email successfully!',
-    LOGIN_SUCCESS: 'User login successfully!',
-    WRONG_PASSWORD: 'Wrong password!',
+    SEND_EMAIL_SUCCESS: 'Send email successfully!',//đã làm
+    LOGIN_SUCCESS: 'User login successfully!',//đã làm
+    WRONG_PASSWORD: 'Wrong password!',//đã làm
     GET_INFO_SUCCESS: 'Get user information successfully!',
     UPDATE_SUCCESS: 'Update user successfully!',
     RESET_PASSWORD_SUCCESS: 'Reset password successfully!',

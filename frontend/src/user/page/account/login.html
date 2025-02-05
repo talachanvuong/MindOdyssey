@@ -20,16 +20,19 @@
     >
       <p class="text-3xl">LOGIN NOW</p>
       <form
+        id="form"
         class="mt-5 flex w-full flex-col justify-center p-5 sm:w-4/12 sm:rounded-lg sm:border sm:shadow-lg"
       >
         <label class="text-xs">Email</label>
         <input
+          id="emailInput"
           placeholder="Enter your email"
           class="rounded-md border bg-stone-100"
         />
         <br />
         <label class="text-xs">Password</label>
         <input
+          id="passwordInput"
           placeholder="Enter your password"
           class="rounded-md border bg-stone-100"
         />
@@ -42,6 +45,7 @@
           Password Forget?
         </button>
         <button
+          id="submitBtn"
           class="rounded-md bg-orange-300 pb-2 pt-2 text-xl hover:bg-orange-400"
         >
           LOGIN
@@ -50,7 +54,7 @@
           <p class="inline">You haven't have an account yet?</p>
           <a
             href="register.html"
-            class="ml-2 inline text-blue-500 hover:underline"
+            class="ml-2 inline text-cyan-500 hover:underline"
           >
             Register now</a
           >
@@ -60,7 +64,7 @@
 
     <!-- popup Forget Password -->
     <div
-      class="fixed inset-0 flex invisible h-full w-full items-center justify-center bg-black bg-opacity-50 opacity-0"
+      class="invisible fixed inset-0 flex h-full w-full items-center justify-center bg-black bg-opacity-50 opacity-0"
       id="popupModal"
     >
       <div
@@ -79,7 +83,7 @@
               placeholder="your email"
             />
             <button
-              class="mx-auto mt-10 w-1/2 rounded-xl bg-blue-200 py-2 text-blue-500"
+              class="bg-blue-200 text-blue-500 mx-auto mt-10 w-1/2 rounded-xl py-2"
             >
               Send email now!
             </button>
@@ -92,6 +96,44 @@
             </button>
           </form>
         </div>
+      </div>
+    </div>
+
+    <!-- popup alert -->
+
+    <!-- user doesn't exist -->
+    <div
+      id="noUser"
+      class="invisible fixed top-0 min-h-screen w-screen bg-slate-400 bg-opacity-55"
+    >
+      <div
+        class="mx-auto mt-56 flex w-5/6 flex-col items-center gap-5 rounded-xl bg-white"
+      >
+        <p class="mx-auto mt-5 text-3xl">Tài khoản không tồn tại</p>
+        <button
+          id="okBtn1"
+          class="mb-6 w-1/2 rounded-xl bg-orange-300 py-3 text-4xl shadow-xl"
+        >
+          OK
+        </button>
+      </div>
+    </div>
+
+    <!-- wrong password -->
+    <div
+      id="wrongPass"
+      class="invisible fixed top-0 min-h-screen w-screen bg-slate-400 bg-opacity-55"
+    >
+      <div
+        class="mx-auto mt-56 flex w-5/6 flex-col items-center gap-5 rounded-xl bg-white"
+      >
+        <p class="mx-auto mt-5 text-3xl">Sai mật khẩu!!</p>
+        <button
+          id="okBtn2"
+          class="mb-6 w-1/2 rounded-xl bg-orange-300 py-3 text-4xl shadow-xl"
+        >
+          OK
+        </button>
       </div>
     </div>
 
