@@ -1,183 +1,98 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import nm from 'nodemailer'
 import envConfig from '../config/envConfig.js'
-import client from '../db/db.js'
 import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
-import {
-  displayNameValidate,
-  emailValidate,
-  passwordValidate,
-  requiredValidate,
-} from '../utils/validate.js'
-
-// Check user exist or not
-const isUserExist = async (email) => {
-  try {
-    const query = `
-        SELECT 1
-        FROM users
-        WHERE email = $1
-        LIMIT 1;
-    `
-    const result = await client.query(query, [email])
-    return result.rowCount > 0
-  } catch {
-    throw new Error('Database error!')
-  }
-}
-
-// Send email to verify
-const sendEmail = async (email, subject, text, html) => {
-  const transporter = nm.createTransport({
-    service: 'gmail',
-    auth: {
-      user: envConfig.mailerEmail,
-      pass: envConfig.mailerPass,
-    },
-  })
-
-  // Config email
-  const mailOptions = {
-    from: envConfig.mailerEmail,
-    to: email,
-    subject: subject,
-    text: text,
-    html: html,
-  }
-
-  // Send email
-  try {
-    await transporter.sendMail(mailOptions)
-  } catch {
-    throw new Error('Send email error!')
-  }
-}
+import userService from '../services/userService.js'
+import userSchema from '../schemas/userSchema.js'
 
 // Login user and send token
 export const login = async (req, res) => {
-  const { email, password } = req.body
-
   // Check validation
-  const requiredError = requiredValidate([email, password])
-  if (requiredError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, requiredError)
+  const { error, value } = userSchema.loginValidate.validate(req.body)
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+  }
+  const { email, password } = value
+
+  // Check exist user
+  const userExist = await userService.isUserExist(email)
+
+  if (!userExist) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.NOT_FOUND)
   }
 
-  const emailError = emailValidate(email)
-  if (emailError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, emailError)
-  }
+  const result = await userService.selectPasswordUserIDbyEmail(email)
+  const user_id = result.user_id
+  const hashedPassword = result.password
 
-  const passwordError = passwordValidate(password)
-  if (passwordError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, passwordError)
-  }
-
-  try {
-    // Check exist user
-    const userExist = await isUserExist(email)
-    if (!userExist) {
-      return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.NOT_FOUND)
-    }
-
-    const query = `
-      SELECT password, user_id
-      FROM users
-      WHERE email = $1;
-    `
-    const result = await client.query(query, [email])
-    const user_id = result.rows[0].user_id
-    const hashedPassword = result.rows[0].password
-
-    // Check correct password
-    const isMatchedPassword = await bcrypt.compare(password, hashedPassword)
-    if (!isMatchedPassword) {
-      return sendResponse(
-        res,
-        STATUS_CODE.BAD_REQUEST,
-        MESSAGE.USER.WRONG_PASSWORD
-      )
-    }
-
-    // Create token
-    const accessToken = jwt.sign(
-      { email: email, user_id: user_id },
-      envConfig.accessTokenSecretKey,
-      { expiresIn: '1h' }
-    )
-    const refreshToken = jwt.sign(
-      { email: email, user_id: user_id },
-      envConfig.refreshTokenSecretKey,
-      { expiresIn: '365d' }
-    )
-
-    // Save refresh token
-    const queryRefreshToken = `
-      INSERT INTO refresh_tokens(token, user_id)
-      VALUES($1, $2);
-    `
-    await client.query(queryRefreshToken, [refreshToken, user_id])
-
-    // Send token
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      secure: false,
-      path: '/',
-      sameSite: 'strict',
-      maxAge: 3600000,
-    })
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: false,
-      path: '/',
-      sameSite: 'strict',
-      maxAge: 31556952000,
-    })
-    return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.LOGIN_SUCCESS)
-  } catch (error) {
-    console.error('Error login:', error.message)
+  // Check correct password
+  const isMatchedPassword = await bcrypt.compare(password, hashedPassword)
+  if (!isMatchedPassword) {
     return sendResponse(
       res,
-      STATUS_CODE.INTERNAL_SERVER_ERROR,
-      MESSAGE.SERVER.ERROR
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.USER.WRONG_PASSWORD
     )
   }
+
+  // Create token
+  const accessToken = jwt.sign(
+    { email: email, user_id: user_id },
+    envConfig.accessTokenSecretKey,
+    { expiresIn: '1h' }
+  )
+  const refreshToken = jwt.sign(
+    { email: email, user_id: user_id },
+    envConfig.refreshTokenSecretKey,
+    { expiresIn: '365d' }
+  )
+
+  // Save refresh token
+  await userService.insertRefreshToken(user_id, refreshToken)
+
+  // Send token
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    secure: false,
+    path: '/',
+    sameSite: 'strict',
+    maxAge: 3600000,
+  })
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: false,
+    path: '/',
+    sameSite: 'strict',
+    maxAge: 31556952000,
+  })
+  return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.LOGIN_SUCCESS)
 }
 
 export const verifyEmail = async (req, res) => {
-  const { email } = req.body
-
   // Check validation
-  const requiredError = requiredValidate([email])
-  if (requiredError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, requiredError)
+  const { error, value } = userSchema.emailValidate.validate(req.body)
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+  }
+  const { email } = value
+  // Check exist user
+  const userExist = await userService.isUserExist(email)
+  if (userExist) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.EXISTED)
   }
 
-  const emailError = emailValidate(email)
-  if (emailError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, emailError)
-  }
+  const registerToken = jwt.sign(
+    { email: email },
+    envConfig.accessTokenSecretKey,
+    { expiresIn: '5m' }
+  )
+  const linkRegister = `${req.protocol}://${req.get(
+    'host'
+  )}/api/user/verifyemail?token=${registerToken}`
 
-  try {
-    // Check exist user
-    const userExist = await isUserExist(email)
-    if (userExist) {
-      return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.EXISTED)
-    }
-
-    const registerToken = jwt.sign(
-      { email: email },
-      envConfig.accessTokenSecretKey,
-      { expiresIn: '5m' }
-    )
-    const linkRegister = `${req.protocol}://${req.get(
-      'host'
-    )}/api/user/verifyemail?token=${registerToken}`
-
-    const subject = 'Xác thực đăng ký MindOdysey'
-    const text = 'Xác thực đăng ký MindOdysey link chỉ có hiệu lực trong 5 phút'
-    const html = `
+  const subject = 'Xác thực đăng ký MindOdysey'
+  const text = 'Xác thực đăng ký MindOdysey link chỉ có hiệu lực trong 5 phút'
+  const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
         <h1 style="text-align: center; background-color: #4CAF50; color: white; padding: 10px; border-radius: 8px 8px 0 0;">Welcome to MindOdysey!</h1>
         <p style="margin: 20px 0; line-height: 1.6; color: #333;">Hi,</p>
@@ -189,188 +104,93 @@ export const verifyEmail = async (req, res) => {
         <p style="text-align: center; font-size: 12px; color: #888;">&copy; 2025 MindOdysey. All rights reserved.</p>
       </div>
     `
-    await sendEmail(email, subject, text, html)
-    return sendResponse(
-      res,
-      STATUS_CODE.SUCCESS,
-      MESSAGE.USER.SEND_EMAIL_SUCCESS
-    )
-  } catch (error) {
-    console.error('Error verifyEmail:', error.message)
-    return sendResponse(
-      res,
-      STATUS_CODE.INTERNAL_SERVER_ERROR,
-      MESSAGE.SERVER.ERROR
-    )
-  }
+  await userService.sendEmail(email, subject, text, html)
+  return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.SEND_EMAIL_SUCCESS)
 }
 
 export const register = async (req, res) => {
   const { email } = req.user
-  const { display_name, password, confirmPassword } = req.body
 
   // Check validation
-  const requiredError = requiredValidate([
-    display_name,
-    password,
-    confirmPassword,
-  ])
-  if (requiredError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, requiredError)
+  const { error, value } = userSchema.registerValidate.validate(req.body)
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
   }
+  const { display_name, password } = value
 
-  const displayNameError = displayNameValidate(display_name)
-  if (displayNameError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, displayNameError)
-  }
 
-  const passwordError = passwordValidate(password)
-  if (passwordError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, passwordError)
-  }
-
-  if (password !== confirmPassword) {
-    return sendResponse(
-      res,
-      STATUS_CODE.BAD_REQUEST,
-      MESSAGE.USER.PASSWORD_NOT_MATCH
-    )
-  }
-
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10)
-    const query = `
-      INSERT INTO users (email, password, display_name)
-      VALUES ($1, $2, $3);
-    `
-    await client.query(query, [email, hashedPassword, display_name])
-    res.clearCookie('accessToken', {
-      httpOnly: true,
-      secure: false,
-      path: '/',
-      sameSite: 'strict',
-    })
-    return sendResponse(res, STATUS_CODE.CREATED, MESSAGE.USER.REGISTER_SUCCESS)
-  } catch (error) {
-    console.error('Error register:', error.message)
-    return sendResponse(
-      res,
-      STATUS_CODE.INTERNAL_SERVER_ERROR,
-      MESSAGE.SERVER.ERROR
-    )
-  }
+  const hashedPassword = await bcrypt.hash(password, 10)
+  await userService.insertUser(email, display_name, hashedPassword)
+  res.clearCookie('accessToken', {
+    httpOnly: true,
+    secure: false,
+    path: '/',
+    sameSite: 'strict',
+  })
+  return sendResponse(res, STATUS_CODE.CREATED, MESSAGE.USER.REGISTER_SUCCESS)
 }
 
 // Get information
 export const getInfo = async (req, res) => {
   const { user_id } = req.user
-
-  try {
-    const query = `
-      SELECT email, display_name
-      FROM users
-      WHERE user_id = $1;
-    `
-    const result = await client.query(query, [user_id])
-    return sendResponse(
-      res,
-      STATUS_CODE.SUCCESS,
-      MESSAGE.USER.GET_INFO_SUCCESS,
-      result.rows[0]
-    )
-  } catch (error) {
-    console.error('Error getInfo:', error.message)
-    return sendResponse(
-      res,
-      STATUS_CODE.INTERNAL_SERVER_ERROR,
-      MESSAGE.SERVER.ERROR
-    )
-  }
+  const result = await userService.selectInfoUser(user_id)
+  return sendResponse(
+    res,
+    STATUS_CODE.SUCCESS,
+    MESSAGE.USER.GET_INFO_SUCCESS,
+    result
+  )
 }
 
 // Update user
 export const update = async (req, res) => {
   const { user_id } = req.user
-  const { new_display_name } = req.body
-
-  // Check validation
-  const requiredError = requiredValidate([new_display_name])
-  if (requiredError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, requiredError)
+  const { error, value } = userSchema.newDisplayNameValidate.validate(req.body)
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
   }
+  const { new_display_name } = value
 
-  const newDisplayNameError = displayNameValidate(new_display_name)
-  if (newDisplayNameError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, newDisplayNameError)
-  }
-
-  try {
-    const query = `
-      SELECT display_name
-      FROM users
-      WHERE user_id = $1;
-    `
-    const result = await client.query(query, [user_id])
-    if (result.rows[0].display_name === new_display_name) {
-      return sendResponse(
-        res,
-        STATUS_CODE.BAD_REQUEST,
-        MESSAGE.USER.SAME_DISPLAY_NAME
-      )
-    }
-
-    const queryUpdate = `
-      UPDATE users
-      SET display_name = $1
-      WHERE user_id = $2;
-    `
-    await client.query(queryUpdate, [new_display_name, user_id])
-    return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.UPDATE_SUCCESS)
-  } catch (error) {
-    console.error('Error update:', error.message)
+  const result_select = await userService.selectDisplayname(user_id)
+  if (result_select === new_display_name) {
     return sendResponse(
       res,
-      STATUS_CODE.INTERNAL_SERVER_ERROR,
-      MESSAGE.SERVER.ERROR
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.USER.SAME_DISPLAY_NAME
     )
   }
+
+  await userService.updateDisplayname(new_display_name, user_id)
+  return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.UPDATE_SUCCESS)
 }
 
 // Forget password
 export const forgetPassword = async (req, res) => {
-  const { email } = req.body
-
   // Check validation
-  const requiredError = requiredValidate([email])
-  if (requiredError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, requiredError)
+  const { error, value } = userSchema.emailValidate.validate(req.body)
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+  }
+  const { email } = value
+  // Check exist user
+  const userExist = await userService.isUserExist(email)
+  if (!userExist) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.NOT_FOUND)
   }
 
-  const emailError = emailValidate(email)
-  if (emailError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, emailError)
-  }
+  // Create token and send email
+  const resetpasswordToken = jwt.sign(
+    { email: email },
+    envConfig.accessTokenSecretKey,
+    { expiresIn: '5m' }
+  )
+  const linkForgetPass = `${req.protocol}://${req.get(
+    'host'
+  )}/api/user/forgetpassword?token=${resetpasswordToken}`
 
-  try {
-    // Check exist user
-    const userExist = await isUserExist(email)
-    if (!userExist) {
-      return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.USER.NOT_FOUND)
-    }
-
-    // Create token and send email
-    const resetpasswordToken = jwt.sign(
-      { email: email },
-      envConfig.accessTokenSecretKey,
-      { expiresIn: '5m' }
-    )
-    const linkForgetPass = `${req.protocol}://${req.get(
-      'host'
-    )}/api/user/forgetpassword?token=${resetpasswordToken}`
-
-    const subject = 'Xác thực đổi mật khẩu MindOdysey'
-    const text = 'Xác thực đăng ký MindOdysey link chỉ có hiệu lực trong 5 phút'
-    const html = `
+  const subject = 'Xác thực đổi mật khẩu MindOdysey'
+  const text = 'Xác thực đăng ký MindOdysey link chỉ có hiệu lực trong 5 phút'
+  const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
       <h1 style="text-align: center; background-color: #4CAF50; color: white; padding: 10px; border-radius: 8px 8px 0 0;">Khôi phục mật khẩu MindOdysey</h1>
       <p style="margin: 20px 0; line-height: 1.6; color: #333;">Xin chào,</p>
@@ -381,36 +201,19 @@ export const forgetPassword = async (req, res) => {
       <p style="text-align: center; font-size: 12px; color: #888; margin-top: 20px;">Nếu bạn không yêu cầu khôi phục mật khẩu, vui lòng bỏ qua email này.</p>
       <p style="text-align: center; font-size: 12px; color: #888;">&copy; 2025 MindOdysey. All rights reserved.</p>
     </div>`
-    await sendEmail(email, subject, text, html)
-    return sendResponse(
-      res,
-      STATUS_CODE.SUCCESS,
-      MESSAGE.USER.SEND_EMAIL_SUCCESS
-    )
-  } catch (error) {
-    console.error('Error forgetPassword:', error.message)
-    return sendResponse(
-      res,
-      STATUS_CODE.INTERNAL_SERVER_ERROR,
-      MESSAGE.SERVER.ERROR
-    )
-  }
+  await userService.sendEmail(email, subject, text, html)
+  return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.SEND_EMAIL_SUCCESS)
 }
 
 export const resetPassword = async (req, res) => {
   const { email } = req.user
-  const { newPassword, confirmNewPassword } = req.body
 
   // Check validation
-  const requiredError = requiredValidate([newPassword, confirmNewPassword])
-  if (requiredError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, requiredError)
+  const { error, value } = userSchema.resetPasswordValidate.validate(req.body)
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
   }
-
-  const newPasswordError = passwordValidate(newPassword)
-  if (newPasswordError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, newPasswordError)
-  }
+  const { newPassword, confirmNewPassword } = value
 
   if (newPassword !== confirmNewPassword) {
     return sendResponse(
@@ -420,179 +223,92 @@ export const resetPassword = async (req, res) => {
     )
   }
 
-  try {
-    const hashedPassword = await bcrypt.hash(newPassword, 10)
-    const query = `
-      UPDATE users
-      SET password = $2
-      WHERE email = $1;
-    `
-    await client.query(query, [email, hashedPassword])
-    res.clearCookie('accessToken', {
-      httpOnly: true,
-      secure: false,
-      path: '/',
-      sameSite: 'strict',
-    })
-    return sendResponse(
-      res,
-      STATUS_CODE.SUCCESS,
-      MESSAGE.USER.RESET_PASSWORD_SUCCESS
-    )
-  } catch (error) {
-    console.error('Error resetPassword:', error.message)
-    return sendResponse(
-      res,
-      STATUS_CODE.INTERNAL_SERVER_ERROR,
-      MESSAGE.SERVER.ERROR
-    )
-  }
+  const hashedPassword = await bcrypt.hash(newPassword, 10)
+  await userService.updateResetPassword(hashedPassword, email)
+  res.clearCookie('accessToken', {
+    httpOnly: true,
+    secure: false,
+    path: '/',
+    sameSite: 'strict',
+  })
+  return sendResponse(
+    res,
+    STATUS_CODE.SUCCESS,
+    MESSAGE.USER.RESET_PASSWORD_SUCCESS
+  )
 }
 
 export const changePassword = async (req, res) => {
   const { user_id } = req.user
-  const { oldPassword, newPassword, confirmNewPassword } = req.body
 
   // Check validation
-  const requiredError = requiredValidate([
-    oldPassword,
-    newPassword,
-    confirmNewPassword,
-  ])
-  if (requiredError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, requiredError)
+  const { error, value } = userSchema.changePasswordValidate.validate(req.body)
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
   }
+  const { oldPassword, newPassword } = value
 
-  const oldPasswordError = passwordValidate(oldPassword)
-  if (oldPasswordError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, oldPasswordError)
-  }
 
-  const newPasswordError = passwordValidate(newPassword)
-  if (newPasswordError) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, newPasswordError)
-  }
-
-  if (newPassword === oldPassword) {
+  const result_select = await userService.selectPassword(user_id)
+  const hashedPassword = result_select
+  const isMatchedPassword = await bcrypt.compare(oldPassword, hashedPassword)
+  if (!isMatchedPassword) {
     return sendResponse(
       res,
       STATUS_CODE.BAD_REQUEST,
-      MESSAGE.USER.SAME_PASSWORD
+      MESSAGE.USER.WRONG_PASSWORD
     )
   }
 
-  if (newPassword !== confirmNewPassword) {
-    return sendResponse(
-      res,
-      STATUS_CODE.BAD_REQUEST,
-      MESSAGE.USER.PASSWORD_NOT_MATCH
-    )
-  }
-
-  try {
-    const query = `
-      SELECT password
-      FROM users
-      WHERE user_id = $1;
-    `
-    const result = await client.query(query, [user_id])
-    const hashedPassword = result.rows[0].password
-    const isMatchedPassword = await bcrypt.compare(oldPassword, hashedPassword)
-    if (!isMatchedPassword) {
-      return sendResponse(
-        res,
-        STATUS_CODE.BAD_REQUEST,
-        MESSAGE.USER.WRONG_PASSWORD
-      )
-    }
-
-    const hashedNewPassword = await bcrypt.hash(newPassword, 10)
-    const queryUpdate = `
-      UPDATE users 
-      SET password = $2
-      WHERE user_id = $1;
-    `
-    await client.query(queryUpdate, [user_id, hashedNewPassword])
-    return sendResponse(
-      res,
-      STATUS_CODE.SUCCESS,
-      MESSAGE.USER.CHANGE_PASSWORD_SUCCESS
-    )
-  } catch (error) {
-    console.error('Error changePassword:', error.message)
-    return sendResponse(
-      res,
-      STATUS_CODE.INTERNAL_SERVER_ERROR,
-      MESSAGE.SERVER.ERROR
-    )
-  }
+  const hashedNewPassword = await bcrypt.hash(newPassword, 10)
+  await userService.updateChangePassword(hashedNewPassword, user_id)
+  return sendResponse(
+    res,
+    STATUS_CODE.SUCCESS,
+    MESSAGE.USER.CHANGE_PASSWORD_SUCCESS
+  )
 }
 
 // Logout
 export const logout = async (req, res) => {
   const refreshToken = req.cookies?.refreshToken
+  const { error } = userSchema.refreshTokenValidate.validate(refreshToken)
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+  }
 
-  if (!refreshToken) {
+  const isRefreshTokenExist = await userService.isRefreshTokenExist(
+    refreshToken
+  )
+  if (!isRefreshTokenExist) {
     return sendResponse(
       res,
       STATUS_CODE.BAD_REQUEST,
-      MESSAGE.AUTH.REFRESH_TOKEN.MISSING
+      MESSAGE.AUTH.REFRESH_TOKEN.NOT_FOUND
     )
   }
 
-  try {
-    const queryCheckRefreshToken = `
-      SELECT 1
-      FROM refresh_tokens
-      WHERE token = $1
-      LIMIT 1;
-    `
-    const result = await client.query(queryCheckRefreshToken, [refreshToken])
-    if (result.rowCount === 0) {
-      return sendResponse(
-        res,
-        STATUS_CODE.BAD_REQUEST,
-        MESSAGE.AUTH.REFRESH_TOKEN.NOT_FOUND
-      )
-    }
-
-    const queryDeleteRefreshToken = `
-      DELETE FROM refresh_tokens
-      WHERE token = $1;
-    `
-    await client.query(queryDeleteRefreshToken, [refreshToken])
-    res.clearCookie('accessToken', {
-      httpOnly: true,
-      secure: false,
-      path: '/',
-      sameSite: 'strict',
-    })
-    res.clearCookie('refreshToken', {
-      httpOnly: true,
-      secure: false,
-      path: '/',
-      sameSite: 'strict',
-    })
-    return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.LOGOUT_SUCCESS)
-  } catch (error) {
-    console.error('Error logout:', error.message)
-    return sendResponse(
-      res,
-      STATUS_CODE.INTERNAL_SERVER_ERROR,
-      MESSAGE.SERVER.ERROR
-    )
-  }
+  await userService.deleteRefreshToken(refreshToken)
+  res.clearCookie('accessToken', {
+    httpOnly: true,
+    secure: false,
+    path: '/',
+    sameSite: 'strict',
+  })
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: false,
+    path: '/',
+    sameSite: 'strict',
+  })
+  return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.LOGOUT_SUCCESS)
 }
 
 export const setCookieRegister = (req, res) => {
-  const token = req.token
-
-  if (!token) {
-    return sendResponse(
-      res,
-      STATUS_CODE.BAD_REQUEST,
-      MESSAGE.AUTH.ACCESS_TOKEN.MISSING
-    )
+  const token=req.token
+  const {error}=userSchema.accessTokenValidate.validate(token)
+  if(error){
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
   }
 
   res.cookie('accessToken', token, {
@@ -607,14 +323,10 @@ export const setCookieRegister = (req, res) => {
 }
 
 export const setCookieForgetPass = (req, res) => {
-  const token = req.token
-
-  if (!token) {
-    return sendResponse(
-      res,
-      STATUS_CODE.BAD_REQUEST,
-      MESSAGE.AUTH.ACCESS_TOKEN.MISSING
-    )
+  const token=req.token
+  const {error}=userSchema.accessTokenValidate.validate(token)
+  if(error){
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
   }
 
   res.cookie('accessToken', token, {
