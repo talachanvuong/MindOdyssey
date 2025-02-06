@@ -58,6 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
   closePopUp.addEventListener('click', closeModal)
   closePopUp2.addEventListener(`click`, closeModal)
   popupModal.addEventListener('click', closeModalWhenClickOutSide)
+
+
+  
   // =========================    LOGIC    =====================================//
 
   const form = document.getElementById('form')
@@ -81,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const response = await fetch('http://localhost:3000/api/user/login', {
         method: 'POST',
+        credentials : "include",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email,
@@ -92,11 +96,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (response.ok) {
         if (data.message === 'User login successfully!') {
+          const loading = document.getElementById('loading')
+          loading.classList.remove('invisible')
           window.location.href = '../../page/account/lobby.html'
         }
       } else {
         // Lỗi nếu response không ok
-        if (data.message === 'User not found!') {
+        if (data.message === 'User not found!') {//tài khoản không tồn tại
           console.error('Lỗi API:', data)
           const noUser = document.getElementById('noUser')
           noUser.classList.remove('invisible')
@@ -106,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
           })
         }
 
-        if (data.message === 'Wrong password!') {
+        if (data.message === 'Wrong password!') {//sai mật khẩu
           console.error('Lỗi API:', data)
           const wrongPass = document.getElementById('wrongPass')
           wrongPass.classList.remove('invisible')
@@ -117,9 +123,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (
-          data.message === 'Password must be between 8 and 32 characters long!'
+          data.message === 'Password must be between 8 and 32 characters long!'//sai format mật khẩu
         ) {
           alert('mật khẩu phải chứa ít nhất 8 kí tự và nhiều nhất 32 kí tự')
+        }
+        
+        if (
+          data.message === 'Invalid email address!'//sai format email
+        ) {
+          alert('Email không hợp lệ')
         }
       }
     } catch (error) {

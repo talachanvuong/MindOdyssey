@@ -1,12 +1,107 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
-    <p>Lobyyyy</p>
+  </head>
+  <body class="bg-stone-200">
+    <header
+      class="flex h-20 flex-row justify-between rounded-bl-2xl rounded-br-2xl bg-cyan-300 p-2 shadow-md shadow-gray-600 sm:h-14"
+    >
+      <!-- chưa biết làm gì với nút menu  -->
+      <img src="../img/menu.png" />
+      <a class="flex" href="user_information.html">
+        <img src="../img/user.png" />
+      </a>
+    </header>
+    <main class="mt-5 flex min-h-screen items-center">
+      <div
+        class="mx-4 flex h-fit flex-col gap-3 rounded-xl bg-white p-5 shadow-md shadow-gray-700 sm:mx-auto sm:w-2/5"
+      >
+        <!-- title -->
+        <p class="text-center text-6xl font-semibold sm:text-7xl mb-3">
+          Trắc Nghiệm Trực Tuyến
+        </p>
+
+        <!-- searching box -->
+        <div
+          id="searching"
+          class="mx-3 h-2/5 rounded-xl bg-cyan-300 py-5 shadow-md shadow-gray-700"
+        >
+          <form class="flex flex-col items-center gap-5">
+            <input
+              class="focus:ring-blue-300 h-12 w-11/12 rounded-lg border bg-[url('../img/searching.png')] bg-[length:20px] bg-[left_0.5rem_center] bg-no-repeat p-2 pl-10 opacity-70 shadow-md shadow-gray-700 outline-none placeholder:text-gray-700 focus:ring-2"
+              type="text"
+              placeholder="Hôm nay ôn gì đây ?"
+            />
+            <button
+              class="w-11/12 rounded-lg border border-gray-600 bg-cyan-200 text-3xl font-bold shadow-md shadow-gray-700"
+            >
+              Tìm kiếm
+            </button>
+          </form>
+        </div>
+
+        <!-- feature -->
+        <div
+          class="mt-10 grid grid-cols-2 grid-rows-[100px_100px] gap-4  p-4"
+        >
+          <!-- area -->
+          <a
+            href="#"
+            id="area"
+            class="flex flex-col justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700"
+          >
+            <img
+              src="../img/area_icon_feature.png"
+              class="m-auto w-1/2 object-contain sm:w-1/3"
+            />
+          </a>
+
+          <!-- create document -->
+          <a
+            href="#"
+            id="create_doc"
+            class="flex flex-col justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700"
+          >
+            <img
+              src="../img/create_doc_feature.png"
+              class="m-auto w-1/2 object-contain sm:w-1/3"
+            />
+          </a>
+
+          <!-- storage -->
+          <a
+            href="#"
+            id="storage"
+            class="flex flex-col justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700"
+          >
+            <img
+              src="../img/storage.png"
+              class="m-auto w-1/2 object-contain sm:w-1/3"
+            />
+          </a>
+
+          <!-- completed_doc -->
+          <a
+            href="#"
+            id="completed_doc"
+            class="flex flex-col justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700"
+          >
+            <img
+              src="../img/completed_document.png"
+              class="m-auto w-1/2 object-contain sm:w-1/3"
+            />
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer
+      class="mt-5 flex h-20 flex-col justify-center rounded-tl-2xl rounded-tr-2xl bg-cyan-300 p-2 shadow-md shadow-gray-600"
+    >
+    <p class="text-4xl font-bold mx-auto">About Us: Group 1</p></footer>
     <script type="module" src="../../js/account/register.js"></script>
-</body>
+  </body>
 </html>
