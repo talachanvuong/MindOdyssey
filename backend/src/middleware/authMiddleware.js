@@ -9,7 +9,7 @@ const verifyUser = (req, res, next) => {
 
   const { error } = userSchema.accessTokenValidate.validate(token)
   if (error) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+    return sendResponse(res, STATUS_CODE.UNAUTHORIZED, error.details[0].message)
   }
 
   jwt.verify(token, envConfig.accessTokenSecretKey, (error, decoded) => {
@@ -40,7 +40,7 @@ const verifyEmail = (req, res, next) => {
   const token = req.query.token
   const { error } = userSchema.accessTokenValidate.validate(token)
   if (error) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+    return sendResponse(res, STATUS_CODE.UNAUTHORIZED, error.details[0].message)
   }
 
   jwt.verify(token, envConfig.accessTokenSecretKey, (error, decoded) => {
@@ -73,7 +73,7 @@ const postRefreshToken = async (req, res) => {
 
   const { error } = userSchema.refreshTokenValidate.validate(refreshToken)
   if (error) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+    return sendResponse(res, STATUS_CODE.UNAUTHORIZED, error.details[0].message)
   }
 
   const isRefreshTokenExist = await userService.isRefreshTokenExist(
@@ -82,7 +82,7 @@ const postRefreshToken = async (req, res) => {
   if (!isRefreshTokenExist) {
     return sendResponse(
       res,
-      STATUS_CODE.BAD_REQUEST,
+      STATUS_CODE.UNAUTHORIZED,
       MESSAGE.AUTH.REFRESH_TOKEN.NOT_FOUND
     )
   }
