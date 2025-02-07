@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } catch (error) {
-      console.error('internet error')
+      alert('Có lỗi xảy ra :(')
     }
   })
 })
