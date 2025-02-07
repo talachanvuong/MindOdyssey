@@ -1,31 +1,47 @@
 import {
+  createDocumentSchema,
+  editDocumentSchema,
+  getDocumentDetailSchema,
+  removeDocumentSchema,
+} from '../schemas/documentSchema.js'
+import {
   destroyCloudinary,
   uploadCloudinary,
 } from '../services/cloudinaryService.js'
 import { isCourseExistById } from '../services/courseService.js'
 import {
+  arrangeOrderAfterDelete,
+  arrangeOrderAfterUpdate,
+  arrangeOrderBeforeInsert,
+  confirmUpdateDocument,
   deleteDocument,
+  deleteQuestion,
   insertContent,
   insertDocument,
   insertQuestion,
+  isContentAuthor,
+  isContentExist,
   isDocumentAuthor,
   isDocumentExist,
+  isQuestionAuthor,
+  isQuestionExist,
+  selectContent,
   selectContents,
   selectDocument,
+  selectQuestion,
   selectQuestions,
+  selectTotalQuestions,
+  updateContent,
+  updateDocument,
+  updateQuestion,
 } from '../services/documentService.js'
-import {
-  createDocumentSchema,
-  getDocumentDetailSchema,
-  removeDocumentSchema,
-} from '../schemas/documentSchema.js'
 import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
 import { timeConvert } from '../utils/convert.js'
 
 /**
  * Create a new document.
  */
-export const createDocument = async (uploadedImages, req, res) => {
+export const createDocument = async (req, res) => {
   const { user_id } = req.user
   const { error, value } = createDocumentSchema.validate(req.body)
   const { title, description, course, questions } = value
@@ -39,10 +55,10 @@ export const createDocument = async (uploadedImages, req, res) => {
   // Check course exist
   const existedCourse = await isCourseExistById(course)
   if (!existedCourse) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.COURSE.NOT_FOUND)
+    return sendResponse(res, STATUS_CODE.NOT_FOUND, MESSAGE.COURSE.NOT_FOUND)
   }
 
-  // Insert new document
+  // Insert new document in database
   const document_id = await insertDocument(
     title,
     description,
@@ -54,7 +70,7 @@ export const createDocument = async (uploadedImages, req, res) => {
   for (let i = 0; i < totalQuestions; i++) {
     const question = questions[i]
 
-    // Insert new question
+    // Insert new question in database
     const question_id = await insertQuestion(
       i + 1,
       question.correct,
@@ -65,12 +81,7 @@ export const createDocument = async (uploadedImages, req, res) => {
       // Upload attachment to cloudinary
       const attachment = await uploadCloudinary(content.attachment)
 
-      // Store public_id of uploaded images
-      if (attachment) {
-        uploadedImages.push(attachment.public_id)
-      }
-
-      // Insert new content
+      // Insert new content in database
       await insertContent(
         content.text,
         attachment?.secure_url,
@@ -100,14 +111,10 @@ export const getDocumentDetail = async (req, res) => {
   // Check document exist
   const existedDocument = await isDocumentExist(document)
   if (!existedDocument) {
-    return sendResponse(
-      res,
-      STATUS_CODE.BAD_REQUEST,
-      MESSAGE.DOCUMENT.NOT_FOUND
-    )
+    return sendResponse(res, STATUS_CODE.NOT_FOUND, MESSAGE.DOCUMENT.NOT_FOUND)
   }
 
-  // Get document detail
+  // Get document detail in database
   const resultDocument = await selectDocument(document)
   result.title = resultDocument.title
   result.description = resultDocument.description
@@ -121,7 +128,7 @@ export const getDocumentDetail = async (req, res) => {
   result.reject_reason = resultDocument.reject_reason
   result.questions = []
 
-  // Get questions detail
+  // Get questions detail in database
   const resultQuestions = await selectQuestions(document)
   for (let i = 0; i < resultQuestions.length; i++) {
     const resultQuestion = resultQuestions[i]
@@ -131,7 +138,7 @@ export const getDocumentDetail = async (req, res) => {
       correct: resultQuestion.correct_answer,
     })
 
-    // Get contents detail
+    // Get contents detail in database
     const resultContents = await selectContents(resultQuestion.question_id)
     for (const resultContent of resultContents) {
       result.questions[i].content.push({
@@ -155,7 +162,7 @@ export const getDocumentDetail = async (req, res) => {
 /**
  * Remove a document.
  */
-export const removeDocument = async (destroyedImages, req, res) => {
+export const removeDocument = async (req, res) => {
   const { user_id } = req.user
   const { error, value } = removeDocumentSchema.validate(req.body)
   const { document } = value
@@ -168,16 +175,12 @@ export const removeDocument = async (destroyedImages, req, res) => {
   // Check document exist
   const existedDocument = await isDocumentExist(document)
   if (!existedDocument) {
-    return sendResponse(
-      res,
-      STATUS_CODE.BAD_REQUEST,
-      MESSAGE.DOCUMENT.NOT_FOUND
-    )
+    return sendResponse(res, STATUS_CODE.NOT_FOUND, MESSAGE.DOCUMENT.NOT_FOUND)
   }
 
   // Check document author
-  const validAuthor = await isDocumentAuthor(user_id, document)
-  if (!validAuthor) {
+  const validDocumentAuthor = await isDocumentAuthor(user_id, document)
+  if (!validDocumentAuthor) {
     return sendResponse(
       res,
       STATUS_CODE.BAD_REQUEST,
@@ -185,18 +188,15 @@ export const removeDocument = async (destroyedImages, req, res) => {
     )
   }
 
-  // Get questions detail
+  // Get questions detail in database
   const resultQuestions = await selectQuestions(document)
   for (const resultQuestion of resultQuestions) {
-    // Get contents detail
+    // Get contents detail in database
     const resultContents = await selectContents(resultQuestion.question_id)
     for (const resultContent of resultContents) {
       // Remove attachment in cloudinary
       if (resultContent.attachment) {
-        await destroyCloudinary(resultContent.attachment_id).then(() =>
-          // Store public_id of destroyed images
-          destroyedImages.push(resultContent.attachment_id)
-        )
+        await destroyCloudinary(resultContent.attachment_id)
       }
     }
   }
@@ -204,4 +204,288 @@ export const removeDocument = async (destroyedImages, req, res) => {
   // Delete document in database
   await deleteDocument(document)
   return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.DOCUMENT.REMOVE_SUCCESS)
+}
+
+/**
+ * Edit a document.
+ */
+export const editDocument = async (req, res) => {
+  const { user_id } = req.user
+  const { error, value } = editDocumentSchema.validate(req.body)
+  const { document, title, description, course, questions } = value
+
+  // Check validation
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+  }
+
+  // Check document exist
+  const existedDocument = await isDocumentExist(document)
+  if (!existedDocument) {
+    return sendResponse(res, STATUS_CODE.NOT_FOUND, MESSAGE.DOCUMENT.NOT_FOUND)
+  }
+
+  // Check document author
+  const validDocumentAuthor = await isDocumentAuthor(user_id, document)
+  if (!validDocumentAuthor) {
+    return sendResponse(
+      res,
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.DOCUMENT.INVALID_AUTHOR
+    )
+  }
+
+  // Check course exist if defined
+  if (course) {
+    const existedCourse = await isCourseExistById(course)
+    if (!existedCourse) {
+      return sendResponse(res, STATUS_CODE.NOT_FOUND, MESSAGE.COURSE.NOT_FOUND)
+    }
+  }
+
+  // Update document in database
+  await updateDocument(title, description, course, document)
+
+  // Update questions in database
+  if (questions) {
+    for (const question of questions) {
+      // Case: add
+      if (question.action === 'add') {
+        // Check order valid
+        const totalQuestions = selectTotalQuestions(document)
+        if (question.order > totalQuestions + 1) {
+          return sendResponse(
+            res,
+            STATUS_CODE.BAD_REQUEST,
+            MESSAGE.QUESTION.INVALID_ORDER
+          )
+        }
+
+        // Arrange other question order before insert
+        await arrangeOrderBeforeInsert(question.order, document)
+
+        // Insert new question in database
+        const question_id = await insertQuestion(
+          question.order,
+          question.correct,
+          document
+        )
+
+        for (const content of question.content) {
+          // Upload attachment to cloudinary
+          const attachment = await uploadCloudinary(content.attachment)
+
+          // Insert new content in database
+          await insertContent(
+            content.text,
+            attachment?.secure_url,
+            attachment?.public_id,
+            content.type,
+            question_id
+          )
+        }
+      }
+      // Case: remove
+      else if (question.action === 'remove') {
+        // Check total questions remain
+        const totalQuestions = selectTotalQuestions(document)
+        if (totalQuestions === 1) {
+          return sendResponse(
+            res,
+            STATUS_CODE.BAD_REQUEST,
+            MESSAGE.QUESTION.LAST
+          )
+        }
+
+        // Check question exist
+        const existedQuestion = await isQuestionExist(question.id)
+        if (!existedQuestion) {
+          return sendResponse(
+            res,
+            STATUS_CODE.NOT_FOUND,
+            MESSAGE.QUESTION.NOT_FOUND
+          )
+        }
+
+        // Check question author
+        const validQuestionAuthor = await isQuestionAuthor(
+          user_id,
+          document,
+          question.id
+        )
+        if (!validQuestionAuthor) {
+          return sendResponse(
+            res,
+            STATUS_CODE.BAD_REQUEST,
+            MESSAGE.QUESTION.INVALID_AUTHOR
+          )
+        }
+
+        // Get contents detail in database
+        const resultContents = await selectContents(question.id)
+        for (const resultContent of resultContents) {
+          // Remove attachment in cloudinary
+          if (resultContent.attachment) {
+            await destroyCloudinary(resultContent.attachment_id)
+          }
+        }
+
+        // Delete queston in database
+        const order = await deleteQuestion(question.id)
+
+        // Arrange other question order after delete
+        await arrangeOrderAfterDelete(order, document)
+      }
+      // Case: edit
+      else if (question.action === 'edit') {
+        // Check question exist
+        const existedQuestion = await isQuestionExist(question.id)
+        if (!existedQuestion) {
+          return sendResponse(
+            res,
+            STATUS_CODE.NOT_FOUND,
+            MESSAGE.QUESTION.NOT_FOUND
+          )
+        }
+
+        // Check question author
+        const validQuestionAuthor = await isQuestionAuthor(
+          user_id,
+          document,
+          question.id
+        )
+        if (!validQuestionAuthor) {
+          return sendResponse(
+            res,
+            STATUS_CODE.BAD_REQUEST,
+            MESSAGE.QUESTION.INVALID_AUTHOR
+          )
+        }
+
+        // Check order valid if defined
+        if (question.order) {
+          const totalQuestions = selectTotalQuestions(document)
+          if (question.order > totalQuestions) {
+            return sendResponse(
+              res,
+              STATUS_CODE.BAD_REQUEST,
+              MESSAGE.QUESTION.INVALID_ORDER
+            )
+          }
+        }
+
+        // Get order of question
+        const resultQuestion = await selectQuestion(question.id)
+
+        // Update queston in database
+        await updateQuestion(question.order, question.correct, question.id)
+
+        // Arrange other question order before update
+        await arrangeOrderAfterUpdate(
+          resultQuestion.order,
+          question.order,
+          question.id,
+          document
+        )
+
+        // Update contents in database
+        if (question.content) {
+          for (const content of question.content) {
+            // Check content exist
+            const existedContent = await isContentExist(content.id)
+            if (!existedContent) {
+              return sendResponse(
+                res,
+                STATUS_CODE.NOT_FOUND,
+                MESSAGE.CONTENT.NOT_FOUND
+              )
+            }
+
+            // Check content author
+            const validContentAuthor = await isContentAuthor(
+              user_id,
+              document,
+              question.id,
+              content.id
+            )
+            if (!validContentAuthor) {
+              return sendResponse(
+                res,
+                STATUS_CODE.BAD_REQUEST,
+                MESSAGE.CONTENT.INVALID_AUTHOR
+              )
+            }
+
+            // Set attachment to null
+            if (content.attachment === null) {
+              // Get attachment_id of content
+              const resultContent = await selectContent(content.id)
+
+              // Neither text nor attachment can be null
+              if (resultContent.text === null) {
+                return sendResponse(
+                  res,
+                  STATUS_CODE.BAD_REQUEST,
+                  MESSAGE.CONTENT.EMPTY
+                )
+              }
+
+              // Remove attachment in cloudinary
+              await destroyCloudinary(resultContent.attachment_id)
+
+              // Update content in database
+              await updateContent(content.text, null, null, content.id)
+            }
+            // Set attachment to new value
+            else if (content.attachment !== undefined) {
+              // Upload attachment to cloudinary
+              const attachment = await uploadCloudinary(content.attachment)
+
+              // Get attachment_id of content
+              const resultContent = await selectContent(content.id)
+              // Remove attachment in cloudinary
+              await destroyCloudinary(resultContent.attachment_id)
+
+              // Update content in database
+              await updateContent(
+                content.text,
+                attachment.secure_url,
+                attachment.public_id,
+                content.id
+              )
+            }
+            // Only set text to new value/null
+            else {
+              // Get attachment_id of content
+              const resultContent = await selectContent(content.id)
+
+              // Neither text nor attachment can be null
+              if (
+                content.text === null &&
+                resultContent.attachment_id === null
+              ) {
+                return sendResponse(
+                  res,
+                  STATUS_CODE.BAD_REQUEST,
+                  MESSAGE.CONTENT.EMPTY
+                )
+              }
+
+              // Update content in database
+              await updateContent(
+                content.text,
+                undefined,
+                undefined,
+                content.id
+              )
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Confirm update document in database
+  await confirmUpdateDocument(document)
+  return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.DOCUMENT.EDIT_SUCCESS)
 }
