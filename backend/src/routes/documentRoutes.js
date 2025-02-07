@@ -8,10 +8,7 @@ import { asyncHandler } from '../middleware/asyncMiddleware.js'
 import authMiddleware from '../middleware/authMiddleware.js'
 import { errorHandler } from '../middleware/errorMiddleware.js'
 import { mutexLockHandler } from '../middleware/mutexLockMiddleware.js'
-import {
-  destroyTransactionHandler,
-  uploadTransactionHandler,
-} from '../middleware/transactionMiddleware.js'
+import { transactionHandler } from '../middleware/transactionMiddleware.js'
 
 const router = Router()
 // Create document
@@ -19,7 +16,7 @@ router.post(
   '/',
   authMiddleware.verifyUser,
   mutexLockHandler,
-  uploadTransactionHandler(createDocument),
+  transactionHandler(createDocument),
   errorHandler
 )
 // Get document detail
@@ -35,7 +32,7 @@ router.delete(
   '/',
   authMiddleware.verifyUser,
   mutexLockHandler,
-  destroyTransactionHandler(removeDocument),
+  transactionHandler(removeDocument),
   errorHandler
 )
 

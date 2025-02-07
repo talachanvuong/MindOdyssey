@@ -1,4 +1,9 @@
 import {
+  createDocumentSchema,
+  getDocumentDetailSchema,
+  removeDocumentSchema,
+} from '../schemas/documentSchema.js'
+import {
   destroyCloudinary,
   uploadCloudinary,
 } from '../services/cloudinaryService.js'
@@ -14,18 +19,13 @@ import {
   selectDocument,
   selectQuestions,
 } from '../services/documentService.js'
-import {
-  createDocumentSchema,
-  getDocumentDetailSchema,
-  removeDocumentSchema,
-} from '../schemas/documentSchema.js'
 import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
 import { timeConvert } from '../utils/convert.js'
 
 /**
  * Create a new document.
  */
-export const createDocument = async (uploadedImages, req, res) => {
+export const createDocument = async (images, req, res) => {
   const { user_id } = req.user
   const { error, value } = createDocumentSchema.validate(req.body)
   const { title, description, course, questions } = value
@@ -42,7 +42,7 @@ export const createDocument = async (uploadedImages, req, res) => {
     return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.COURSE.NOT_FOUND)
   }
 
-  // Insert new document
+  // Insert new document in database
   const document_id = await insertDocument(
     title,
     description,
@@ -54,7 +54,7 @@ export const createDocument = async (uploadedImages, req, res) => {
   for (let i = 0; i < totalQuestions; i++) {
     const question = questions[i]
 
-    // Insert new question
+    // Insert new question in database
     const question_id = await insertQuestion(
       i + 1,
       question.correct,
@@ -67,10 +67,10 @@ export const createDocument = async (uploadedImages, req, res) => {
 
       // Store public_id of uploaded images
       if (attachment) {
-        uploadedImages.push(attachment.public_id)
+        images.uploadedImages.push(attachment.public_id)
       }
 
-      // Insert new content
+      // Insert new content in database
       await insertContent(
         content.text,
         attachment?.secure_url,
@@ -107,7 +107,7 @@ export const getDocumentDetail = async (req, res) => {
     )
   }
 
-  // Get document detail
+  // Get document detail in database
   const resultDocument = await selectDocument(document)
   result.title = resultDocument.title
   result.description = resultDocument.description
@@ -121,7 +121,7 @@ export const getDocumentDetail = async (req, res) => {
   result.reject_reason = resultDocument.reject_reason
   result.questions = []
 
-  // Get questions detail
+  // Get questions detail in database
   const resultQuestions = await selectQuestions(document)
   for (let i = 0; i < resultQuestions.length; i++) {
     const resultQuestion = resultQuestions[i]
@@ -131,7 +131,7 @@ export const getDocumentDetail = async (req, res) => {
       correct: resultQuestion.correct_answer,
     })
 
-    // Get contents detail
+    // Get contents detail in database
     const resultContents = await selectContents(resultQuestion.question_id)
     for (const resultContent of resultContents) {
       result.questions[i].content.push({
@@ -155,7 +155,7 @@ export const getDocumentDetail = async (req, res) => {
 /**
  * Remove a document.
  */
-export const removeDocument = async (destroyedImages, req, res) => {
+export const removeDocument = async (images, req, res) => {
   const { user_id } = req.user
   const { error, value } = removeDocumentSchema.validate(req.body)
   const { document } = value
@@ -176,8 +176,8 @@ export const removeDocument = async (destroyedImages, req, res) => {
   }
 
   // Check document author
-  const validAuthor = await isDocumentAuthor(user_id, document)
-  if (!validAuthor) {
+  const validDocumentAuthor = await isDocumentAuthor(user_id, document)
+  if (!validDocumentAuthor) {
     return sendResponse(
       res,
       STATUS_CODE.BAD_REQUEST,
@@ -185,17 +185,17 @@ export const removeDocument = async (destroyedImages, req, res) => {
     )
   }
 
-  // Get questions detail
+  // Get questions detail in database
   const resultQuestions = await selectQuestions(document)
   for (const resultQuestion of resultQuestions) {
-    // Get contents detail
+    // Get contents detail in database
     const resultContents = await selectContents(resultQuestion.question_id)
     for (const resultContent of resultContents) {
       // Remove attachment in cloudinary
       if (resultContent.attachment) {
         await destroyCloudinary(resultContent.attachment_id).then(() =>
           // Store public_id of destroyed images
-          destroyedImages.push(resultContent.attachment_id)
+          images.destroyedImages.push(resultContent.attachment_id)
         )
       }
     }
