@@ -41,7 +41,7 @@ import { timeConvert } from '../utils/convert.js'
 /**
  * Create a new document.
  */
-export const createDocument = async (images, req, res) => {
+export const createDocument = async (req, res) => {
   const { user_id } = req.user
   const { error, value } = createDocumentSchema.validate(req.body)
   const { title, description, course, questions } = value
@@ -80,11 +80,6 @@ export const createDocument = async (images, req, res) => {
     for (const content of question.content) {
       // Upload attachment to cloudinary
       const attachment = await uploadCloudinary(content.attachment)
-
-      // Store public_id of uploaded images
-      if (attachment) {
-        images.uploadedImages.push(attachment.public_id)
-      }
 
       // Insert new content in database
       await insertContent(
@@ -167,7 +162,7 @@ export const getDocumentDetail = async (req, res) => {
 /**
  * Remove a document.
  */
-export const removeDocument = async (images, req, res) => {
+export const removeDocument = async (req, res) => {
   const { user_id } = req.user
   const { error, value } = removeDocumentSchema.validate(req.body)
   const { document } = value
@@ -201,10 +196,7 @@ export const removeDocument = async (images, req, res) => {
     for (const resultContent of resultContents) {
       // Remove attachment in cloudinary
       if (resultContent.attachment) {
-        await destroyCloudinary(resultContent.attachment_id).then(() =>
-          // Store public_id of destroyed images
-          images.destroyedImages.push(resultContent.attachment_id)
-        )
+        await destroyCloudinary(resultContent.attachment_id)
       }
     }
   }
@@ -217,7 +209,7 @@ export const removeDocument = async (images, req, res) => {
 /**
  * Edit a document.
  */
-export const editDocument = async (images, req, res) => {
+export const editDocument = async (req, res) => {
   const { user_id } = req.user
   const { error, value } = editDocumentSchema.validate(req.body)
   const { document, title, description, course, questions } = value
@@ -283,11 +275,6 @@ export const editDocument = async (images, req, res) => {
           // Upload attachment to cloudinary
           const attachment = await uploadCloudinary(content.attachment)
 
-          // Store public_id of uploaded images
-          if (attachment) {
-            images.uploadedImages.push(attachment.public_id)
-          }
-
           // Insert new content in database
           await insertContent(
             content.text,
@@ -339,10 +326,7 @@ export const editDocument = async (images, req, res) => {
         for (const resultContent of resultContents) {
           // Remove attachment in cloudinary
           if (resultContent.attachment) {
-            await destroyCloudinary(resultContent.attachment_id).then(() =>
-              // Store public_id of destroyed images
-              images.destroyedImages.push(resultContent.attachment_id)
-            )
+            await destroyCloudinary(resultContent.attachment_id)
           }
         }
 
@@ -447,10 +431,7 @@ export const editDocument = async (images, req, res) => {
               }
 
               // Remove attachment in cloudinary
-              await destroyCloudinary(resultContent.attachment_id).then(() =>
-                // Store public_id of destroyed images
-                images.destroyedImages.push(resultContent.attachment_id)
-              )
+              await destroyCloudinary(resultContent.attachment_id)
 
               // Update content in database
               await updateContent(content.text, null, null, content.id)
@@ -460,16 +441,10 @@ export const editDocument = async (images, req, res) => {
               // Upload attachment to cloudinary
               const attachment = await uploadCloudinary(content.attachment)
 
-              // Store public_id of uploaded images
-              images.uploadedImages.push(attachment.public_id)
-
               // Get attachment_id of content
               const resultContent = await selectContent(content.id)
               // Remove attachment in cloudinary
-              await destroyCloudinary(resultContent.attachment_id).then(() =>
-                // Store public_id of destroyed images
-                images.destroyedImages.push(resultContent.attachment_id)
-              )
+              await destroyCloudinary(resultContent.attachment_id)
 
               // Update content in database
               await updateContent(
