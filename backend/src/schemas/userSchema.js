@@ -1,24 +1,30 @@
 import joi from 'joi'
 
-const emailSchema = joi.string().email().required().messages({
+const emailSchema = joi.string().trim().email().required().messages({
   'string.email': 'Invalid email format',
   'string.empty': 'Email cannot be empty',
   'any.required': 'Email is required',
 })
 
-const passwordSchema = joi.string().min(8).max(32).required().messages({
+const passwordSchema = joi.string().trim().min(8).max(32).required().messages({
   'string.min': 'Password must be at least 8 characters long',
   'string.max': 'Password must be at most 32 characters long',
   'string.empty': 'Password cannot be empty',
   'any.required': 'Password is required',
 })
 
-const displayNameSchema = joi.string().min(8).max(64).required().messages({
-  'string.min': 'Display name must be at least 8 characters long',
-  'string.max': 'Display name must be at most 64 characters long',
-  'string.empty': 'Display name cannot be empty',
-  'any.required': 'Display name is required',
-})
+const displayNameSchema = joi
+  .string()
+  .trim()
+  .min(8)
+  .max(64)
+  .required()
+  .messages({
+    'string.min': 'Display name must be at least 8 characters long',
+    'string.max': 'Display name must be at most 64 characters long',
+    'string.empty': 'Display name cannot be empty',
+    'any.required': 'Display name is required',
+  })
 
 const loginValidate = joi.object({
   email: emailSchema,
