@@ -3,9 +3,9 @@ import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
 const inProcess = new Set()
 
 export const mutexLockHandler = (req, res, next) => {
-  const { use_id: user_id } = req.user
+  const { email } = req.user
 
-  if (inProcess.has(user_id)) {
+  if (inProcess.has(email)) {
     return sendResponse(
       res,
       STATUS_CODE.BAD_REQUEST,
@@ -13,10 +13,10 @@ export const mutexLockHandler = (req, res, next) => {
     )
   }
 
-  inProcess.add(user_id)
+  inProcess.add(email)
 
   res.on('finish', () => {
-    inProcess.delete(user_id)
+    inProcess.delete(email)
   })
 
   next()
