@@ -47,7 +47,7 @@ export const selectCourses = async (keyword) => {
     `SELECT course_id, title
      FROM courses
      WHERE title ILIKE $1;`,
-    !keyword ? ['%%'] : [`%${keyword}%`]
+    keyword === undefined ? ['%%'] : [`%${keyword}%`]
   )
   return result.rows
 }

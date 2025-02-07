@@ -13,50 +13,65 @@
     </header>
 
     <main class="mt-5 flex translate-y-12 flex-col items-center opacity-0">
-      <p class="mb-5 text-4xl">Regiser</p>
+      <p class="mb-5 text-4xl">Register</p>
       <form
+      id="form"
         class="flex h-3/4 w-4/5 flex-col rounded-xl bg-white p-5 shadow-xl sm:w-4/12"
       >
         <label class="mt-3 text-sm sm:text-lg">Name</label>
         <div class="flex justify-center">
           <input
+            id="nameInput"
             class="w-11/12 rounded-md bg-stone-200 text-center"
             placeholder="Enter your name"
           /><br />
         </div>
-        <label class="mt-3 text-sm sm:text-lg">Email</label>
-        <div class="flex justify-center">
-          <input
-            class="w-11/12 rounded-md bg-stone-200 text-center"
-            placeholder="Enter your email"
-          /><br />
-        </div>
+
+        <p id="errorName" class="text-red-500 font-bold ml-4 "></p>
+        
         <label class="mt-3 text-sm sm:text-lg">Password</label>
         <div class="flex justify-center">
           <input
+            id="passwordInput"
             class="w-11/12 rounded-md bg-stone-200 text-center"
             placeholder="Enter your Password"
           /><br />
         </div>
+
+        <p id="errorPass" class="text-red-500 font-bold ml-4 "></p>
+
         <label class="mt-3 text-sm sm:text-lg"
           >Enter your Password once again</label
         >
         <div class="flex justify-center">
           <input
+            id="repassInput"
             class="w-11/12 rounded-md bg-stone-200 text-center"
             placeholder="Re-pass"
           /><br />
         </div>
 
+        <p id="errorRePass" class="text-red-500 font-bold ml-4 "></p>
+
         <div class="flex justify-center">
           <button
-            class="mb-10 mt-10 w-5/12 items-center rounded-md bg-blue-200 text-blue-500"
+        
+            class="text-blue-500 mb-10 mt-10 h-12 w-5/12 items-center rounded-md bg-blue"
           >
             Confirm
           </button>
         </div>
       </form>
     </main>
+
+  <!-- popup alert successful -->
+   <div id="successful" class="invisible fixed flex flex-col items-center bg-stone-500 bg-opacity-50 top-0 w-screen h-screen">
+      <div class="flex flex-col sm:w-2/6 items-center bg-white h-1/2 w-4/5 mt-24 rounded-xl shadow-gray-700 shadow-xl ">
+          <p class="text-3xl font-bold mt-5"> Đăng kí thành công</p>
+          <img src="../img/done.png" class="h-1/2">
+          <a href="login.html" class="bg-orange-300 h-1/6 w-1/2 text-center font-bold text-base text-gray-700  rounded-lg mt-3 py-2 shadow-gray-700 shadow-md">Đến trang đăng nhập</a>
+      </div>
+   </div>
     <script type="module" src="../../js/account/register.js"></script>
   </body>
 </html>

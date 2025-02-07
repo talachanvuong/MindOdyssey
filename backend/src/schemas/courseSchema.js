@@ -5,5 +5,5 @@ export const createCourseSchema = Joi.object({
 })
 
 export const getCoursesSchema = Joi.object({
-  keyword: Joi.string().trim().allow(''),
+  keyword: Joi.string().trim(),
 })
