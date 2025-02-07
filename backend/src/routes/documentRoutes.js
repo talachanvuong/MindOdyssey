@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import {
   createDocument,
+  editDocument,
   getDocumentDetail,
   removeDocument,
 } from '../controllers/documentController.js'
@@ -33,6 +34,14 @@ router.delete(
   authMiddleware.verifyUser,
   mutexLockHandler,
   transactionHandler(removeDocument),
+  errorHandler
+)
+// Update document
+router.patch(
+  '/',
+  authMiddleware.verifyUser,
+  mutexLockHandler,
+  transactionHandler(editDocument),
   errorHandler
 )
 
