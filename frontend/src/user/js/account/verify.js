@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Xử lý sự kiện submit
   form.addEventListener('submit', async (event) => {
-    loading.classList.remove('invisible')
+    
     event.preventDefault() // Ngăn chặn load lại trang
 
     const email = emailInput.value.trim() // Lấy email nhập vào
@@ -16,7 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Vui lòng nhập email!')
       return
     }
-
+    
+    loading.classList.remove('invisible')
+    
     try {
       const response = await fetch(
         'http://localhost:3000/api/user/verifyemail', //nơi gửi

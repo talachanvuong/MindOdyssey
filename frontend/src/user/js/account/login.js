@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //Open Popup
   function toggleModal(event) {
-    event.preventDefault()
+    //event.preventDefault()
     popupModal.classList.remove('invisible')
     setTimeout(() => {
       popupModal.classList.remove('opacity-0')
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //close Popup
   function closeModal(event) {
-    event.preventDefault()
+    //event.preventDefault()
     popupModal.classList.remove('opacity-100')
     popupModal.classList.add('opacity-0', 'duration-700')
     content.classList.remove('translate-y-3')
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //close Popup when click out side
   function closeModalWhenClickOutSide(event) {
-    event.preventDefault()
+    //event.preventDefault()
     if (event.target === popupModal) {
       popupModal.classList.remove('opacity-100')
       popupModal.classList.add('opacity-0', 'duration-700')
@@ -59,12 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
   closePopUp2.addEventListener(`click`, closeModal)
   popupModal.addEventListener('click', closeModalWhenClickOutSide)
 
-
-  
-  // =========================    LOGIC    =====================================//
+  // =========================    LOGIC  LOGIN  =====================================//
 
   const form = document.getElementById('form')
-  const submitBtn = document.getElementById('submitBtn')
   const emailInput = document.getElementById('emailInput')
   const passwordInput = document.getElementById('passwordInput')
 
@@ -84,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const response = await fetch('http://localhost:3000/api/user/login', {
         method: 'POST',
-        credentials : "include",
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email,
@@ -102,7 +99,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } else {
         // Lỗi nếu response không ok
-        if (data.message === 'User not found!') {//tài khoản không tồn tại
+        if (data.message === 'User not found!') {
+          //tài khoản không tồn tại
           console.error('Lỗi API:', data)
           const noUser = document.getElementById('noUser')
           noUser.classList.remove('invisible')
@@ -112,7 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
           })
         }
 
-        if (data.message === 'Wrong password!') {//sai mật khẩu
+        if (data.message === 'Wrong password!') {
+          //sai mật khẩu
           console.error('Lỗi API:', data)
           const wrongPass = document.getElementById('wrongPass')
           wrongPass.classList.remove('invisible')
@@ -123,13 +122,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (
-          data.message === 'Password must be between 8 and 32 characters long!'//sai format mật khẩu
+          data.message === 'Password must be between 8 and 32 characters long!' //sai format mật khẩu
         ) {
           alert('mật khẩu phải chứa ít nhất 8 kí tự và nhiều nhất 32 kí tự')
         }
-        
+
         if (
-          data.message === 'Invalid email address!'//sai format email
+          data.message === 'Invalid email address!' //sai format email
         ) {
           alert('Email không hợp lệ')
         }
@@ -138,5 +137,105 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('🚨 Lỗi kết nối:', error)
       alert('❌ Không thể kết nối đến server. Vui lòng thử lại sau.')
     }
+  })
+
+  // ========================= Forget Password    =====================================//
+
+  //send email
+  const sendForm = document.getElementById('sendForm')
+  const emailForgetInput = document.getElementById('emailForgetInput')
+
+  //disable submit button in 30 seconds after sending email
+  const button = document.getElementById('sendEmailBtn')
+  const originalText = button.innerText
+
+  sendForm.addEventListener('submit', async (event) => {
+    event.preventDefault()
+    const email = emailForgetInput.value.trim()
+
+    if (!email) {
+      const alert = document.getElementById('alert')
+      alert.classList.remove('invisible')
+      return
+    }
+
+    //loading
+    const forgetPasswordLoading = document.getElementById(
+      'forgetPasswordLoading'
+    )
+    forgetPasswordLoading.classList.remove('invisible')
+
+    try {
+      const response = await fetch(
+        'http://localhost:3000/api/user/forgetpassword',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email,
+          }),
+        }
+      )
+      const data = await response.json()
+      if (response.ok) {
+        const sendEmailSuccess = document.getElementById('sendEmailSuccess')
+        forgetPasswordLoading.classList.add('invisible')
+        sendEmailSuccess.classList.remove('invisible')
+
+        //disable button in 30s
+        button.disabled = true
+        let timeLeft = 30
+        button.innerText = `${timeLeft} s`
+        button.classList.add('opacity-50', 'cursor-not-allowed')
+
+        const countdown = setInterval(() => {
+          timeLeft--
+          button.innerText = `${timeLeft} s`
+
+          if (timeLeft <= 0) {
+            clearInterval(countdown)
+            button.innerText = originalText
+            button.disabled = false
+            button.classList.remove('opacity-50', 'cursor-not-allowed')
+          }
+        }, 1000)
+
+      } else {
+        if (data.message === 'User not found!') {
+          const noUserFound = document.getElementById('noUserFound')
+          noUserFound.classList.remove('invisible')
+          forgetPasswordLoading.classList.add('invisible')
+        }
+        if (data.message === 'Invalid email address!') {
+          const invalidEmail = document.getElementById('invalidEmail')
+          invalidEmail.classList.remove('invisible')
+          forgetPasswordLoading.classList.add('invisible')
+        }
+      }
+    } catch (error) {
+      console.error('🚨 Lỗi kết nối:', error)
+      alert('❌ Không thể kết nối đến server. Vui lòng thử lại sau.')
+    }
+  })
+
+  //close alert popup when send email success
+  const closeSendEmailSuccess = document.getElementById('closeSendEmailSuccess')
+  closeSendEmailSuccess.addEventListener('click', () => {
+    const sendEmailSuccess = document.getElementById('sendEmailSuccess')
+    sendEmailSuccess.classList.add('invisible')
+  })
+
+  //close alert popup when email invalid
+  const closeInvalidEmail = document.getElementById('closeInvalidEmail')
+  closeInvalidEmail.addEventListener('click', () => {
+    const invalidEmail = document.getElementById('invalidEmail')
+    invalidEmail.classList.add('invisible')
+  })
+
+  //close alert popup when user not found
+  const closeNoUserFound = document.getElementById('closeNoUserFound')
+  closeNoUserFound.addEventListener('click', () => {
+    const noUserFound = document.getElementById('noUserFound')
+    noUserFound.classList.add('invisible')
   })
 })

@@ -13,43 +13,74 @@
     </header>
 
     <main class="mt-5 flex -translate-y-12 flex-col items-center opacity-0">
-      <p class="mb-5 text-4xl">Enter Your New Password</p>
+      <p class="mb-5 text-4xl">Quên mật khẩu</p>
       <form
+      id="form"
         class="flex h-full w-4/5 flex-col rounded-xl bg-white p-5 shadow-xl sm:w-4/12"
       >
         
-        <label class="mt-3 text-sm sm:text-lg">Enter you New Password</label>
+        <label class="mt-3 text-sm sm:text-lg">Nhập mật khẩu mới</label>
         <div class="flex justify-center">
           <input
+          id="newPass"
             class="w-11/12 rounded-md bg-stone-200 py-2 text-center"
-            placeholder="Enter your Password"
+            placeholder="mật khẩu mới"
           /><br />
         </div>
+
+        <p id="errorNewPass" class="text-red-500 font-bold ml-4 "></p>
+
         <label class="mt-3 text-sm sm:text-lg"
-          >Enter your Password once again</label
+          >Nhập lại mật khẩu</label
         >
         <div class="flex justify-center">
           <input
+          id="reNewPass"
             class="w-11/12 rounded-md bg-stone-200 py-2 text-center"
-            placeholder="Re-pass"
+            placeholder="nhập lại mật khẩu mới"
           /><br />
         </div>
+
+        <p id="errorReNewPass" class="text-red-500 font-bold ml-4 "></p>
 
         <!-- button -->
         <div class="flex flex-col items-center justify-center">
           <button
-            class="mb-3 mt-3 w-5/12 items-center rounded-md bg-blue-200 py-2 text-blue-500 hover:bg-blue-300"
+            class="mb-3 mt-3 w-5/12 items-center rounded-md bg-blue py-2 text-blue-500 hover:bg-blue-300"
           >
-            Confirm
+            Xác nhận
           </button>
           <button
             class="mb-3 w-5/12 items-center rounded-md bg-orange-300 py-2 hover:bg-orange-400"
           >
-            <a href="#">Back</a>
+            <a href="#">Trở về</a>
           </button>
         </div>
       </form>
-    </main>
+    </main> 
+
+    <!-- popup success renew pass -->
+    <div
+    id="success"
+    class=" fixed top-0 min-h-screen w-screen bg-slate-400 bg-opacity-55"
+  >
+    <div
+      class="mx-auto mt-56 flex w-5/6 flex-col items-center gap-5 rounded-xl bg-white  sm:w-2/5"
+    >
+      <p class="mx-auto mt-5 text-3xl">Đổi mật khẩu mới thành công !!!</p>
+      <div class="flex flex-row items-center gap-3">
+        <p>Về trang đăng nhập</p>
+        <img src="../img/done.png" class="h-10" />
+      </div>
+      <a
+      href="login.html"
+        class="mb-6 w-1/2 rounded-xl bg-orange-300 py-3 text-4xl shadow-xl text-center"
+      >
+        Đăng nhập
+      </a>
+    </div>
+  </div>
+    
     <script type="module" src="../../js/account/new_pass.js"></script>
   </body>
 </html>
