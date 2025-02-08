@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //Open Popup
   function toggleModal(event) {
-    //event.preventDefault()
+   
     popupModal.classList.remove('invisible')
     setTimeout(() => {
       popupModal.classList.remove('opacity-0')
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //close Popup
   function closeModal(event) {
-    //event.preventDefault()
+   
     popupModal.classList.remove('opacity-100')
     popupModal.classList.add('opacity-0', 'duration-700')
     content.classList.remove('translate-y-3')
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //close Popup when click out side
   function closeModalWhenClickOutSide(event) {
-    //event.preventDefault()
+   
     if (event.target === popupModal) {
       popupModal.classList.remove('opacity-100')
       popupModal.classList.add('opacity-0', 'duration-700')
