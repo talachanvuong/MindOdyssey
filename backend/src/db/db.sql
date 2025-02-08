@@ -99,8 +99,6 @@ CREATE TABLE "refresh_tokens" (
   "created_at" TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP)
 );
 
-CREATE UNIQUE INDEX ON "questions" ("order", "document_id");
-
 CREATE UNIQUE INDEX ON "contents" ("type", "question_id");
 
 CREATE UNIQUE INDEX ON "practice_histories" ("created_at", "user_id");
@@ -109,7 +107,12 @@ CREATE UNIQUE INDEX ON "arena_histories" ("created_at", "user_id");
 
 CREATE UNIQUE INDEX ON "arena_histories" ("user_id", "opponent");
 
-ALTER TABLE "contents" ADD CHECK ("text" IS NOT NULL OR "attachment" IS NOT NULL);
+ALTER TABLE "contents"
+ADD CHECK (
+	("text" IS NOT NULL AND "attachment" IS NULL AND "attachment_id" IS NULL) OR
+	("text" IS NULL AND "attachment" IS NOT NULL AND "attachment_id" IS NOT NULL) OR
+	("text" IS NOT NULL AND "attachment" IS NOT NULL AND "attachment_id" IS NOT NULL)
+);
 
 ALTER TABLE "questions" ADD FOREIGN KEY ("document_id") REFERENCES "documents" ("document_id") ON DELETE CASCADE;
 
