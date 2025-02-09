@@ -61,6 +61,7 @@ export const MESSAGE = {
   SERVER: {
     ERROR: 'Internal server error!',
     PROCCESSING: 'Request is already being processed!',
+    NO_PAYLOAD: 'Cannot send payload!',
   },
 }
 
