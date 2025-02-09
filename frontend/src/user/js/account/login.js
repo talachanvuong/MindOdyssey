@@ -93,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (response.ok) {
         if (data.message === 'User login successfully!') {
+          console.log(data.message)
           const loading = document.getElementById('loading')
           loading.classList.remove('invisible')
           window.location.href = '../../page/account/lobby.html'
