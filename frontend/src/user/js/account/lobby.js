@@ -1,7 +1,7 @@
 import '../../../style.css'
 document.addEventListener('DOMContentLoaded', () =>{
 
-    //send request to refresh token every 1 hour
+    //send request to refresh token every 1 hour but before 10s
     setInterval(async()=>{
         try{
             const response =await fetch('http://localhost:3000/api/user/refreshtoken', {
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () =>{
             console.error(err)
         }
 
-    },3600000)
+    },3400 * 1000)
 
     //logout button
     const logout = document.getElementById('logout')

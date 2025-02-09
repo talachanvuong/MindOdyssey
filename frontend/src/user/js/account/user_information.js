@@ -1,5 +1,6 @@
 import '../../../style.css'
 document.addEventListener('DOMContentLoaded', () => {
+  //================== EFFECT ===============================//
   //effect for user div
   const user_zone = document.getElementById('user_zone')
   setTimeout(() => {
@@ -48,6 +49,27 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 500)
     }
   }
+
+  //open change name
+  const changeNameBtn = document.getElementById('changeNameBtn')
+  const change_name = document.getElementById('change_name')
+
+  changeNameBtn.addEventListener('click', (e) => {
+    console.log('click change name')
+    change_name.classList.remove('invisible')
+  })
+  //change name
+  const renameBtn = document.getElementById('renameBtn')
+  renameBtn.addEventListener('click', (e) => {
+    e.stopPropagation()
+    change_name.classList.add('invisible')
+  })
+  //close change name
+  const closeReNameBtn = document.getElementById('closeReNameBtn')
+  closeReNameBtn.addEventListener('click', (e) => {
+    e.stopPropagation()
+    change_name.classList.add('invisible')
+  })
 
   // Open menu
   function toggleMenu(event) {
@@ -142,5 +164,71 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     })
+  })
+  //======================= LOGIC ===============================//
+  const name = document.getElementById('name')
+  const email = document.getElementById('email')
+  const display_name = document.getElementById('display_name')
+
+  async function getUserInfo() {
+    try {
+      const response = await fetch('http://localhost:3000/api/user/showinfo', {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      const data = await response.json()
+      if (response.ok) {
+        name.textContent = data.result.display_name
+        email.textContent = data.result.email
+        display_name.textContent = data.result.display_name
+      } else {
+        console.log(data.message)
+        name.textContent = 'Có lỗi khi lấy thông tin'
+        email.textContent = 'Có lỗi khi lấy thông tin'
+        display_name.textContent = 'LỖI HIỂN THỊ'
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  getUserInfo()
+
+  //change name
+  const renameForm = document.getElementById('reNameForm')
+  const newNameInput = document.getElementById('new_name')
+  renameForm.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const newName = newNameInput.value.trim()
+    if (!newName) {
+      alert('Vui lòng nhập tên mới')
+      return
+    }
+    try {
+      const response = await fetch('http://localhost:3000/api/user/update', {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({new_display_name:newName }),
+      })
+      const data = await response.json()
+      if (response.ok) {
+        const alert = document.getElementById('alertSuccess')
+        const success = document.getElementById('success')
+        alert.textContent = data.message
+        success.classList.remove('invisible')
+        setTimeout(() => {
+          success.classList.add('invisible')
+        }, 3000)
+        name.textContent = newName
+        display_name.textContent = newName
+      } else {
+        console.log(data.message)
+      }
+    } catch (e) {
+      console.log(e)
+      console.log('Có lỗi xảy ra')
+      console.log(newName)
+    }
   })
 })
