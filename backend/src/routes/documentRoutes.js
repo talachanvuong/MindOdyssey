@@ -3,6 +3,7 @@ import {
   createDocument,
   editDocument,
   getDocumentDetail,
+  getDocuments,
   removeDocument,
 } from '../controllers/documentController.js'
 import { asyncHandler } from '../middleware/asyncMiddleware.js'
@@ -41,6 +42,14 @@ router.patch(
   authMiddleware.verifyUser,
   mutexLockHandler,
   asyncHandler(editDocument),
+  errorHandler
+)
+// Get documents
+router.get(
+  '/',
+  authMiddleware.verifyUser,
+  mutexLockHandler,
+  asyncHandler(getDocuments),
   errorHandler
 )
 
