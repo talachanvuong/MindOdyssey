@@ -13,7 +13,7 @@ export const MESSAGE = {
     NOT_FOUND: 'Document not found!',
     INVALID_AUTHOR: 'Invalid document author!',
     CREATE_SUCCESS: 'Create document successfully!',
-    GET_SUCCESS: 'Get document successfully!',
+    GET_SUCCESS: 'Get document(s) successfully!',
     REMOVE_SUCCESS: 'Remove document successfully!',
     EDIT_SUCCESS: 'Edit document successfully!',
   },

@@ -57,3 +57,79 @@ Content-Type: application/json
 {
     "document": 0
 }
+
+### Update document
+PATCH {{host}}
+Content-Type: application/json
+
+{
+    "document": 0,
+    "title": "",
+    "description": "",
+    "course": 0,
+    "questions": [
+        {
+            "action": "add",
+            "content": [
+                {
+                    "text": "",
+                    "attachment": "",
+                    "type": "Q"
+                },
+                {
+                    "text": "",
+                    "attachment": "",
+                    "type": "A"
+                },
+                {
+                    "text": "",
+                    "attachment": "",
+                    "type": "B"
+                },
+                {
+                    "text": "",
+                    "attachment": "",
+                    "type": "C"
+                },
+                {
+                    "text": "",
+                    "attachment": "",
+                    "type": "D"
+                }
+            ],
+            "order": 0,
+            "correct": ""
+        },
+        {
+            "action": "remove",
+            "id": 0
+        },
+        {
+            "action": "edit",
+            "id": 0,
+            "content": [
+                {
+                    "id": 0,
+                    "text": "",
+                    "attachment": ""
+                }
+            ],
+            "order": 0,
+            "correct": ""
+        }
+    ]
+}
+
+### Get documents
+GET {{host}}
+Content-Type: application/json
+
+{
+    "pagination": {
+        "page": 0,
+        "perPage": 0
+    },
+    "keyword": "",
+    // Timestamp in milliseconds
+    "filter": 0 
+}
