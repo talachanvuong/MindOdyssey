@@ -18,22 +18,22 @@ document.addEventListener('DOMContentLoaded', () =>{
             }else{
                 if(data.message === "Refresh token expired!"){
                     console.log(data.message)
-                    alert('Your session has expired. Please login again!')
+                    alert('Phiên đăng nhập của bạn đã hết hạn. Vui lòng đăng nhập lại!')
                     window.location.href = '../../page/account/login.html'
                 }
                 if(data.message === "Refresh token missing!"){
                     console.log(data.message)
-                    alert('Your session has expired. Please login again!')
+                    alert('Có lỗi xảy ra. Vui lòng đăng nhập lại!')
                     window.location.href = '../../page/account/login.html'
                 }
                 if(data.message === "Invalid refresh token!"){
                     console.log(data.message)
-                    alert('Your session has expired. Please login again!')
+                    alert('Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại!')
                     window.location.href = '../../page/account/login.html'
                 }
                 if(data.message === "Refresh token not found!"){
                     console.log(data.message)
-                    alert('Your session has expired. Please login again!')
+                    alert('Phiên đăng nhập của ban đã hết hạn. Vui lòng đăng nhập lại!')
                     window.location.href = '../../page/account/login.html'}
         }
         }catch(err){
