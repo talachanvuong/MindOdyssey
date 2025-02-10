@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Đăng nhập</title>
   </head>
-  <body class="flex flex-col items-center justify-center">
+  <body class="flex flex-col ">
     <!-- header -->
     <header class="h-16 w-full bg-cyan-300 p-2">
       <a href="../home.html">
@@ -29,6 +29,8 @@
           placeholder="Enter your email"
           class="rounded-md border bg-stone-100"
         />
+
+        <p id="emailInputAlert" class=" ml-4 text-red-500"></p>
         <br />
         <label class="text-xs">Password</label>
         <input
@@ -36,6 +38,7 @@
           placeholder="Enter your password"
           class="rounded-md border bg-stone-100"
         />
+        <p id="passwordInputAlert" class=" ml-4 text-red-500"></p>
         <br />
         <button
           type="button"
@@ -83,8 +86,7 @@
               class="mx-3 rounded-md border bg-stone-100 pl-2 sm:py-2"
               placeholder="email"
             />
-            <p id="alert" class="invisible ml-4 text-red-500">
-              Chưa nhập email!
+            <p id="alert" class=" ml-4 text-red-500">
             </p>
             <button
               type="submit"
@@ -107,42 +109,7 @@
 
     <!-- popup alert -->
 
-    <!-- user doesn't exist -->
-    <div
-      id="noUser"
-      class="invisible fixed top-0 min-h-screen w-screen bg-slate-400 bg-opacity-55"
-    >
-      <div
-        class="mx-auto mt-56 flex w-5/6 flex-col items-center gap-5 rounded-xl bg-white"
-      >
-        <p class="mx-auto mt-5 text-3xl">Tài khoản không tồn tại</p>
-        <button
-          id="okBtn1"
-          class="mb-6 w-1/2 rounded-xl bg-orange-300 py-3 text-4xl shadow-xl"
-        >
-          OK
-        </button>
-      </div>
-    </div>
-
-    <!-- wrong password -->
-    <div
-      id="wrongPass"
-      class="invisible fixed top-0 min-h-screen w-screen bg-slate-400 bg-opacity-55"
-    >
-      <div
-        class="mx-auto mt-56 flex w-5/6 flex-col items-center gap-5 rounded-xl bg-white"
-      >
-        <p class="mx-auto mt-5 text-3xl">Sai mật khẩu!!</p>
-        <button
-          id="okBtn2"
-          class="mb-6 w-1/2 rounded-xl bg-orange-300 py-3 text-4xl shadow-xl"
-        >
-          OK
-        </button>
-      </div>
-    </div>
-
+    <div id="popupAlert"></div>
     <!-- loading -->
 
     <div
@@ -209,7 +176,7 @@
 
     <!-- success -->
 
-    <div
+    <!-- <div
       id="sendEmailSuccess"
       class="invisible fixed top-0 min-h-screen w-screen bg-slate-400 bg-opacity-55"
     >
@@ -228,10 +195,10 @@
           OK
         </button>
       </div>
-    </div>
+    </div> -->
 
     <!-- invalid email -->
-    <div
+    <!-- <div
       id="invalidEmail"
       class="invisible fixed top-0 min-h-screen w-screen bg-slate-400 bg-opacity-55"
     >
@@ -251,10 +218,10 @@
           OK
         </button>
       </div>
-    </div>
+    </div> -->
 
     <!-- user can not be founded -->
-    <div
+    <!-- <div
       id="noUserFound"
       class="invisible fixed top-0 min-h-screen w-screen bg-slate-400 bg-opacity-55"
     >
@@ -273,7 +240,7 @@
           OK
         </button>
       </div>
-    </div>
+    </div> -->
 
     <script type="module" src="../../js/account/login.js"></script>
   </body>

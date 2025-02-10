@@ -1,7 +1,8 @@
 import '../../../style.css'
+import { Popup_Modal } from '../model/popup.js'
+
 document.addEventListener('DOMContentLoaded', () => {
   //================== EFFECT ===============================//
-  //effect for user div
   const user_zone = document.getElementById('user_zone')
   setTimeout(() => {
     user_zone.classList.remove('opacity-0', '-translate-y-5', 'scale-90')
@@ -144,6 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
   checkbox.forEach((checkbox) => {
     checkbox.checked = true
   })
+
   confirmButton.addEventListener('click', () => {
     checkbox.forEach((checkbox) => {
       const elementId = checkboxToContentMap[checkbox.id]
@@ -170,6 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const email = document.getElementById('email')
   const display_name = document.getElementById('display_name')
 
+  //get user information function
   async function getUserInfo() {
     try {
       const response = await fetch('http://localhost:3000/api/user/showinfo', {
@@ -199,20 +202,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const newNameInput = document.getElementById('new_name')
   renameForm.addEventListener('submit', async (e) => {
     e.preventDefault()
+    //get new name
     const newName = newNameInput.value.trim()
+
+    //alert if user don't input new name
     if (!newName) {
       alert('Vui lòng nhập tên mới')
       return
     }
+
+    //api calling
     try {
       const response = await fetch('http://localhost:3000/api/user/update', {
         method: 'PATCH',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({new_display_name:newName }),
+        body: JSON.stringify({ new_display_name: newName }),
       })
       const data = await response.json()
+      const popup = new Popup_Modal('sameName', data.message)
       if (response.ok) {
+        //display alert popup when success in 3s
         const alert = document.getElementById('alertSuccess')
         const success = document.getElementById('success')
         alert.textContent = data.message
@@ -223,12 +233,11 @@ document.addEventListener('DOMContentLoaded', () => {
         name.textContent = newName
         display_name.textContent = newName
       } else {
-        console.log(data.message)
+        //error
+        popup.open()
       }
     } catch (e) {
-      console.log(e)
-      console.log('Có lỗi xảy ra')
-      console.log(newName)
+      console.error(e)
     }
   })
 })

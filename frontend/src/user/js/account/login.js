@@ -1,4 +1,5 @@
 import '../../../style.css'
+import { Popup_Modal } from '../model/popup.js'
 
 document.addEventListener('DOMContentLoaded', () => {
   // =================   EFFECT ===============================//
@@ -17,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //Open Popup
   function toggleModal(event) {
-   
     popupModal.classList.remove('invisible')
     setTimeout(() => {
       popupModal.classList.remove('opacity-0')
@@ -29,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //close Popup
   function closeModal(event) {
-   
     popupModal.classList.remove('opacity-100')
     popupModal.classList.add('opacity-0', 'duration-700')
     content.classList.remove('translate-y-3')
@@ -41,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //close Popup when click out side
   function closeModalWhenClickOutSide(event) {
-   
     if (event.target === popupModal) {
       popupModal.classList.remove('opacity-100')
       popupModal.classList.add('opacity-0', 'duration-700')
@@ -65,19 +63,34 @@ document.addEventListener('DOMContentLoaded', () => {
   const emailInput = document.getElementById('emailInput')
   const passwordInput = document.getElementById('passwordInput')
 
+  //form login
   form.addEventListener('submit', async (event) => {
     event.preventDefault() //chống reload page
     const email = emailInput.value.trim()
     const password = passwordInput.value.trim()
+
+    //check all field are filled
+    const emailInputAlert = document.getElementById('emailInputAlert')
+    const passwordInputAlert =  document.getElementById('passwordInputAlert')
+    let filled = true
+
     if (!email) {
-      alert('Vui lòng điền email!')
-      return
+      emailInputAlert.textContent =
+        'Vui lòng nhập email'
+      filled = false
+    }else{
+      emailInputAlert.textContent=''
     }
     if (!password) {
-      alert('Bạn chưa điền mật khẩu!!')
-      return
+      passwordInputAlert.textContent =
+        'Vui lòng nhập mật khẩu'
+      filled = false
+    }else{
+      passwordInputAlert.textContent=''
     }
+    if (!filled) return
 
+    //api calling
     try {
       const response = await fetch('http://localhost:3000/api/user/login', {
         method: 'POST',
@@ -89,54 +102,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }),
       })
 
-      const data = await response.json() // Lấy dữ liệu JSON từ response
+      const data = await response.json()
+      const popup = new Popup_Modal('popupAlert', data.message)
 
+      //achor to lobby if login success
       if (response.ok) {
         if (data.message === 'User login successfully!') {
-          console.log(data.message)
-          const loading = document.getElementById('loading')
+          popup.open()
           loading.classList.remove('invisible')
           window.location.href = '../../page/account/lobby.html'
         }
       } else {
-        // Lỗi nếu response không ok
+        //popup user not founded
         if (data.message === 'User not found!') {
-          //tài khoản không tồn tại
-          console.error('Lỗi API:', data)
-          const noUser = document.getElementById('noUser')
-          noUser.classList.remove('invisible')
-          const okBtn1 = document.getElementById('okBtn1')
-          okBtn1.addEventListener('click', () => {
-            noUser.classList.add('invisible')
-          })
+          popup.open()
         }
 
+        //popup if wrong password
         if (data.message === 'Wrong password!') {
-          //sai mật khẩu
-          console.error('Lỗi API:', data)
-          const wrongPass = document.getElementById('wrongPass')
-          wrongPass.classList.remove('invisible')
-          const okBtn2 = document.getElementById('okBtn2')
-          okBtn2.addEventListener('click', () => {
-            wrongPass.classList.add('invisible')
-          })
+          popup.open()
         }
 
+        //wrong format
         if (
-          data.message === 'Password must be between 8 and 32 characters long!' //sai format mật khẩu
+          data.message === 'Password must be between 8 and 32 characters long!'
         ) {
-          alert('mật khẩu phải chứa ít nhất 8 kí tự và nhiều nhất 32 kí tự')
+          passwordInputAlert.textContent = data.message
         }
 
-        if (
-          data.message === 'Invalid email address!' //sai format email
-        ) {
-          alert('Email không hợp lệ')
+        //wrong format email
+        if (data.message === 'Invalid email address!') {
+          emailInputAlert.textContent = data.message
         }
       }
     } catch (error) {
-      console.error('🚨 Lỗi kết nối:', error)
-      alert('❌ Không thể kết nối đến server. Vui lòng thử lại sau.')
+      console.error(error)
+      alert(error)
     }
   })
 
@@ -153,19 +154,22 @@ document.addEventListener('DOMContentLoaded', () => {
   sendForm.addEventListener('submit', async (event) => {
     event.preventDefault()
     const email = emailForgetInput.value.trim()
+    const alert = document.getElementById('alert')
 
     if (!email) {
-      const alert = document.getElementById('alert')
-      alert.classList.remove('invisible')
+     alert.textContent = "Vui lòng nhập email"
       return
+    }else{
+      alert.textContent =``
     }
 
-    //loading
+    //loading screen
     const forgetPasswordLoading = document.getElementById(
       'forgetPasswordLoading'
     )
     forgetPasswordLoading.classList.remove('invisible')
 
+    //api calling
     try {
       const response = await fetch(
         'http://localhost:3000/api/user/forgetpassword',
@@ -177,11 +181,14 @@ document.addEventListener('DOMContentLoaded', () => {
           }),
         }
       )
+
       const data = await response.json()
+      const popup = new Popup_Modal('popupAlert', data.message)
+
+      //popup alert if send email success
       if (response.ok) {
-        const sendEmailSuccess = document.getElementById('sendEmailSuccess')
+        popup.open()
         forgetPasswordLoading.classList.add('invisible')
-        sendEmailSuccess.classList.remove('invisible')
 
         //disable button in 30s
         button.disabled = true
@@ -200,16 +207,15 @@ document.addEventListener('DOMContentLoaded', () => {
             button.classList.remove('opacity-50', 'cursor-not-allowed')
           }
         }, 1000)
-
       } else {
+        //if user not found
         if (data.message === 'User not found!') {
-          const noUserFound = document.getElementById('noUserFound')
-          noUserFound.classList.remove('invisible')
+          popup.open()
           forgetPasswordLoading.classList.add('invisible')
         }
+        //if invalid email
         if (data.message === 'Invalid email address!') {
-          const invalidEmail = document.getElementById('invalidEmail')
-          invalidEmail.classList.remove('invisible')
+          alert.textContent = data.message
           forgetPasswordLoading.classList.add('invisible')
         }
       }
@@ -217,26 +223,5 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('🚨 Lỗi kết nối:', error)
       alert('❌ Không thể kết nối đến server. Vui lòng thử lại sau.')
     }
-  })
-
-  //close alert popup when send email success
-  const closeSendEmailSuccess = document.getElementById('closeSendEmailSuccess')
-  closeSendEmailSuccess.addEventListener('click', () => {
-    const sendEmailSuccess = document.getElementById('sendEmailSuccess')
-    sendEmailSuccess.classList.add('invisible')
-  })
-
-  //close alert popup when email invalid
-  const closeInvalidEmail = document.getElementById('closeInvalidEmail')
-  closeInvalidEmail.addEventListener('click', () => {
-    const invalidEmail = document.getElementById('invalidEmail')
-    invalidEmail.classList.add('invisible')
-  })
-
-  //close alert popup when user not found
-  const closeNoUserFound = document.getElementById('closeNoUserFound')
-  closeNoUserFound.addEventListener('click', () => {
-    const noUserFound = document.getElementById('noUserFound')
-    noUserFound.classList.add('invisible')
   })
 })
