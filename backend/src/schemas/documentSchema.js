@@ -118,3 +118,12 @@ export const editDocumentSchema = Joi.object({
     )
     .min(1),
 }).or('title', 'description', 'course', 'questions')
+
+export const getDocumentsSchema = Joi.object({
+  pagination: Joi.object({
+    page: Joi.number().integer().strict().min(1).required(),
+    perPage: Joi.number().integer().strict().min(1).required(),
+  }),
+  keyword: Joi.string().trim(),
+  filter: Joi.date().timestamp()
+})

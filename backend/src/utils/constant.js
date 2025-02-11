@@ -1,16 +1,7 @@
 export const MESSAGE = {
   VALIDATE: {
-    REQUIRED: 'Missing required field!',
-    DISPLAY_NAME: 'Display name must be between 8 and 64 characters long!',
-    EMAIL: 'Invalid email address!',
-    PASSWORD: 'Password must be between 8 and 32 characters long!',
-    TITLE: 'Title must be between 8 and 256 characters long!',
-    CONTENT: 'Content must be less than 4096 characters long!',
-    ATTACHMENT: 'Size must be less than 5 MB!',
-    DESCRIPTION: 'Desciption must be les than 2048 characters long!',
     TIME_PER_QUESTION:
       'The allowed time for each question must be between 30 seconds and 3 minutes!',
-    REASON: 'Reason must be less than 2048 characters long!',
   },
   COURSE: {
     EXISTED: 'Course already exists!',
@@ -22,7 +13,7 @@ export const MESSAGE = {
     NOT_FOUND: 'Document not found!',
     INVALID_AUTHOR: 'Invalid document author!',
     CREATE_SUCCESS: 'Create document successfully!',
-    GET_SUCCESS: 'Get document successfully!',
+    GET_SUCCESS: 'Get document(s) successfully!',
     REMOVE_SUCCESS: 'Remove document successfully!',
     EDIT_SUCCESS: 'Edit document successfully!',
   },
@@ -49,27 +40,28 @@ export const MESSAGE = {
     RESET_PASSWORD_SUCCESS: 'Reset password successfully!',
     CHANGE_PASSWORD_SUCCESS: 'Change password successfully!',
     LOGOUT_SUCCESS: 'Logout and delete refresh token successfully!',
-    PASSWORD_NOT_MATCH: 'Password does not match!',
-    SAME_DISPLAY_NAME: 'New display name must be different from the old one!',
-    SAME_PASSWORD: 'New password must be different from the old one!',
   },
   AUTH: {
     ACCESS_TOKEN: {
-      MISSING: 'Access token missing!',
       INVALID: 'Invalid access token!',
       EXPIRED: 'Access token expired!',
     },
     REFRESH_TOKEN: {
-      MISSING: 'Refresh token missing!',
       NOT_FOUND: 'Refresh token not found!',
       INVALID: 'Invalid refresh token!',
       EXPIRED: 'Refresh token expired!',
       SUCCESS: 'Refresh token successfully!',
     },
   },
+  PRACTICE: {
+    GET_DOCS_SUCCESS: 'Get documents successfully!',
+    NOT_FOUND_DOCS: 'No results found for this keyword!',
+    PAGE_EXCEEDS_TOTAL: 'The requested page exceeds the total number of pages!',
+  },
   SERVER: {
     ERROR: 'Internal server error!',
     PROCCESSING: 'Request is already being processed!',
+    NO_PAYLOAD: 'Cannot send payload!',
   },
 }
 

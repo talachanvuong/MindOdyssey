@@ -2,6 +2,7 @@ import {
   createDocumentSchema,
   editDocumentSchema,
   getDocumentDetailSchema,
+  getDocumentsSchema,
   removeDocumentSchema,
 } from '../schemas/documentSchema.js'
 import {
@@ -28,6 +29,7 @@ import {
   selectContent,
   selectContents,
   selectDocument,
+  selectDocuments,
   selectQuestion,
   selectQuestions,
   selectTotalQuestions,
@@ -488,4 +490,33 @@ export const editDocument = async (req, res) => {
   // Confirm update document in database
   await confirmUpdateDocument(document)
   return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.DOCUMENT.EDIT_SUCCESS)
+}
+
+/**
+ * Get documents.
+ */
+export const getDocuments = async (req, res) => {
+  const { user_id } = req.user
+  const { error, value } = getDocumentsSchema.validate(req.body)
+  const { pagination, keyword, filter } = value
+
+  // Check validation
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+  }
+
+  // Get documents in database
+  const resultDocuments = await selectDocuments(
+    pagination,
+    keyword,
+    filter,
+    user_id
+  )
+
+  return sendResponse(
+    res,
+    STATUS_CODE.SUCCESS,
+    MESSAGE.DOCUMENT.GET_SUCCESS,
+    resultDocuments
+  )
 }

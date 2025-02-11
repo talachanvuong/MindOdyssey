@@ -1,4 +1,5 @@
 import client from '../db/db.js'
+import { timeConvert } from '../utils/convert.js'
 
 /**
  * Check document exist.
@@ -100,19 +101,19 @@ export const selectDocument = async (document_id) => {
       d.title,
       d.description,
       d.total_questions,
-      c.title as course,
-      d.user_id as author,
+      c.title AS course,
+      d.user_id AS author,
       d.created_at,
       d.last_updated,
       d.status,
-      a.display_name as reviewer,
+      a.display_name AS reviewer,
       d.reject_reason
-     FROM documents as d
-     INNER JOIN courses as c
+     FROM documents AS d
+     INNER JOIN courses AS c
      ON d.course_id = c.course_id
-     LEFT OUTER JOIN admins as a
+     LEFT OUTER JOIN admins AS a
      ON d.admin_id = a.admin_id
-     WHERE document_id = $1;`,
+     WHERE d.document_id = $1;`,
     [document_id]
   )
   return result.rows[0]
@@ -184,8 +185,8 @@ export const isDocumentAuthor = async (user_id, document_id) => {
 export const isQuestionAuthor = async (user_id, document_id, question_id) => {
   const result = await client.query(
     `SELECT 1
-     FROM documents as d
-     INNER JOIN questions as q
+     FROM documents AS d
+     INNER JOIN questions AS q
      ON d.document_id = q.document_id
      WHERE d.user_id = $1
      AND d.document_id = $2
@@ -207,10 +208,10 @@ export const isContentAuthor = async (
 ) => {
   const result = await client.query(
     `SELECT 1
-     FROM documents as d
-     INNER JOIN questions as q
+     FROM documents AS d
+     INNER JOIN questions AS q
      ON d.document_id = q.document_id
-     INNER JOIN contents as c
+     INNER JOIN contents AS c
      ON q.question_id = c.question_id
      WHERE d.user_id = $1
      AND d.document_id = $2
@@ -360,7 +361,7 @@ export const selectTotalQuestions = async (document_id) => {
      WHERE document_id = $1;`,
     [document_id]
   )
-  return result.rows[0].total_questions
+  return parseInt(result.rows[0].total_questions)
 }
 
 /**
@@ -450,4 +451,63 @@ export const arrangeOrderAfterUpdate = async (
      AND document_id = $4;`,
     [old_order, new_order, question_id, document_id]
   )
+}
+
+/**
+ * Select documents.
+ */
+export const selectDocuments = async (pagination, keyword, filter, user_id) => {
+  const options = []
+  const conditions = []
+  const refs = []
+  let index = 1
+
+  if (pagination) {
+    options.push(`LIMIT $${index} OFFSET $${index + 1}`)
+    refs.push(pagination.perPage)
+    refs.push(pagination.perPage * (pagination.page - 1))
+    index += 2
+  }
+
+  if (keyword) {
+    conditions.push(`d.title ILIKE $${index}`)
+    refs.push(`%${keyword}%`)
+    index++
+  }
+
+  if (filter) {
+    conditions.push(`d.created_at >= $${index}`)
+    refs.push(new Date(filter).toISOString())
+    index++
+  }
+
+  const result = await client.query(
+    `SELECT
+      d.document_id,
+      d.title,
+      d.description,
+      d.total_questions,
+      c.title AS course,
+      d.created_at,
+      d.last_updated,
+      d.status,
+      a.display_name AS reviewer,
+      d.reject_reason,
+      COUNT(*) OVER() AS total_pages
+     FROM documents AS d
+     INNER JOIN courses AS c
+     ON d.course_id = c.course_id
+     LEFT OUTER JOIN admins AS a
+     ON d.admin_id = a.admin_id
+     WHERE d.user_id = $${index}
+     ${conditions.map((condition) => `AND ${condition}`).join(' ')}
+     ${options.join(' ')};`,
+    [...refs, user_id]
+  )
+  return result.rows.map((row) => ({
+    ...row,
+    created_at: timeConvert(row.created_at),
+    last_updated: timeConvert(row.last_updated),
+    total_pages: parseInt(row.total_pages),
+  }))
 }
