@@ -93,7 +93,6 @@ router.get(
 // Refresh token
 router.post(
   '/refreshtoken',
-  asyncHandler(authMiddleware.verifyUser),
   mutexLockHandler,
   asyncHandler(authMiddleware.postRefreshToken),
   errorHandler
