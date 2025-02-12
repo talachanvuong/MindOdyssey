@@ -127,11 +127,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (
           data.message === 'Password must be between 8 and 32 characters long!'
         ) {
+         
           passwordInputAlert.textContent = data.message
         }
 
         //wrong format email
         if (data.message === 'Invalid email address!') {
+          console.log(data.message)
           emailInputAlert.textContent = data.message
         }
       }

@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json()
 
       if(response.ok){
+        //open popup
         const success = document.getElementById('success')
         success.classList.remove('invisible')
       }

@@ -1,4 +1,6 @@
 import '../../../style.css'
+import '../model/refreshToken.js'
+import refreshToken from '../model/refreshToken.js'
 
 document.addEventListener('DOMContentLoaded', () => {
   const elements = document.querySelectorAll('.opacity-0')
@@ -38,44 +40,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if(!filled) return
 
-    try{
-      const response = await fetch(
-        'http://localhost:3000/api/user/changepassword',
-        {
-          method: 'POST',
-          credentials: 'include',
-          
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            oldPassword: oldPass,
-            newPassword:newPass, 
-            confirmNewPassword: rePass}),
+    async function changePass() {
+      try{
+        const response = await fetch(
+          'http://localhost:3000/api/user/changepassword',
+          {
+            method: 'POST',
+            credentials: 'include',
+            
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              oldPassword: oldPass,
+              newPassword:newPass, 
+              confirmNewPassword: rePass}),
+          }
+        )
+        const data = await response.json()
+        if(response.ok){
+          const success = document.getElementById('success')
+          success.classList.remove('invisible')
         }
-      )
-      const data = await response.json()
-      if(response.ok){
-        const success = document.getElementById('success')
-        success.classList.remove('invisible')
+        else{
+          if(data.message === "Password must be between 8 and 32 characters long!"){
+            alert('Mật khẩu phải chứa từ 8 đến 32 ký tự')
+          }
+          if(data.message === "Wrong password!"){
+            alert('Mật khẩu cũ không đúng')
+          }
+          if(data.message === "Password does not match!"){
+            alert('Mật khẩu mới không khớp')
+          }
+          if(data.message ===`Access token is required`){
+            await refreshToken()
+            return changePass()
+          }
+          console.log(data.message)
+        }
+  
+      }catch(error){
+        console.error(error)
       }
-      else{
-        if(data.message === "Password must be between 8 and 32 characters long!"){
-          alert('Mật khẩu phải chứa từ 8 đến 32 ký tự')
-        }
-        if(data.message === "Wrong password!"){
-          alert('Mật khẩu cũ không đúng')
-        }
-        if(data.message === "Password does not match!"){
-          alert('Mật khẩu mới không khớp')
-        }
-        console.log(data.message)
-      }
-
-    }catch(error){
-      console.error(error)
+  
     }
-
+    changePass()
+    
   })
 
 

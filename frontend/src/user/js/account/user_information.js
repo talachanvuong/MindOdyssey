@@ -1,5 +1,7 @@
 import '../../../style.css'
 import { Popup_Modal } from '../model/popup.js'
+import '../model/refreshToken.js'
+import refreshToken from '../model/refreshToken.js'
 
 document.addEventListener('DOMContentLoaded', () => {
   //================== EFFECT ===============================//
@@ -146,27 +148,30 @@ document.addEventListener('DOMContentLoaded', () => {
     checkbox.checked = true
   })
 
-  confirmButton.addEventListener('click', () => {
-    checkbox.forEach((checkbox) => {
-      const elementId = checkboxToContentMap[checkbox.id]
-      const element = document.getElementById(elementId)
-      if (element) {
-        if (checkbox.checked) {
-          element.classList.remove('invisible')
-          setTimeout(() => {
-            element.classList.remove('opacity-0', 'scale-0')
-            element.classList.add('opacity-100', 'scale-100')
-          }, 10)
-        } else {
-          element.classList.add('opacity-0', 'scale-0')
-          element.classList.remove('opacity-100', 'scale-100')
-          setTimeout(() => {
-            element.classList.add('invisible')
-          }, 300)
-        }
+  //display checkbox function
+  function displayCheckBox(){checkbox.forEach((checkbox) => {
+    const elementId = checkboxToContentMap[checkbox.id]
+    const element = document.getElementById(elementId)
+    if (element) {
+      if (checkbox.checked) {
+        element.classList.remove('invisible')
+        setTimeout(() => {
+          element.classList.remove('opacity-0', 'scale-0')
+          element.classList.add('opacity-100', 'scale-100')
+        }, 10)
+      } else {
+        element.classList.add('opacity-0', 'scale-0')
+        element.classList.remove('opacity-100', 'scale-100')
+        setTimeout(() => {
+          element.classList.add('invisible')
+        }, 300)
       }
-    })
+    }
   })
+
+  }
+  //confirmButton.addEventListener('click', ()=>displayCheckBox())
+  document.addEventListener('click',()=>displayCheckBox())
   //======================= LOGIC ===============================//
   const name = document.getElementById('name')
   const email = document.getElementById('email')
@@ -175,7 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
   //get user information function
   async function getUserInfo() {
     try {
-      const response = await fetch('http://localhost:3000/api/user/showinfo', {
+        //if(refreshToken()) console.log('ok')
+        const response = await fetch('http://localhost:3000/api/user/showinfo', {
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -186,13 +192,17 @@ document.addEventListener('DOMContentLoaded', () => {
         email.textContent = data.result.email
         display_name.textContent = data.result.display_name
       } else {
-        console.log(data.message)
-        name.textContent = 'Có lỗi khi lấy thông tin'
-        email.textContent = 'Có lỗi khi lấy thông tin'
-        display_name.textContent = 'LỖI HIỂN THỊ'
+        //console.log(data.message)
+        if(data.message===`Access token is required`){
+          await refreshToken()
+          return getUserInfo()
+        }       
       }
     } catch (e) {
       console.log(e)
+      name.textContent = 'Có lỗi khi lấy thông tin'
+      email.textContent = 'Có lỗi khi lấy thông tin'
+      display_name.textContent = 'LỖI HIỂN THỊ'
     }
   }
   getUserInfo()
@@ -212,6 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     //api calling
+   async function changeName(){
     try {
       const response = await fetch('http://localhost:3000/api/user/update', {
         method: 'PATCH',
@@ -233,11 +244,15 @@ document.addEventListener('DOMContentLoaded', () => {
         name.textContent = newName
         display_name.textContent = newName
       } else {
-        //error
-        popup.open()
+        if(data.message===`Access token is required`){
+          await refreshToken()
+          return changeName()
+        }       
       }
     } catch (e) {
       console.error(e)
     }
+   } 
+   changeName()
   })
 })
