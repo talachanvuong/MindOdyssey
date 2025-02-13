@@ -21,7 +21,7 @@
           <label class="text-2xl">Nhập email</label>
           <input class="rounded border border-black" />
           <button
-            class="mx-auto mt-3 h-10 w-1/2 rounded bg-orange-300 text-2xl shadow-xl hover:bg-orange-400"
+            class="mx-auto mt-3 h-10 w-1/2 rounded bg-orange-300 text-2xl shadow-xl"
           >
             Gửi email
           </button>
@@ -31,7 +31,60 @@
 
     <!-- popup alert -->
 
-    <div id="popupAlert"></div>
+    <!-- successful -->
+    <div
+      id="success"
+      class="invisible fixed top-0 h-screen w-screen bg-gray-400 bg-opacity-55"
+    >
+      <div
+        class="mx-auto mt-44 flex h-fit w-11/12 flex-col items-center rounded-xl border bg-white sm:mx-auto sm:w-2/5"
+      >
+        <p class="mt-5 text-2xl">Đã gửi email, hãy kiểm tra hòm thư!!</p>
+        <button
+          id="button1"
+          class="mb-5 mt-5 h-11 w-2/5 rounded-xl bg-orange-300 text-xl font-bold shadow-xl"
+        >
+          OK
+        </button>
+      </div>
+    </div>
+
+    <!-- user exist-->
+    <div
+      id="fail"
+      class="invisible fixed top-0 h-screen w-screen bg-gray-400 bg-opacity-55"
+    >
+      <div
+        class="mx-auto mt-44 flex h-fit w-11/12 flex-col items-center rounded-xl border bg-white sm:mx-auto sm:w-2/5"
+      >
+        <p id="existError" class="mt-5 text-2xl"></p>
+        <button
+          id="button2"
+          class="mb-5 mt-5 h-11 w-2/5 rounded-xl bg-orange-300 text-xl font-bold shadow-xl"
+        >
+          OK
+        </button>
+      </div>
+    </div>
+
+    <!--invalid email-->
+    <div
+      id="invalid"
+      class="invisible fixed top-0 h-screen w-screen bg-gray-400 bg-opacity-55"
+    >
+      <div
+        class="mx-auto mt-44 flex h-fit w-11/12 flex-col items-center rounded-xl border bg-white sm:mx-auto sm:w-2/5"
+      >
+        <p id="invalidError" class="mt-5 text-2xl"></p>
+        <button
+          id="button3"
+          class="mb-5 mt-5 h-11 w-2/5 rounded-xl bg-orange-300 text-xl font-bold shadow-xl"
+        >
+          OK
+        </button>
+      </div>
+    </div>
+
     <!-- loading -->
 
     <div

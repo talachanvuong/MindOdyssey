@@ -1,5 +1,6 @@
 export class Popup_Modal {
   constructor(id, message) {
+    //console.log(document.getElementById(id))
     this.idModal = document.getElementById(id)
     this.message = message
     if (!this.idModal) {
@@ -27,7 +28,7 @@ export class Popup_Modal {
           </button>
         </div>
       </div>`
-    const closeBtn = document
+    document
       .getElementById('close')
       .addEventListener('click', () => this.close())
   }

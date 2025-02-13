@@ -1,7 +1,9 @@
 import '../../../style.css'
 import { Popup_Modal } from '../model/popup.js'
-import '../model/refreshToken.js'
-import refreshToken from '../model/refreshToken.js'
+import '../model/callApi.js'
+import callApi from '../model/callApi.js'
+import api from '../config/envConfig.js'
+
 
 document.addEventListener('DOMContentLoaded', () => {
   //================== EFFECT ===============================//
@@ -179,31 +181,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //get user information function
   async function getUserInfo() {
-    try {
-        //if(refreshToken()) console.log('ok')
-        const response = await fetch('http://localhost:3000/api/user/showinfo', {
-        method: 'GET',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-      })
-      const data = await response.json()
-      if (response.ok) {
-        name.textContent = data.result.display_name
-        email.textContent = data.result.email
-        display_name.textContent = data.result.display_name
-      } else {
-        //console.log(data.message)
-        if(data.message===`Access token is required`){
-          await refreshToken()
-          return getUserInfo()
-        }       
-      }
-    } catch (e) {
-      console.log(e)
-      name.textContent = 'Có lỗi khi lấy thông tin'
-      email.textContent = 'Có lỗi khi lấy thông tin'
-      display_name.textContent = 'LỖI HIỂN THỊ'
-    }
+    const result = callApi.callApi(api.apiShowInfo)
+
+    console.log(result)
   }
   getUserInfo()
 

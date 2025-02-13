@@ -30,7 +30,7 @@
           class="rounded-md border bg-stone-100"
         />
 
-        <p id="emailInputAlert" class=" ml-4 text-red-500"></p>
+        <div id="emailInputAlert"></div>
         <br />
         <label class="text-xs">Password</label>
         <input
@@ -39,7 +39,7 @@
           placeholder="Enter your password"
           class="rounded-md border bg-stone-100"
         />
-        <p id="passwordInputAlert" class=" ml-4 text-red-500"></p>
+        <div id="passwordInputAlert"></div>
         <br />
         <button
           type="button"
@@ -68,7 +68,7 @@
 
     <!-- popup Forget Password -->
     <div
-      class="invisible opacity-0 fixed inset-0 flex h-full w-full items-center justify-center bg-black bg-opacity-50"
+      class="invisible opacity-0 fixed inset-0 flex h-full w-full items-center justify-center bg-black bg-opacity-50" 
       id="popupModal"
     >
       <div
@@ -80,15 +80,14 @@
         </button>
         <div class="mx-auto mt-10 flex h-4/6 w-11/12 flex-col items-center">
           <p class="mt-5 text-center text-2xl">Quên mật khẩu ?</p>
-          <form id="sendForm" class="mt-10 flex w-full flex-col">
+          <form id="sendForm" class="mt-10 flex w-full flex-col justify-center  ">
             <label class="ml-2 text-left">Nhập Email</label>
             <input
               id="emailForgetInput"
               class="mx-3 rounded-md border bg-stone-100 pl-2 sm:py-2"
               placeholder="email"
             />
-            <p id="alert" class=" ml-4 text-red-500">
-            </p>
+            <div id = 'alert'></div>
             <button
               type="submit"
               id="sendEmailBtn"
