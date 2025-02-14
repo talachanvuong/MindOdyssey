@@ -1,13 +1,10 @@
 const refreshToken = async () => {
   try {
-    const response = await fetch(
-      'http://localhost:3000/api/user/refreshtoken',
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-      }
-    )
+    const response = await fetch('http://localhost:3000/api/user/refreshtoken', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+    })
 
     const data = await response.json()
 
@@ -25,7 +22,6 @@ const refreshToken = async () => {
 }
 
 const fetchData = async (linkApi, body = null, method) => {
-  //fetch API and response the data
   try {
     const response = await fetch(linkApi, {
       method,
@@ -33,7 +29,9 @@ const fetchData = async (linkApi, body = null, method) => {
       body: body ? JSON.stringify(body) : null,
       headers: { 'Content-Type': 'application/json' },
     })
+
     const data = await response.json()
+
     return {
       statusCode: response.status,
       message: data.message,
@@ -46,48 +44,40 @@ const fetchData = async (linkApi, body = null, method) => {
 
 const callApi = async (linkApi, body = null, method) => {
   try {
-    //the result data of the fetch
-    const data = await fetchData(linkApi, body, method)
+    let data = await fetchData(linkApi, body, method)
 
-    //check if the token is expired or not
-    if (data.message === 'Access token expired!') {
-      refreshToken()
-      return await fetchData(linkApi, body, method)
+    if (!data) {
+      return { status: 'error', message: 'Fetch failed' }
     }
 
-    //check  message/status
-    else {
-      //if success
-      switch (data.statusCode) {
-        case 200: {
-          return {
-            status: 'success',
-            message: data.message,
-          }
-        }
-        case 201: {
-          return {
-            status: 'created',
-            message: data.message,
-          }
-        }
-        case 400:
-        case 401:
-        case 404:
-        case 500:
-          return {
-            status: 'error',
-            message: data.message,
-          }
-        default:
-          return { status: 'unknown', message: 'Unexpected response' }
+    // Nếu token hết hạn, thử refresh rồi gọi lại API
+    if (data.message === 'Access token expired!') {
+      const refreshed = await refreshToken()
+      if (refreshed) {
+        data = await fetchData(linkApi, body, method)
+      } else {
+        return { status: 'error', message: 'Token refresh failed' }
       }
+    }
+
+    // Kiểm tra response code và trả về thông tin tương ứng
+    switch (data.statusCode) {
+      case 200:
+        return { status: 'success', message: data.message }
+      case 201:
+        return { status: 'created', message: data.message }
+      case 400:
+      case 401:
+      case 404:
+      case 500:
+        return { status: 'error', message: data.message }
+      default:
+        return { status: 'unknown', message: 'Unexpected response' }
     }
   } catch (error) {
     console.log('Error in callApi:', error)
-    return null
+    return { status: 'error', message: 'Internal error' }
   }
 }
 
-//Api calling function
 export default callApi
