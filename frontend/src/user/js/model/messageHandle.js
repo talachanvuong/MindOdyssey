@@ -15,6 +15,7 @@ const redMessage = [
   'Confirm new password must match new password',
   'Password cannot be empty',
   'Confirm password cannot be empty',
+  'Email cannot be empty'
 ]
 const popupMessage = [
   'User not found!',
