@@ -75,21 +75,10 @@ document.addEventListener('DOMContentLoaded', () => {
     //check all field are filled
     const emailInputAlert = document.getElementById('emailInputAlert')
     const passwordInputAlert = document.getElementById('passwordInputAlert')
-    let filled = true
+    
+    msg.redText(emailInputAlert,'')
+    msg.redText(passwordInputAlert,'')
 
-    if (!email) {
-      emailInputAlert.textContent = 'Vui lòng nhập email'
-      filled = false
-    } else {
-      emailInputAlert.textContent = ''
-    }
-    if (!password) {
-      passwordInputAlert.textContent = 'Vui lòng nhập mật khẩu'
-      filled = false
-    } else {
-      passwordInputAlert.textContent = ''
-    }
-    if (!filled) return
 
     //api login calling
     const apiResult = await callApi.callApi(
@@ -97,15 +86,17 @@ document.addEventListener('DOMContentLoaded', () => {
       { email: email, password: password }, //session
       'POST' //method
     )
+    console.log(apiResult.message)
     if (apiResult.status === 'success') {
       window.location.href = 'lobby.html'
     } else {
       const type = msg.classify(apiResult.message)
+
       if (type === 'redText') {
-        if (apiResult.message.includes('email')) {
+        if (apiResult.message.toLowerCase().includes('email')) {
           msg.redText(emailInputAlert, apiResult.message)
         }
-        if (apiResult.message.includes('Password')) {
+        if (apiResult.message.toLowerCase().includes('password')) {
           msg.redText(passwordInputAlert, apiResult.message)
         }
       }
@@ -130,12 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const email = emailForgetInput.value.trim()
     const alert = document.getElementById('alert')
 
-    if (!email) {
-      msg.redText(alert, 'Vui lòng nhập email')
-      return
-    } else {
-      msg.redText(alert, '')
-    }
+    msg.redText(alert,'')
 
     //loading screen
     const forgetPasswordLoading = document.getElementById(
@@ -174,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const type = msg.classify(apiResult.message)
       forgetPasswordLoading.classList.add('invisible')
       if (type === `redText`) {
-        console.log('hello')
+
         msg.redText(alert, apiResult.message)
       }
       if (type === `popup`) {

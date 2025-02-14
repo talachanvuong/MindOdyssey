@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const emailInput = document.querySelector('input')
   const loading = document.getElementById('loading')
   const redText = document.getElementById('alert')
+  const popupAlert = document.getElementById('popupAlert')
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault()
@@ -36,6 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (type === 'redText') {
         loading.classList.add('invisible')
         msg.redText(redText, apiResult.message)
+      }
+      if(type === 'popup'){
+        loading.classList.add('invisible')
+        msg.popup(popupAlert,apiResult.message)
       }
     }
   })

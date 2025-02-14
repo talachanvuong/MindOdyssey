@@ -1,13 +1,14 @@
 const refreshToken = async () => {
   try {
-    const response = await fetch('http://localhost:3000/api/user/refreshtoken', {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-    })
-
+    const response = await fetch(
+      'http://localhost:3000/api/user/refreshtoken',
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      }
+    )
     const data = await response.json()
-
     if (response.ok) {
       console.log('Token Refreshed')
       return true
@@ -31,10 +32,10 @@ const fetchData = async (linkApi, body = null, method) => {
     })
 
     const data = await response.json()
-
     return {
       statusCode: response.status,
       message: data.message,
+      result: data.result,
     }
   } catch (error) {
     console.log('Error in fetchData:', error)
@@ -49,9 +50,11 @@ const callApi = async (linkApi, body = null, method) => {
     if (!data) {
       return { status: 'error', message: 'Fetch failed' }
     }
-
     // Nếu token hết hạn, thử refresh rồi gọi lại API
-    if (data.message === 'Access token expired!') {
+    if (
+      data.message === 'Access token expired!' ||
+      data.message === 'Access token is required'
+    ) {
       const refreshed = await refreshToken()
       if (refreshed) {
         data = await fetchData(linkApi, body, method)
@@ -63,9 +66,9 @@ const callApi = async (linkApi, body = null, method) => {
     // Kiểm tra response code và trả về thông tin tương ứng
     switch (data.statusCode) {
       case 200:
-        return { status: 'success', message: data.message }
+        return { status: 'success', message: data.message, data: data.result }
       case 201:
-        return { status: 'created', message: data.message }
+        return { status: 'created', message: data.message, data: data.result }
       case 400:
       case 401:
       case 404:
@@ -80,4 +83,4 @@ const callApi = async (linkApi, body = null, method) => {
   }
 }
 
-export default {callApi,refreshToken}
+export default { callApi, refreshToken }

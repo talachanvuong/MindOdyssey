@@ -1,8 +1,7 @@
 import '../../../style.css'
-import { Popup_Modal } from '../model/popup.js'
-import '../model/callApi.js'
-import callApi from '../model/callApi.js'
 import api from '../config/envConfig.js'
+import callApi from '../model/callApi.js'
+import msg from '../model/messageHandle.js'
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -59,13 +58,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const changeNameBtn = document.getElementById('changeNameBtn')
   const change_name = document.getElementById('change_name')
 
-  changeNameBtn.addEventListener('click', (e) => {
-    console.log('click change name')
+  changeNameBtn.addEventListener('click', () => {
     change_name.classList.remove('invisible')
   })
   //change name
   const renameBtn = document.getElementById('renameBtn')
-  renameBtn.addEventListener('click', (e) => {
+  renameBtn.addEventListener('submit', (e) => {
     e.stopPropagation()
     change_name.classList.add('invisible')
   })
@@ -181,58 +179,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //get user information function
   async function getUserInfo() {
-    const result = callApi.callApi(api.apiShowInfo)
-
-    console.log(result)
+    const apiResult =await callApi.callApi(api.apiShowInfo,null,'GET')
+    if(apiResult.status === `success`){
+      name.textContent=apiResult.data.display_name
+      email.textContent=apiResult.data.email
+      display_name.textContent=apiResult.data.display_name
+    }
+    else{
+      console.log(apiResult)
+      name.textContent='error'
+      email.textContent='error'
+      display_name.textContent='error'
+    }
   }
   getUserInfo()
 
   //change name
   const renameForm = document.getElementById('reNameForm')
   const newNameInput = document.getElementById('new_name')
+  const popupAlert = document.getElementById('popupAlert')
+  const error = document.getElementById('error')
   renameForm.addEventListener('submit', async (e) => {
     e.preventDefault()
-    //get new name
     const newName = newNameInput.value.trim()
+    const oldName = name.textContent.trim()
 
-    //alert if user don't input new name
-    if (!newName) {
-      alert('Vui lòng nhập tên mới')
+    //filter if newname is similar to oldname
+    if (newName === oldName) {
+      msg.popup(popupAlert,'New name must be different from old name')
       return
     }
 
-    //api calling
-   async function changeName(){
-    try {
-      const response = await fetch('http://localhost:3000/api/user/update', {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ new_display_name: newName }),
-      })
-      const data = await response.json()
-      const popup = new Popup_Modal('sameName', data.message)
-      if (response.ok) {
-        //display alert popup when success in 3s
-        const alert = document.getElementById('alertSuccess')
-        const success = document.getElementById('success')
-        alert.textContent = data.message
-        success.classList.remove('invisible')
-        setTimeout(() => {
-          success.classList.add('invisible')
-        }, 3000)
-        name.textContent = newName
-        display_name.textContent = newName
-      } else {
-        if(data.message===`Access token is required`){
-          await refreshToken()
-          return changeName()
-        }       
-      }
-    } catch (e) {
-      console.error(e)
+    msg.redText(error,``)
+
+   const apiResult = await callApi.callApi(api.apiUpdate,{new_display_name:newName},'PATCH')
+   if(apiResult.status ===`success`){
+      msg.popup(popupAlert,apiResult.message)
+      name.textContent=newName
+      display_name.textContent =newName 
+   }else {
+    const type=msg.classify(apiResult.message)
+    if(type === 'redText'){
+      msg.redText(error,apiResult.message)
     }
-   } 
-   changeName()
+   }
+    
   })
 })

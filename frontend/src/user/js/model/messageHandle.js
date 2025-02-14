@@ -15,12 +15,20 @@ const redMessage = [
   'Confirm new password must match new password',
   'Password cannot be empty',
   'Confirm password cannot be empty',
-  'Email cannot be empty'
+  'Email cannot be empty',
+  'Display name must be at least 8 characters long',
+  'Display name cannot be empty',
+  'Confirm password must match password',
+  'Confirm password is required',
+  'Email cannot be empty',
+  'Display name must be at most 64 characters long',
 ]
 const popupMessage = [
   'User not found!',
   'Wrong password!',
   'Send email successfully!',
+  'User already exists!',
+  'Update user successfully!',
 ]
 
 const alertMessage = ['Access token is required']
