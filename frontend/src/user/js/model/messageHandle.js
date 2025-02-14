@@ -1,44 +1,38 @@
+import { Popup_Modal } from '../model/popup.js'
 
-import {Popup_Modal} from '../model/popup.js'
-
-const redText = (idText,message)=>{
-    if(!idText) return
-    idText.innerHTML=`<p class=" ml-2 text-red-500">${message}</p>`
+const redText = (id, message) => {
+  if (!id) return
+  id.innerHTML = `<p class=" ml-2 text-red-500">${message}</p>`
 }
+const popup = (id,message)=>{
+    if(!id) return
+    const popup = new Popup_Modal(id.id,message )
+    popup.open()
+}
+const alertMessage = [
+  'Invalid email format',
+  'Password must be at least 8 characters long',
+  'Confirm new password must match new password',
+]
+const popupMessage = [
+  'User not found!',
+  'Wrong password!',
+  'Send email successfully!',
+]
 
-
-const messageHandle = (id,message) =>{
-    if(!id){
-        console.log('error occurs when gaining ID')
+function classify(message) {
+    if(!message) {
+        console.error('Message null')
         return
-    } 
-    const popup = new Popup_Modal(id.id,message)
-    switch(message){
-        case "Invalid email format":{
-            redText(id,message)
-            break
-        }
-        case "Password must be at least 8 characters long":{
-            redText(id,message)
-            break
-        }
-        case "User not found!":{
-            popup.open()
-            break
-        }
-        case "Wrong password!":{
-            popup.open()
-            break
-        }
-        case "Send email successfully!":{
-            popup.open()
-            break
-        }
-        default:{
-            console.log('this message is need to updated!')
-            break
-        }
     }
+  if (alertMessage.includes(message)) {
+    return 'alert'
+  }
+  if (popupMessage.includes(message)) {
+    return 'popup'
+  }
+  console.error('this message is need to updated!')
 }
 
-export default messageHandle
+
+export default {classify,redText,popup}

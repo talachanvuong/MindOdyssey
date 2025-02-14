@@ -2,7 +2,7 @@ import '../../../style.css'
 import '../model/callApi.js'
 import api from '../config/envConfig.js'
 import callApi from '../model/callApi.js'
-import messageHandle from '../model/messageHandle.js'
+import msg from '../model/messageHandle.js'
 
 document.addEventListener('DOMContentLoaded', () => {
   // =================   EFFECT ===============================//
@@ -92,17 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (!filled) return
 
-    const checkError = (message) => {
-      if (message.includes('email')) {
-        messageHandle(emailInputAlert, message)
-      } else if (message.includes('Password')) {
-        messageHandle(passwordInputAlert, message)
-        return
-      } else {
-        messageHandle(popupAlert, message)
-      }
-    }
-
     //api login calling
     const apiResult = await callApi(
       api.apiLogin, //link
@@ -112,7 +101,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (apiResult.status === 'success') {
       window.location.href = 'lobby.html'
     } else {
-      checkError(apiResult.message)
+      const type = msg.classify(apiResult.message)
+      if (type === 'alert') {
+        if (apiResult.message.includes('email')) {
+          msg.redText(emailInputAlert, apiResult.message)
+        }
+        if (apiResult.message.includes('Password')) {
+          msg.redText(passwordInputAlert, apiResult.message)
+        }
+      }
+      if (type === `popup`) {
+        msg.popup(popupAlert, apiResult.message)
+      }
     }
   })
 
@@ -132,10 +132,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const alert = document.getElementById('alert')
 
     if (!email) {
-      alert.textContent = 'Vui lòng nhập email'
+      msg.redText(alert, 'Vui lòng nhập email')
       return
     } else {
-      alert.textContent = ``
+      msg.redText(alert, '')
     }
 
     //loading screen
@@ -144,18 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
     )
     forgetPasswordLoading.classList.remove('invisible')
 
-    //function check email validation
-    const checkError = (message) => {
-      if (message.includes('email')) {
-        messageHandle(alert, message)
-        forgetPasswordLoading.classList.add('invisible')
-        return
-      } else {
-        messageHandle(popupAlert, apiResult.message)
-        forgetPasswordLoading.classList.add('invisible')
-      }
-    }
-
     //call API
     const apiResult = await callApi(
       api.apiForgetPassword,
@@ -163,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
       'POST'
     )
     if (apiResult.status === 'success') {
-      messageHandle(popupAlert, apiResult.message)
+      msg.popup(popupAlert, apiResult.message)
       forgetPasswordLoading.classList.add('invisible')
 
       //disable button in 30s
@@ -184,7 +172,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }, 1000)
     } else {
-      checkError(apiResult.message)
+      const type = msg.classify(apiResult.message)
+      forgetPasswordLoading.classList.add('invisible')
+      if (type === `alert`) {
+        console.log('hello')
+        msg.redText(alert, apiResult.message)
+      }
+      if (type === `popup`) {
+        msg.popup(popupAlert, apiResult.message)
+      }
     }
   })
 })
