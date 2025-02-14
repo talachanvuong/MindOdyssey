@@ -35,4 +35,5 @@ export class Popup_Modal {
   close() {
     this.idModal.innerHTML = ''
   }
+  
 }

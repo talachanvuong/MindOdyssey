@@ -80,4 +80,4 @@ const callApi = async (linkApi, body = null, method) => {
   }
 }
 
-export default callApi
+export default {callApi,refreshToken}

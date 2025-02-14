@@ -1,5 +1,4 @@
 import '../../../style.css'
-import '../model/callApi.js'
 import api from '../config/envConfig.js'
 import callApi from '../model/callApi.js'
 import msg from '../model/messageHandle.js'
@@ -93,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!filled) return
 
     //api login calling
-    const apiResult = await callApi(
+    const apiResult = await callApi.callApi(
       api.apiLogin, //link
       { email: email, password: password }, //session
       'POST' //method
@@ -102,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = 'lobby.html'
     } else {
       const type = msg.classify(apiResult.message)
-      if (type === 'alert') {
+      if (type === 'redText') {
         if (apiResult.message.includes('email')) {
           msg.redText(emailInputAlert, apiResult.message)
         }
@@ -145,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
     forgetPasswordLoading.classList.remove('invisible')
 
     //call API
-    const apiResult = await callApi(
+    const apiResult = await callApi.callApi(
       api.apiForgetPassword,
       { email: email },
       'POST'
@@ -174,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       const type = msg.classify(apiResult.message)
       forgetPasswordLoading.classList.add('invisible')
-      if (type === `alert`) {
+      if (type === `redText`) {
         console.log('hello')
         msg.redText(alert, apiResult.message)
       }

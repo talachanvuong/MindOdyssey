@@ -1,4 +1,7 @@
 import '../../../style.css'
+import callApi from '../model/callApi.js'
+import api from '../config/envConfig.js'
+import msg from '../model/messageHandle.js'
 // =================   EFFECT ===============================//
 document.addEventListener('DOMContentLoaded', () => {
   const elements = document.querySelectorAll('.opacity-0')
@@ -21,56 +24,30 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault()
     const newPass = newPassInput.value.trim()
     const reNewPass = reNewPassInput.value.trim()
-
-    let filled= true //check all fields are filled
-
-    if (!newPass) {
-      errorNewPass.textContent = 'Please enter your new password'
-     filled = false
-    
+    msg.redText(errorNewPass,'')
+    msg.redText(errorReNewPass,'')
+    //API calling
+    const apiResult = await callApi.callApi(
+      api.apiResetPassword,
+      { newPassword: newPass, confirmNewPassword: reNewPass },
+      'POST'
+    )
+    if (apiResult.status === 'success') {
+      const success = document.getElementById('success')
+      success.classList.remove('invisible')
     } else {
-      errorNewPass.textContent = ''
-    }
-    if (!reNewPass) {
-      errorReNewPass.textContent = 'Please re-enter your new password'
-      filled = false
-    } else {
-      errorReNewPass.textContent = ''
-    }
-
-    if(!filled) return
-
-    try{
-      const response = await fetch('http://localhost:3000/api/user/resetpassword', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ newPassword: newPass, confirmNewPassword: reNewPass })
-      })
-
-      const data = await response.json()
-
-      if(response.ok){
-        //open popup
-        const success = document.getElementById('success')
-        success.classList.remove('invisible')
+      console.log(apiResult.message)
+      const type = msg.classify(apiResult.message)
+      if (type === `redText`) {
+        if (apiResult.message.includes('Password'))
+          msg.redText(errorNewPass, apiResult.message)
+        if (apiResult.message.includes('Confirm'))
+          msg.redText(errorReNewPass, apiResult.message)
       }
-      else{
-        if(data.message === "Access token missing!"){
-          window.location.href = '../../page/account/tokenExpired.html'
-        }
-        if(data.message === "Password must be between 8 and 32 characters long!"){
-          alert('mật khẩu phải chứa từ 8 đến 32 ký tự')
-        }
-        if(data.message === "Password does not match!"){
-          alert('mật khẩu không khớp')
-        }
-        
+      if (type === `alert`) {
+        alert('Đã hết phiên đổi mật khẩu, vui lòng gửi lại email')
+        window.location.href = '../home.html'      
       }
-    }catch(error){
-      console.error(error)
     }
   })
 })
