@@ -17,6 +17,7 @@ import {
   confirmUpdateDocument,
   deleteDocument,
   deleteQuestion,
+  illegalAccessDocument,
   insertContent,
   insertDocument,
   insertQuestion,
@@ -38,7 +39,6 @@ import {
   updateQuestion,
 } from '../services/documentService.js'
 import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
-import { timeConvert } from '../utils/convert.js'
 
 /**
  * Create a new document.
@@ -101,6 +101,7 @@ export const createDocument = async (req, res) => {
  * Get the details of a document.
  */
 export const getDocumentDetail = async (req, res) => {
+  const { user_id } = req.user
   const { error, value } = getDocumentDetailSchema.validate(req.body)
   const { document } = value
   const result = {}
@@ -116,41 +117,26 @@ export const getDocumentDetail = async (req, res) => {
     return sendResponse(res, STATUS_CODE.NOT_FOUND, MESSAGE.DOCUMENT.NOT_FOUND)
   }
 
+  // Check illegal access
+  const illegalAccess = await illegalAccessDocument(user_id, document)
+  if (illegalAccess) {
+    return sendResponse(res, STATUS_CODE.FORBIDDEN, MESSAGE.SERVER.PRIVACY)
+  }
+
   // Get document detail in database
   const resultDocument = await selectDocument(document)
-  result.title = resultDocument.title
-  result.description = resultDocument.description
-  result.total_questions = resultDocument.total_questions
-  result.course = resultDocument.course
-  result.author = resultDocument.author
-  result.created_at = timeConvert(resultDocument.created_at)
-  result.last_updated = timeConvert(resultDocument.last_updated)
-  result.status = resultDocument.status
-  result.reviewer = resultDocument.reviewer
-  result.reject_reason = resultDocument.reject_reason
+  Object.assign(result, resultDocument)
   result.questions = []
 
   // Get questions detail in database
   const resultQuestions = await selectQuestions(document)
-  for (let i = 0; i < resultQuestions.length; i++) {
-    const resultQuestion = resultQuestions[i]
-    result.questions.push({
-      id: resultQuestion.question_id,
-      content: [],
-      correct: resultQuestion.correct_answer,
-    })
-
+  for (const resultQuestion of resultQuestions) {
     // Get contents detail in database
-    const resultContents = await selectContents(resultQuestion.question_id)
-    for (const resultContent of resultContents) {
-      result.questions[i].content.push({
-        id: resultContent.content_id,
-        text: resultContent.text,
-        attachment: resultContent.attachment,
-        attachment_id: resultContent.attachment_id,
-        type: resultContent.type,
-      })
-    }
+    const resultContents = await selectContents(resultQuestion.id)
+    result.questions.push({
+      ...resultQuestion,
+      content: resultContents,
+    })
   }
 
   return sendResponse(

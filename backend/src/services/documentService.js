@@ -100,9 +100,8 @@ export const selectDocument = async (document_id) => {
     `SELECT
       d.title,
       d.description,
-      d.total_questions,
       c.title AS course,
-      d.user_id AS author,
+      u.display_name AS author,
       d.created_at,
       d.last_updated,
       d.status,
@@ -113,10 +112,30 @@ export const selectDocument = async (document_id) => {
      ON d.course_id = c.course_id
      LEFT OUTER JOIN admins AS a
      ON d.admin_id = a.admin_id
+     INNER JOIN users AS u
+     ON d.user_id = u.user_id
      WHERE d.document_id = $1;`,
     [document_id]
   )
-  return result.rows[0]
+  return result.rows.map((row) => ({
+    ...row,
+    created_at: timeConvert(row.created_at),
+    last_updated: timeConvert(row.last_updated),
+  }))[0]
+}
+
+/**
+ * Check for illegal access to a document.
+ */
+export const illegalAccessDocument = async (user_id, document_id) => {
+  const result = await client.query(
+    `SELECT user_id, status
+     FROM documents
+     WHERE document_id = $1;`,
+    [document_id]
+  )
+  const document = result.rows[0]
+  return document.user_id !== user_id && document.status !== 'Đã duyệt'
 }
 
 /**
@@ -125,7 +144,7 @@ export const selectDocument = async (document_id) => {
 export const selectQuestions = async (document_id) => {
   const result = await client.query(
     `SELECT
-      question_id,
+      question_id AS id,
       correct_answer
      FROM questions
      WHERE document_id = $1
@@ -141,7 +160,7 @@ export const selectQuestions = async (document_id) => {
 export const selectContents = async (question_id) => {
   const result = await client.query(
     `SELECT
-      content_id,
+      content_id AS id,
       text,
       attachment,
       attachment_id,
