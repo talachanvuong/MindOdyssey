@@ -30,10 +30,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const password = passwordInput.value.trim()
     const repass = repassInput.value.trim()
 
-    msg.redText(errorName, '')
-    msg.redText(errorPass, '')
-    msg.redText(errorRePass, '')
-
+    //empty field filter
+    let filled = true
+    if (!name) {
+      msg.redText(errorName, 'display name is required')
+      filled = false
+    } else  msg.redText(errorName, '')
+    if (!password) {
+      msg.redText(errorPass, 'new password is required')
+      filled = false
+    } else msg.redText(errorPass, '')
+    if (!repass) {
+      msg.redText(errorRePass, 'confirm password is required')
+      filled = false
+    } else   msg.redText(errorRePass, '')
+    if (!filled) return
+   
     //API calling
     const result = await callApi.callApi(
       api.apiRegister,

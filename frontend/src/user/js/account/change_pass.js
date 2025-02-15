@@ -1,6 +1,7 @@
 import '../../../style.css'
-import '../model/refreshToken.js'
-import refreshToken from '../model/refreshToken.js'
+import api from '../config/envConfig.js'
+import callApi from '../model/callApi.js'
+import msg from '../model/messageHandle.js'
 
 document.addEventListener('DOMContentLoaded', () => {
   const elements = document.querySelectorAll('.opacity-0')
@@ -13,80 +14,74 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('form')
   const oldPassInput = document.getElementById('old_passInput')
   const newPassInput = document.getElementById('new_passInput')
-  const rePassInput= document.getElementById('re_passInput')
+  const rePassInput = document.getElementById('re_passInput')
+  const popupAlert = document.getElementById('popupAlert')
 
-  form.addEventListener('submit', async(e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault()
+    const success = document.getElementById('success')
     const oldPass = oldPassInput.value.trim()
-    const newPass = newPassInput.value.trim() 
+    const newPass = newPassInput.value.trim()
     const rePass = rePassInput.value.trim()
-
-    //check all fields are filled
-    let filled = true
-    const oldPassError = document.getElementById('old_pass_error') 
+    const oldPassError = document.getElementById('old_pass_error')
     const newPassError = document.getElementById('new_pass_error')
     const rePassError = document.getElementById('re_pass_error')
-    if(!oldPass) {
-      filled = false
-      oldPassError.textContent = 'Vui lòng nhập mật khẩu cũ'
-    }
-    if(!newPass) {
-      filled = false
-      newPassError.textContent = 'Vui lòng nhập mật khẩu mới'
-    }
-    if(!rePass) {
-      filled = false
-      rePassError.textContent = 'Vui lòng nhập lại mật khẩu mới'
-    }
-    if(!filled) return
 
-    async function changePass() {
-      try{
-        const response = await fetch(
-          'http://localhost:3000/api/user/changepassword',
-          {
-            method: 'POST',
-            credentials: 'include',
-            
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              oldPassword: oldPass,
-              newPassword:newPass, 
-              confirmNewPassword: rePass}),
-          }
-        )
-        const data = await response.json()
-        if(response.ok){
-          const success = document.getElementById('success')
-          success.classList.remove('invisible')
+    //empty field filter
+    let filled = true
+    if (!oldPass) {
+      msg.redText(oldPassError, 'old password is required')
+      filled = false
+    } else msg.redText(oldPassError, '')
+    if (!newPass) {
+      msg.redText(newPassError, 'new password is required')
+      filled = false
+    } else msg.redText(newPassError, '')
+    if (!rePass) {
+      msg.redText(rePassError, 'confirm password is required')
+      filled = false
+    } else msg.redText(rePassError, '')
+    if (!filled) return
+
+    //check all fields are filled
+    const apiResult = await callApi.callApi(
+      api.apiChangePassword,
+      {
+        oldPassword: oldPass,
+        newPassword: newPass,
+        confirmNewPassword: rePass,
+      },
+      'POST'
+    )
+    if (apiResult.status === 'success') {
+      success.classList.remove('invisible')
+    } else {
+      console.log(apiResult.message)
+      const type = msg.classify(apiResult.message)
+      if (type === 'redText') {
+        if (newPassInput.value.length < 8) {
+          msg.redText(newPassError, apiResult.message)
         }
-        else{
-          if(data.message === "Password must be between 8 and 32 characters long!"){
-            alert('Mật khẩu phải chứa từ 8 đến 32 ký tự')
-          }
-          if(data.message === "Wrong password!"){
-            alert('Mật khẩu cũ không đúng')
-          }
-          if(data.message === "Password does not match!"){
-            alert('Mật khẩu mới không khớp')
-          }
-          if(data.message ===`Access token is required`){
-            await refreshToken()
-            return changePass()
-          }
-          console.log(data.message)
+        if (oldPassInput.value.length < 8) {
+          msg.redText(oldPassError, apiResult.message)
         }
-  
-      }catch(error){
-        console.error(error)
+        if (apiResult.message.toLowerCase().includes('confirm')) {
+          msg.redText(rePassError, apiResult.message)
+        }
+        if (rePassInput.value.length < 8) {
+          msg.redText(
+            rePassError,
+            'Password must be at least 8 characters long'
+          )
+        }
       }
-  
+
+      if (type === 'popup') {
+        msg.popup(popupAlert, apiResult.message)
+      }
+      if (type === 'alert') {
+        alert(apiResult.message)
+      }
     }
-    changePass()
-    
   })
-
-
 })

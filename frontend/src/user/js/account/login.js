@@ -88,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
     )
     console.log(apiResult.message)
     if (apiResult.status === 'success') {
+      
       window.location.href = 'lobby.html'
     } else {
       const type = msg.classify(apiResult.message)
