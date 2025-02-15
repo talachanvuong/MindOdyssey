@@ -13,8 +13,5 @@
   "description": "",
   "devDependencies": {
     "concurrently": "^9.1.0"
-  },
-  "dependencies": {
-    "joi-browser": "^13.4.0"
   }
 }
