@@ -1,4 +1,7 @@
 import '../../../style.css'
+import api from '../config/envConfig.js'
+import callApi from '../model/callApi.js'
+import msg from '../model/messageHandle.js'
 //===================  EFFECT =======================//
 document.addEventListener('DOMContentLoaded', () => {
   const elements = document.querySelectorAll('.opacity-0')
@@ -17,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const errorName = document.getElementById('errorName')
   const errorPass = document.getElementById('errorPass')
   const errorRePass = document.getElementById('errorRePass')
+  const success = document.getElementById('successful')
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault()
@@ -26,68 +30,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const password = passwordInput.value.trim()
     const repass = repassInput.value.trim()
 
-    //check if data had been fill all
-    let filledData = true
-
+    //empty field filter
+    let filled = true
     if (!name) {
-      errorName.textContent = 'Vui lòng nhập tên'
-      filledData = false
-    } else errorName.textContent = ''
-
+      msg.redText(errorName, 'display name is required')
+      filled = false
+    } else  msg.redText(errorName, '')
     if (!password) {
-      errorPass.textContent = 'Vui lòng nhập mật khẩu'
-      filledData = false
-    } else errorPass.textContent = ''
-
+      msg.redText(errorPass, 'new password is required')
+      filled = false
+    } else msg.redText(errorPass, '')
     if (!repass) {
-      errorRePass.textContent = 'Vui lòng nhập lại mật khẩu'
-      filledData = false
-    } else errorRePass.textContent = ''
-
-    if (!filledData) return
-
-    try {
-      const response = await fetch('http://localhost:3000/api/user/register', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          display_name: name,
-          password: password,
-          confirmPassword: repass,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        //pop up alert
-        const successfulAlert = document.getElementById('successful')
-        successfulAlert.classList.remove('invisible')
-      } else {
-        if (data.message === 'Access token missing!') {
-          alert('Đã hết thời gian đăng kí =(')
-          window.location.href = '../home.html'
-        }
-        if (
-          data.message ===
-          'Display name must be between 8 and 64 characters long!'
-        ) {
-          errorName.textContent = 'Tên hiển thị phải có từ 8 đến 64 kí tự!  '
-        }
-
-        if (
-          data.message === 'Password must be between 8 and 32 characters long!'
-        ) {
-          errorPass.textContent = 'Mật khẩu phải có từ 8 đến 32 kí tự'
-        }
-
-        if (data.message === 'Password does not match!') {
-          errorRePass.textContent = 'Mật khẩu không khớp'
-        }
+      msg.redText(errorRePass, 'confirm password is required')
+      filled = false
+    } else   msg.redText(errorRePass, '')
+    if (!filled) return
+   
+    //API calling
+    const result = await callApi.callApi(
+      api.apiRegister,
+      { display_name: name, password: password, confirmPassword: repass },
+      'POST'
+    )
+    console.log(result.message)
+    console.log(result.log)
+    if (result.status === `created`) {
+      success.classList.remove('invisible')
+    } else {
+      const type = msg.classify(result.message)
+      if (type === 'redText') {
+        if (result.message.includes('name'))
+          msg.redText(errorName, result.message)
+        if (result.message.includes('Password'))
+          msg.redText(errorPass, result.message)
+        if (result.message.includes('Confirm'))
+          msg.redText(errorRePass, result.message)
       }
-    } catch (error) {
-      alert('Có lỗi xảy ra :(')
+      if (type === 'alert') {
+        alert('Time out for register :(  Please send email again')
+        window.location.href = '../home.html'
+      }
     }
   })
 })

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Đăng nhập</title>
   </head>
-  <body class="flex flex-col items-center justify-center">
+  <body class="flex flex-col ">
     <!-- header -->
     <header class="h-16 w-full bg-cyan-300 p-2">
       <a href="../home.html">
@@ -29,13 +29,17 @@
           placeholder="Enter your email"
           class="rounded-md border bg-stone-100"
         />
+
+        <div id="emailInputAlert"></div>
         <br />
         <label class="text-xs">Password</label>
         <input
+        type="password"
           id="passwordInput"
           placeholder="Enter your password"
           class="rounded-md border bg-stone-100"
         />
+        <div id="passwordInputAlert"></div>
         <br />
         <button
           type="button"
@@ -64,7 +68,7 @@
 
     <!-- popup Forget Password -->
     <div
-      class="invisible fixed inset-0 flex h-full w-full items-center justify-center bg-black bg-opacity-50 opacity-0"
+      class="invisible opacity-0 fixed inset-0 flex h-full w-full items-center justify-center bg-black bg-opacity-50" 
       id="popupModal"
     >
       <div
@@ -75,68 +79,37 @@
           <img class="absolute right-2 top-2 h-6" src="../img/close.png" />
         </button>
         <div class="mx-auto mt-10 flex h-4/6 w-11/12 flex-col items-center">
-          <p class="mt-5 text-center text-2xl">Get Your Password Back</p>
-          <form class="mt-10 flex w-full flex-col">
-            <label class="ml-2 text-left">Enter Your Email</label>
+          <p class="mt-5 text-center text-2xl">Quên mật khẩu ?</p>
+          <form id="sendForm" class="mt-10 flex w-full flex-col justify-center  ">
+            <label class="ml-2 text-left">Nhập Email</label>
             <input
+              id="emailForgetInput"
               class="mx-3 rounded-md border bg-stone-100 pl-2 sm:py-2"
-              placeholder="your email"
+              placeholder="email"
             />
+            <div id = 'alert'></div>
             <button
-              class="bg-blue-200 text-blue-500 mx-auto mt-10 w-1/2 rounded-xl py-2"
+              type="submit"
+              id="sendEmailBtn"
+              class="text-blue-500 mx-auto mt-10 w-1/2 rounded-xl bg-blue py-2"
             >
-              Send email now!
-            </button>
-            <button
-              type="button"
-              class="mx-auto mb-3 mt-4 w-1/2 rounded-xl bg-orange-300 py-1 text-xl"
-              id="closeBtn"
-            >
-              Back
+              Gửi Email
             </button>
           </form>
+          <button
+            type="button"
+            class="mx-auto mb-3 mt-4 w-1/2 rounded-xl bg-orange-300 py-1 text-xl"
+            id="closeBtn"
+          >
+            Trở về
+          </button>
         </div>
       </div>
     </div>
 
     <!-- popup alert -->
 
-    <!-- user doesn't exist -->
-    <div
-      id="noUser"
-      class="invisible fixed top-0 min-h-screen w-screen bg-slate-400 bg-opacity-55"
-    >
-      <div
-        class="mx-auto mt-56 flex w-5/6 flex-col items-center gap-5 rounded-xl bg-white"
-      >
-        <p class="mx-auto mt-5 text-3xl">Tài khoản không tồn tại</p>
-        <button
-          id="okBtn1"
-          class="mb-6 w-1/2 rounded-xl bg-orange-300 py-3 text-4xl shadow-xl"
-        >
-          OK
-        </button>
-      </div>
-    </div>
-
-    <!-- wrong password -->
-    <div
-      id="wrongPass"
-      class="invisible fixed top-0 min-h-screen w-screen bg-slate-400 bg-opacity-55"
-    >
-      <div
-        class="mx-auto mt-56 flex w-5/6 flex-col items-center gap-5 rounded-xl bg-white"
-      >
-        <p class="mx-auto mt-5 text-3xl">Sai mật khẩu!!</p>
-        <button
-          id="okBtn2"
-          class="mb-6 w-1/2 rounded-xl bg-orange-300 py-3 text-4xl shadow-xl"
-        >
-          OK
-        </button>
-      </div>
-    </div>
-
+    <div id="popupAlert"></div>
     <!-- loading -->
 
     <div
@@ -168,6 +141,36 @@
       <p>Đang đăng nhập...</p>
     </div>
 
+    <!-- forget password loading -->
+
+    <div
+      id="forgetPasswordLoading"
+      class="invisible fixed top-0 flex h-screen w-screen flex-col items-center justify-center bg-slate-400 bg-opacity-75"
+    >
+      <svg class="h-16 w-16 animate-spin" viewBox="0 0 50 50">
+        <circle
+          class="text-gray-200"
+          cx="25"
+          cy="25"
+          r="20"
+          stroke="currentColor"
+          stroke-width="4"
+          fill="none"
+        />
+        <circle
+          class="text-gradient-to-r from-blue-500 via-green-400 to-yellow-400"
+          cx="25"
+          cy="25"
+          r="20"
+          stroke="currentColor"
+          stroke-width="4"
+          fill="none"
+          stroke-dasharray="100"
+          stroke-dashoffset="75"
+        />
+      </svg>
+      <p>Chúng tôi đang gửi email, xin chờ một chút...</p>
+    </div>
     <script type="module" src="../../js/account/login.js"></script>
   </body>
 </html>

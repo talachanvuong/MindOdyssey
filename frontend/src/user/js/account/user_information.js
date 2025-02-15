@@ -1,6 +1,11 @@
 import '../../../style.css'
+import api from '../config/envConfig.js'
+import callApi from '../model/callApi.js'
+import msg from '../model/messageHandle.js'
+
+
 document.addEventListener('DOMContentLoaded', () => {
-  //effect for user div
+  //================== EFFECT ===============================//
   const user_zone = document.getElementById('user_zone')
   setTimeout(() => {
     user_zone.classList.remove('opacity-0', '-translate-y-5', 'scale-90')
@@ -48,6 +53,26 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 500)
     }
   }
+
+  //open change name
+  const changeNameBtn = document.getElementById('changeNameBtn')
+  const change_name = document.getElementById('change_name')
+
+  changeNameBtn.addEventListener('click', () => {
+    change_name.classList.remove('invisible')
+  })
+  //change name
+  const renameBtn = document.getElementById('renameBtn')
+  renameBtn.addEventListener('submit', (e) => {
+    e.stopPropagation()
+    change_name.classList.add('invisible')
+  })
+  //close change name
+  const closeReNameBtn = document.getElementById('closeReNameBtn')
+  closeReNameBtn.addEventListener('click', (e) => {
+    e.stopPropagation()
+    change_name.classList.add('invisible')
+  })
 
   // Open menu
   function toggleMenu(event) {
@@ -122,25 +147,82 @@ document.addEventListener('DOMContentLoaded', () => {
   checkbox.forEach((checkbox) => {
     checkbox.checked = true
   })
-  confirmButton.addEventListener('click', () => {
-    checkbox.forEach((checkbox) => {
-      const elementId = checkboxToContentMap[checkbox.id]
-      const element = document.getElementById(elementId)
-      if (element) {
-        if (checkbox.checked) {
-          element.classList.remove('invisible')
-          setTimeout(() => {
-            element.classList.remove('opacity-0', 'scale-0')
-            element.classList.add('opacity-100', 'scale-100')
-          }, 10)
-        } else {
-          element.classList.add('opacity-0', 'scale-0')
-          element.classList.remove('opacity-100', 'scale-100')
-          setTimeout(() => {
-            element.classList.add('invisible')
-          }, 300)
-        }
+
+  //display checkbox function
+  function displayCheckBox(){checkbox.forEach((checkbox) => {
+    const elementId = checkboxToContentMap[checkbox.id]
+    const element = document.getElementById(elementId)
+    if (element) {
+      if (checkbox.checked) {
+        element.classList.remove('invisible')
+        setTimeout(() => {
+          element.classList.remove('opacity-0', 'scale-0')
+          element.classList.add('opacity-100', 'scale-100')
+        }, 10)
+      } else {
+        element.classList.add('opacity-0', 'scale-0')
+        element.classList.remove('opacity-100', 'scale-100')
+        setTimeout(() => {
+          element.classList.add('invisible')
+        }, 300)
       }
-    })
+    }
+  })
+
+  }
+  //confirmButton.addEventListener('click', ()=>displayCheckBox())
+  document.addEventListener('click',()=>displayCheckBox())
+  //======================= LOGIC ===============================//
+  const name = document.getElementById('name')
+  const email = document.getElementById('email')
+  const display_name = document.getElementById('display_name')
+
+  //get user information function
+  async function getUserInfo() {
+    const apiResult =await callApi.callApi(api.apiShowInfo,null,'GET')
+    if(apiResult.status === `success`){
+      name.textContent=apiResult.data.display_name
+      email.textContent=apiResult.data.email
+      display_name.textContent=apiResult.data.display_name
+    }
+    else{
+      console.log(apiResult)
+      name.textContent='error'
+      email.textContent='error'
+      display_name.textContent='error'
+    }
+  }
+  getUserInfo()
+
+  //change name
+  const renameForm = document.getElementById('reNameForm')
+  const newNameInput = document.getElementById('new_name')
+  const popupAlert = document.getElementById('popupAlert')
+  const error = document.getElementById('error')
+  renameForm.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const newName = newNameInput.value.trim()
+    const oldName = name.textContent.trim()
+
+    //filter if newname is similar to oldname
+    if (newName === oldName) {
+      msg.popup(popupAlert,'New name must be different from old name')
+      return
+    }
+
+    msg.redText(error,``)
+
+   const apiResult = await callApi.callApi(api.apiUpdate,{new_display_name:newName},'PATCH')
+   if(apiResult.status ===`success`){
+      msg.popup(popupAlert,apiResult.message)
+      name.textContent=newName
+      display_name.textContent =newName 
+   }else {
+    const type=msg.classify(apiResult.message)
+    if(type === 'redText'){
+      msg.redText(error,apiResult.message)
+    }
+   }
+    
   })
 })
