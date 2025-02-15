@@ -16,6 +16,9 @@ export const MESSAGE = {
     GET_SUCCESS: 'Get document(s) successfully!',
     REMOVE_SUCCESS: 'Remove document successfully!',
     EDIT_SUCCESS: 'Edit document successfully!',
+    REVIEW_SUCCESS: 'Review document successfully!',
+    GET_TOTAL_UNAPPROVED:
+      'Get the number of unapproved documents successfully!',
   },
   QUESTION: {
     NOT_FOUND: 'Question not found!',
@@ -62,6 +65,7 @@ export const MESSAGE = {
     ERROR: 'Internal server error!',
     PROCCESSING: 'Request is already being processed!',
     NO_PAYLOAD: 'Cannot send payload!',
+    PRIVACY: 'You cannot access this!',
   },
 }
 
@@ -70,8 +74,13 @@ export const STATUS_CODE = {
   CREATED: 201,
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
   NOT_FOUND: 404,
   INTERNAL_SERVER_ERROR: 500,
+}
+
+export const EVENT = {
+  STATISTIC: 'statistic',
 }
 
 export const sendResponse = (res, status, message, result = null) => {

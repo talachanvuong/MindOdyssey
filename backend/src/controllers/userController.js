@@ -55,14 +55,14 @@ export const login = async (req, res) => {
     httpOnly: true,
     secure: false,
     path: '/',
-    sameSite: 'strict',
+    sameSite: 'Strict',
     maxAge: 3600000,
   })
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: false,
     path: '/',
-    sameSite: 'strict',
+    sameSite: 'Strict',
     maxAge: 31556952000,
   })
   return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.LOGIN_SUCCESS)
@@ -125,7 +125,7 @@ export const register = async (req, res) => {
     httpOnly: true,
     secure: false,
     path: '/',
-    sameSite: 'strict',
+    sameSite: 'Strict',
   })
   return sendResponse(res, STATUS_CODE.CREATED, MESSAGE.USER.REGISTER_SUCCESS)
 }
@@ -229,7 +229,7 @@ export const resetPassword = async (req, res) => {
     httpOnly: true,
     secure: false,
     path: '/',
-    sameSite: 'strict',
+    sameSite: 'Strict',
   })
   return sendResponse(
     res,
@@ -293,13 +293,13 @@ export const logout = async (req, res) => {
     httpOnly: true,
     secure: false,
     path: '/',
-    sameSite: 'strict',
+    sameSite: 'Strict',
   })
   res.clearCookie('refreshToken', {
     httpOnly: true,
     secure: false,
     path: '/',
-    sameSite: 'strict',
+    sameSite: 'Strict',
   })
   return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.LOGOUT_SUCCESS)
 }
@@ -315,7 +315,7 @@ export const setCookieRegister = (req, res) => {
     httpOnly: true,
     secure: false,
     path: '/',
-    sameSite: 'strict',
+    sameSite: 'Strict',
     maxAge: 300000,
   })
 
@@ -333,7 +333,7 @@ export const setCookieForgetPass = (req, res) => {
     httpOnly: true,
     secure: false,
     path: '/',
-    sameSite: 'strict',
+    sameSite: 'Strict',
     maxAge: 300000,
   })
 
