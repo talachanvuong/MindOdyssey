@@ -16,7 +16,9 @@ export const MESSAGE = {
     GET_SUCCESS: 'Get document(s) successfully!',
     REMOVE_SUCCESS: 'Remove document successfully!',
     EDIT_SUCCESS: 'Edit document successfully!',
-    GET_TOTAL_UNAPPROVED: 'Get the number of unapproved documents successfully!',
+    REVIEW_SUCCESS: 'Review document successfully!',
+    GET_TOTAL_UNAPPROVED:
+      'Get the number of unapproved documents successfully!',
   },
   QUESTION: {
     NOT_FOUND: 'Question not found!',
@@ -63,7 +65,7 @@ export const MESSAGE = {
     ERROR: 'Internal server error!',
     PROCCESSING: 'Request is already being processed!',
     NO_PAYLOAD: 'Cannot send payload!',
-    PRIVACY: 'You cannot access this!'
+    PRIVACY: 'You cannot access this!',
   },
 }
 
