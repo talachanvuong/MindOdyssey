@@ -118,7 +118,7 @@ const postRefreshToken = async (req, res) => {
         httpOnly: true,
         secure: false,
         path: '/',
-        sameSite: 'strict',
+        sameSite: 'Strict',
         maxAge: 3600000,
       })
       return sendResponse(
