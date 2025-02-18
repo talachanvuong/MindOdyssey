@@ -40,6 +40,7 @@ export const MESSAGE = {
     RESET_PASSWORD_SUCCESS: 'Reset password successfully!',
     CHANGE_PASSWORD_SUCCESS: 'Change password successfully!',
     LOGOUT_SUCCESS: 'Logout and delete refresh token successfully!',
+    GET_USER_ID_SUCCESS: 'Get user id successfully!',
   },
   AUTH: {
     ACCESS_TOKEN: {
