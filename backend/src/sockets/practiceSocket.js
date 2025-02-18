@@ -1,9 +1,10 @@
 import { nanoid } from 'nanoid'
-import practiceService from './practiceService.js'
+import practiceService from '../services/practiceService.js'
 import practiceSchema from '../schemas/practiceSchema.js'
+
 const createRoom = (socket, rooms, mode, user_id) => {
   // Kiểm tra mode hợp lệ
-  const { error } = practiceSchema.modeSchema.validate(mode)
+  const { error } = practiceSchema.modeValidate.validate(JSON.parse(mode))
 
   if (error) {
     socket.emit('message', 'Invalid mode')

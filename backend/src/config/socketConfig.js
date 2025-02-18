@@ -1,6 +1,7 @@
 import { Server } from 'socket.io'
 import envConfig from '../config/envConfig.js'
-import practiceSocket from '../socket/practiceSocket.js'
+import practiceEvent from '../events/practiceEvent.js'
+
 export default (server) => {
   const io = new Server(server, {
     cors: {
@@ -8,6 +9,7 @@ export default (server) => {
       credentials: true,
     },
   })
-  practiceSocket.callSocket(io)
+  io.on('connection', (socket) => {
+    practiceEvent(io, socket)
+  })
 }
-
