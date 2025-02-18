@@ -43,6 +43,7 @@ export const MESSAGE = {
     RESET_PASSWORD_SUCCESS: 'Reset password successfully!',
     CHANGE_PASSWORD_SUCCESS: 'Change password successfully!',
     LOGOUT_SUCCESS: 'Logout and delete refresh token successfully!',
+    GET_USER_ID_SUCCESS: 'Get user id successfully!',
   },
   AUTH: {
     ACCESS_TOKEN: {
@@ -57,8 +58,10 @@ export const MESSAGE = {
     },
   },
   PRACTICE: {
+    GET_PRACTICE_HISTORY_SUCCESS: 'Get practice histories successfully!',
     GET_DOCS_SUCCESS: 'Get documents successfully!',
     NOT_FOUND_DOCS: 'No results found for this keyword!',
+    NOT_FOUND_HISTORY: 'No practice history found!',
     PAGE_EXCEEDS_TOTAL: 'The requested page exceeds the total number of pages!',
   },
   SERVER: {
