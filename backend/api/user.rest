@@ -5,8 +5,8 @@ POST {{host}}/login
 Content-Type: application/json
 
 {
-    "email": "",
-    "password": ""
+    "email": "2331540243@vaa.edu.vn",
+    "password": "00000000"
 }
 
 ### Logout
@@ -74,4 +74,8 @@ Content-Type: application/json
 
 ### Refresh token
 POST {{host}}/refreshtoken
+Content-Type: application/json
+
+### Get user_id
+GET {{host}}/getuserid
 Content-Type: application/json
