@@ -5,8 +5,8 @@ POST {{host}}/login
 Content-Type: application/json
 
 {
-    "email": "2331540243@vaa.edu.vn",
-    "password": "00000000"
+    "email": "",
+    "password": ""
 }
 
 ### Logout
