@@ -11,6 +11,7 @@ import {
   setCookieRegister,
   update,
   verifyEmail,
+  getUserID
 } from '../controllers/userController.js'
 import authMiddleware from '../middleware/authMiddleware.js'
 import { asyncHandler } from '../middleware/asyncMiddleware.js'
@@ -96,6 +97,14 @@ router.post(
   asyncHandler(authMiddleware.verifyUser),
   mutexLockHandler,
   asyncHandler(authMiddleware.postRefreshToken),
+  errorHandler
+)
+//get user_id
+router.get(
+  '/getuserid',
+  asyncHandler(authMiddleware.verifyUser),
+  mutexLockHandler,
+  asyncHandler(getUserID),
   errorHandler
 )
 
