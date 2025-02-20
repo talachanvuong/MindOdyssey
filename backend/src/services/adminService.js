@@ -1,15 +1,6 @@
 import client from '../db/db.js'
 import { timeConvert } from '../utils/convert.js'
 
-export const selectTotalUnapprovedDocuments = async () => {
-  const result = await client.query(
-    `SELECT COUNT(*) AS total_unapproved_documents
-     FROM documents
-     WHERE status = 'Chưa duyệt';`
-  )
-  return parseInt(result.rows[0].total_unapproved_documents)
-}
-
 export const updateDocument = async (
   admin_id,
   isApproved,
@@ -29,7 +20,7 @@ export const updateDocument = async (
   refs.push(isApproved ? 'Đã duyệt' : 'Từ chối')
 
   // Reason
-  if (reason) {
+  if (reason !== undefined) {
     updates.push(`reason_reject = $${index}`)
     refs.push(reason)
     index++

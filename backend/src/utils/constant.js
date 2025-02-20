@@ -13,8 +13,6 @@ export const MESSAGE = {
     REMOVE_SUCCESS: 'Remove document successfully!',
     EDIT_SUCCESS: 'Edit document successfully!',
     REVIEW_SUCCESS: 'Review document successfully!',
-    GET_TOTAL_UNAPPROVED:
-      'Get the number of unapproved documents successfully!',
   },
   QUESTION: {
     NOT_FOUND: 'Question not found!',
@@ -80,7 +78,6 @@ export const STATUS_CODE = {
 
 export const EVENT = {
   ADMIN: {
-    STATISTIC: 'statistic',
     UNAPPROVED_LIST: 'unapprovedList',
   },
 }

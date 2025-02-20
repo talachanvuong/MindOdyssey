@@ -1,8 +1,5 @@
 import { selectDocumentsSchema } from '../schemas/adminSchema.js'
-import {
-  selectDocuments,
-  selectTotalUnapprovedDocuments,
-} from '../services/adminService.js'
+import { selectDocuments } from '../services/adminService.js'
 import {
   EVENT,
   MESSAGE,
@@ -11,13 +8,6 @@ import {
 } from '../utils/constant.js'
 
 export default (io, socket) => {
-  socket.on(EVENT.ADMIN.STATISTIC, async (cb) => {
-    const data = {
-      totalUnapprovedDocuments: await selectTotalUnapprovedDocuments(),
-    }
-    cb(data)
-  })
-
   socket.on(EVENT.ADMIN.UNAPPROVED_LIST, async (params, cb) => {
     const { error } = selectDocumentsSchema.validate(JSON.parse(params))
 
