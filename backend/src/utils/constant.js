@@ -1,8 +1,4 @@
 export const MESSAGE = {
-  VALIDATE: {
-    TIME_PER_QUESTION:
-      'The allowed time for each question must be between 30 seconds and 3 minutes!',
-  },
   COURSE: {
     EXISTED: 'Course already exists!',
     NOT_FOUND: 'Course not found!',
@@ -83,7 +79,10 @@ export const STATUS_CODE = {
 }
 
 export const EVENT = {
-  STATISTIC: 'statistic',
+  ADMIN: {
+    STATISTIC: 'statistic',
+    UNAPPROVED_LIST: 'unapprovedList',
+  },
 }
 
 export const sendResponse = (res, status, message, result = null) => {
