@@ -8,3 +8,12 @@ export const reviewDocumentSchema = Joi.object({
     reason: Joi.string().trim().max(2048).allow(null).required(),
   }),
 })
+
+export const selectDocumentsSchema = Joi.object({
+  pagination: Joi.object({
+    page: Joi.number().integer().strict().min(1).required(),
+    perPage: Joi.number().integer().strict().min(1).required(),
+  }),
+  keyword: Joi.string().trim(),
+  filter: Joi.date().timestamp(),
+})
