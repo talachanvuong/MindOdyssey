@@ -94,3 +94,12 @@ export const sendResponse = (res, status, message, result = null) => {
 
   return res.status(status).json(response)
 }
+
+export const messageResponse = (status, message, result = null) => {
+  const response = { status, message }
+  if (result !== null) {
+    response.result = result
+  }
+
+  return response
+}
