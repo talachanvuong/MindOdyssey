@@ -48,6 +48,7 @@ export const MESSAGE = {
     ACCESS_TOKEN: {
       INVALID: 'Invalid access token!',
       EXPIRED: 'Access token expired!',
+      MISSING: 'Missing access token!',
     },
     REFRESH_TOKEN: {
       NOT_FOUND: 'Refresh token not found!',
