@@ -6,6 +6,18 @@ export const isMatchedPassword = async (password, hashedPassword) => {
   return await bcrypt.compare(password, hashedPassword)
 }
 
+export const isReviewedDocument = async (document_id) => {
+  const result = await client.query(
+    `SELECT 1
+     FROM documents
+     WHERE status <> 'Chưa duyệt'
+     AND document_id = $1
+     LIMIT 1;`,
+    [document_id]
+  )
+  return result.rowCount > 0
+}
+
 export const selectAdminByDisplayName = async (display_name) => {
   const result = await client.query(
     `SELECT admin_id, "password"
@@ -36,7 +48,7 @@ export const updateDocument = async (
 
   // Reason
   if (reason !== undefined) {
-    updates.push(`reason_reject = $${index}`)
+    updates.push(`reject_reason = $${index}`)
     refs.push(reason)
     index++
   }

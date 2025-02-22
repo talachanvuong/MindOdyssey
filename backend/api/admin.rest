@@ -14,7 +14,7 @@ POST {{host}}/review
 Content-Type: application/json
 
 {
-    "document": "",
+    "document": 0,
     "isApproved": false,
     "reason": ""
 }

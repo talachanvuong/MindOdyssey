@@ -3,6 +3,7 @@ import envConfig from '../config/envConfig.js'
 import { loginSchema, reviewDocumentSchema } from '../schemas/adminSchema.js'
 import {
   isMatchedPassword,
+  isReviewedDocument,
   selectAdminByDisplayName,
   updateDocument,
 } from '../services/adminService.js'
@@ -87,6 +88,12 @@ export const reviewDocument = async (req, res) => {
   const existedDocument = await isDocumentExist(document)
   if (!existedDocument) {
     return sendResponse(res, STATUS_CODE.NOT_FOUND, MESSAGE.DOCUMENT.NOT_FOUND)
+  }
+
+  // Check document already review
+  const reviewDocument = await isReviewedDocument(document)
+  if (reviewDocument) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.DOCUMENT.REVIEWED)
   }
 
   // Update document in database

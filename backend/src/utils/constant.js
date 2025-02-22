@@ -13,6 +13,7 @@ export const MESSAGE = {
     REMOVE_SUCCESS: 'Remove document successfully!',
     EDIT_SUCCESS: 'Edit document successfully!',
     REVIEW_SUCCESS: 'Review document successfully!',
+    REVIEWED: 'This document was reviewed!',
   },
   QUESTION: {
     NOT_FOUND: 'Question not found!',
