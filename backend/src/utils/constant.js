@@ -39,6 +39,11 @@ export const MESSAGE = {
     LOGOUT_SUCCESS: 'Logout and delete refresh token successfully!',
     GET_USER_ID_SUCCESS: 'Get user id successfully!',
   },
+  ADMIN: {
+    LOGIN_SUCCESS: 'Admin login successfully!',
+    NOT_FOUND: 'Admin not found!',
+    WRONG_PASSWORD: 'Wrong password!',
+  },
   AUTH: {
     ACCESS_TOKEN: {
       INVALID: 'Invalid access token!',

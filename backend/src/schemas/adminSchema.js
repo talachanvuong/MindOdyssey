@@ -1,5 +1,10 @@
 import Joi from 'joi'
 
+export const loginSchema = Joi.object({
+  display_name: Joi.string().trim().min(8).max(64).required(),
+  password: Joi.string().trim().min(8).max(32).required(),
+})
+
 export const reviewDocumentSchema = Joi.object({
   document: Joi.number().integer().strict().min(1).required(),
   isApproved: Joi.boolean().required(),

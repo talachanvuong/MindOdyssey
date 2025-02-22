@@ -1,5 +1,20 @@
+import bcrypt from 'bcryptjs'
 import client from '../db/db.js'
 import { timeConvert } from '../utils/convert.js'
+
+export const isMatchedPassword = async (password, hashedPassword) => {
+  return await bcrypt.compare(password, hashedPassword)
+}
+
+export const selectAdminByDisplayName = async (display_name) => {
+  const result = await client.query(
+    `SELECT admin_id, "password"
+     FROM admins
+     WHERE display_name = $1;`,
+    [display_name]
+  )
+  return result.rows[0]
+}
 
 export const updateDocument = async (
   admin_id,

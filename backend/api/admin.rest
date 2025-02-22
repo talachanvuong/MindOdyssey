@@ -1,0 +1,20 @@
+@host = http://localhost:{{$dotenv SERVER_PORT}}/api/admin
+
+### Login
+POST {{host}}/login
+Content-Type: application/json
+
+{
+    "display_name": "",
+    "password": ""
+}
+
+### Review document
+POST {{host}}/review
+Content-Type: application/json
+
+{
+    "document": "",
+    "isApproved": false,
+    "reason": ""
+}
