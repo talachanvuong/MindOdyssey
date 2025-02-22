@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body class="bg-stone-100">
+    <header class="flex h-12 flex-row justify-between bg-cyan-300 pr-5">
+      <div class="ml-2 mt-1 flex cursor-pointer flex-row gap-2">
+        <a href="../../document/library/doc_lib.html">
+          <img class="h-10" src="../../img/back.png" />
+        </a>
+        <a href="../../account/lobby.html">
+          <img src="../../img/home.png" class="h-10 w-full" />
+        </a>
+      </div>
+
+      <div id="user" class="h-12">
+        <a
+          href="../../account/user_information.html"
+          class="flex flex-row items-center justify-between gap-2 p-1"
+        >
+          <img src="../../img/user.png" class="h-10" />
+          <!-- call API to get user name -->
+          <div id="userName" class="font-bold"></div>
+        </a>
+      </div>
+    </header>
+
+    <main
+      class="mt-5 h-fit w-full rounded-xl bg-white p-3 shadow-md shadow-gray-500"
+    >
+      <div
+        id="infor"
+        class="grid h-fit w-full grid-cols-2 grid-rows-4 rounded-xl bg-cyan-400 p-2 shadow-md shadow-gray-600"
+      >
+        <!-- name of document -->
+        <div
+          class="col-span-2 flex w-full flex-row items-center rounded-xl bg-cyan-200 p-2 shadow-md shadow-gray-500"
+        >
+          <img src="../../img/docIcon.png" class="h-10" />
+          <p id="docName" class="truncate text-2xl">Name of document</p>
+        </div>
+
+        <!-- author -->
+        <div class="col-span-2 flex flex-row items-center gap-2">
+          <img src="../../img/author.png" class="h-10" />
+          <p class="text-2xl" id="authorName">Name of author</p>
+        </div>
+
+        <!-- subject -->
+        <div class="col-span-2 flex flex-row items-center gap-2">
+          <img src="../../img/subject.png" class="ml-2 h-10" />
+          <p id="subject" class="text-2xl">Subject</p>
+        </div>
+
+        <!-- time of test -->
+        <div class="col-span-1 flex flex-row items-center gap-2">
+          <img src="../../img/timer.png" class="h-10" />
+          <p class="text-2xl">Timer</p>
+        </div>
+
+        <div class="col-span-1 flex flex-row items-center gap-2">
+          <img src="../../img/quantity.png" class="h-10" />
+          <p class="text-2xl">N questions</p>
+        </div>
+      </div>
+
+      <!-- the content of the test -->
+      <div
+        class="mt-3 h-full rounded-xl bg-cyan-300 p-1 shadow-md shadow-gray-600"
+      >
+        <a href="reviewUI.html">
+          <div
+            id="startBtn"
+            class="mx-auto cursor-pointer  mb-2 mt-3 h-14 w-1/2 rounded-lg bg-yellow-300 pt-3 text-center text-2xl font-bold opacity-80 shadow-md shadow-gray-600"
+          >
+            Start
+          </div>
+          
+        </a>
+        <!-- list of question of the test -->
+        <ul class="mb-10 flex flex-col gap-2">
+          <!-- The question -->
+          <li
+            class="h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3"
+          >
+            <p id="question">Question 1:The content of the question</p>
+            <form>
+              <ul>
+                <li class="ml-1 flex flex-row gap-2">
+                  <input
+                    disabled
+                    name="question1"
+                    type="radio"
+                    id="ans1"
+                    class="scale-150 cursor-pointer"
+                  />
+                  <label for="ans1">The content of ans</label>
+                </li>
+                <li class="ml-1 flex flex-row gap-2">
+                  <input
+                    disabled
+                    name="question1"
+                    type="radio"
+                    id="ans2"
+                    class="scale-150 cursor-pointer"
+                  />
+                  <label for="ans2">The content of ans</label>
+                </li>
+                <li class="ml-1 flex flex-row gap-2">
+                  <input
+                    disabled
+                    name="question1"
+                    type="radio"
+                    id="ans3"
+                    class="scale-150 cursor-pointer"
+                  />
+                  <label for="ans3">The content of ans</label>
+                </li>
+                <li class="ml-1 flex flex-row gap-2">
+                  <input
+                    name="question1"
+                    type="radio"
+                    id="ans4"
+                    disabled
+                    class="scale-150 cursor-pointer"
+                  />
+                  <label for="ans4">The content of ans</label>
+                </li>
+              </ul>
+            </form>
+          </li>
+
+          <li
+            class="h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3"
+          >
+            <p id="question">Question 2:The content of the question</p>
+            <form>
+              <ul>
+                <li class="ml-1 flex flex-row gap-2">
+                  <input
+                    disabled
+                    name="question2"
+                    type="radio"
+                    id="ans1"
+                    class="scale-150 cursor-pointer"
+                  />
+                  <label for="ans1">The content of ans</label>
+                </li>
+                <li class="ml-1 flex flex-row gap-2">
+                  <input
+                    disabled
+                    name="question2"
+                    type="radio"
+                    id="ans2"
+                    class="scale-150 cursor-pointer"
+                  />
+                  <label for="ans2">The content of ans</label>
+                </li>
+                <li class="ml-1 flex flex-row gap-2">
+                  <input
+                    disabled
+                    type="radio"
+                    name="question2"
+                    id="ans3"
+                    class="scale-150 cursor-pointer"
+                  />
+                  <label for="ans3">The content of ans</label>
+                </li>
+                <li class="ml-1 flex flex-row gap-2">
+                  <input
+                    name="question2"
+                    type="radio"
+                    id="ans4"
+                    disabled
+                    class="scale-150 cursor-pointer"
+                  />
+                  <label for="ans4">The content of ans</label>
+                </li>
+              </ul>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </main>
+    <script
+      type="module"
+      src="../../../js/document/review/reviewScreen.js"
+    ></script>
+  </body>
+</html>
