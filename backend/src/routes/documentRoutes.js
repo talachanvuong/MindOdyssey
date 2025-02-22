@@ -9,14 +9,12 @@ import {
 import { asyncHandler } from '../middleware/asyncMiddleware.js'
 import authMiddleware from '../middleware/authMiddleware.js'
 import { errorHandler } from '../middleware/errorMiddleware.js'
-import { mutexLockHandler } from '../middleware/mutexLockMiddleware.js'
 
 const router = Router()
 // Create document
 router.post(
   '/',
   authMiddleware.verifyUser,
-  mutexLockHandler,
   asyncHandler(createDocument),
   errorHandler
 )
@@ -24,7 +22,6 @@ router.post(
 router.get(
   '/detail',
   authMiddleware.verifyUser,
-  mutexLockHandler,
   asyncHandler(getDocumentDetail),
   errorHandler
 )
@@ -32,7 +29,6 @@ router.get(
 router.delete(
   '/',
   authMiddleware.verifyUser,
-  mutexLockHandler,
   asyncHandler(removeDocument),
   errorHandler
 )
@@ -40,7 +36,6 @@ router.delete(
 router.patch(
   '/',
   authMiddleware.verifyUser,
-  mutexLockHandler,
   asyncHandler(editDocument),
   errorHandler
 )
@@ -48,7 +43,6 @@ router.patch(
 router.get(
   '/',
   authMiddleware.verifyUser,
-  mutexLockHandler,
   asyncHandler(getDocuments),
   errorHandler
 )

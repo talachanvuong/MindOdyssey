@@ -3,6 +3,7 @@ import {
   changePassword,
   forgetPassword,
   getInfo,
+  getUserID,
   login,
   logout,
   register,
@@ -11,12 +12,10 @@ import {
   setCookieRegister,
   update,
   verifyEmail,
-  getUserID
 } from '../controllers/userController.js'
-import authMiddleware from '../middleware/authMiddleware.js'
 import { asyncHandler } from '../middleware/asyncMiddleware.js'
+import authMiddleware from '../middleware/authMiddleware.js'
 import { errorHandler } from '../middleware/errorMiddleware.js'
-import { mutexLockHandler } from '../middleware/mutexLockMiddleware.js'
 const router = Router()
 
 // Log in and log out
@@ -24,29 +23,21 @@ router.post('/login', asyncHandler(login), errorHandler)
 router.post(
   '/logout',
   asyncHandler(authMiddleware.verifyUser),
-  mutexLockHandler,
   asyncHandler(logout),
   errorHandler
 )
 
 // Register
-router.post(
-  '/verifyemail',
-  asyncHandler(verifyEmail),
-  mutexLockHandler,
-  errorHandler
-)
+router.post('/verifyemail', asyncHandler(verifyEmail), errorHandler)
 router.get(
   '/verifyemail',
   asyncHandler(authMiddleware.verifyEmail),
-  mutexLockHandler,
   asyncHandler(setCookieRegister),
   errorHandler
 )
 router.post(
   '/register',
   asyncHandler(authMiddleware.verifyUser),
-  mutexLockHandler,
   asyncHandler(register),
   errorHandler
 )
@@ -61,7 +52,6 @@ router.get(
 router.post(
   '/resetpassword',
   asyncHandler(authMiddleware.verifyUser),
-  mutexLockHandler,
   asyncHandler(resetPassword),
   errorHandler
 )
@@ -70,14 +60,12 @@ router.post(
 router.post(
   '/changepassword',
   asyncHandler(authMiddleware.verifyUser),
-  mutexLockHandler,
   asyncHandler(changePassword),
   errorHandler
 )
 router.patch(
   '/update',
   asyncHandler(authMiddleware.verifyUser),
-  mutexLockHandler,
   asyncHandler(update),
   errorHandler
 )
@@ -86,7 +74,6 @@ router.patch(
 router.get(
   '/showinfo',
   asyncHandler(authMiddleware.verifyUser),
-  mutexLockHandler,
   asyncHandler(getInfo),
   errorHandler
 )
@@ -94,7 +81,6 @@ router.get(
 // Refresh token
 router.post(
   '/refreshtoken',
-  //mutexLockHandler,
   asyncHandler(authMiddleware.postRefreshToken),
   errorHandler
 )
@@ -102,7 +88,6 @@ router.post(
 router.get(
   '/getuserid',
   asyncHandler(authMiddleware.verifyUser),
-  mutexLockHandler,
   asyncHandler(getUserID),
   errorHandler
 )
