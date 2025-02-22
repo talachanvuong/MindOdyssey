@@ -9,6 +9,20 @@ Content-Type: application/json
     "password": ""
 }
 
+### Get unapproved documents
+GET {{host}}/document
+Content-Type: application/json
+
+{
+    "pagination": {
+        "page": 0,
+        "perPage": 0
+    },
+    "keyword": "",
+    // Timestamp in milliseconds
+    "filter": 0 
+}
+
 ### Review document
 POST {{host}}/review
 Content-Type: application/json

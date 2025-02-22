@@ -84,9 +84,7 @@ export const STATUS_CODE = {
 }
 
 export const EVENT = {
-  ADMIN: {
-    UNAPPROVED_LIST: 'unapprovedList',
-  },
+  PRACTICE: {},
 }
 
 export const sendResponse = (res, status, message, result = null) => {

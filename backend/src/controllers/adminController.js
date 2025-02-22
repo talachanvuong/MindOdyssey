@@ -1,10 +1,15 @@
 import jwt from 'jsonwebtoken'
 import envConfig from '../config/envConfig.js'
-import { loginSchema, reviewDocumentSchema } from '../schemas/adminSchema.js'
+import {
+  loginSchema,
+  reviewDocumentSchema,
+  selectDocumentsSchema,
+} from '../schemas/adminSchema.js'
 import {
   isMatchedPassword,
   isReviewedDocument,
   selectAdminByDisplayName,
+  selectDocuments,
   updateDocument,
 } from '../services/adminService.js'
 import { isDocumentExist } from '../services/documentService.js'
@@ -69,6 +74,28 @@ export const login = async (req, res) => {
   })
 
   return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.ADMIN.LOGIN_SUCCESS)
+}
+
+/**
+ * Get unapproved documents.
+ */
+export const getUnapprovedDocuments = async (req, res) => {
+  const { error, value } = selectDocumentsSchema.validate(req.body)
+  const { pagination, keyword, filter } = value
+
+  // Check validation
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+  }
+
+  // Get documents in database
+  const resultDocuments = await selectDocuments(pagination, keyword, filter)
+  return sendResponse(
+    res,
+    STATUS_CODE.SUCCESS,
+    MESSAGE.DOCUMENT.GET_SUCCESS,
+    resultDocuments
+  )
 }
 
 /**
