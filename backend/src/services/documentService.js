@@ -476,57 +476,55 @@ export const arrangeOrderAfterUpdate = async (
  * Select documents.
  */
 export const selectDocuments = async (pagination, keyword, filter, user_id) => {
-  const options = []
   const conditions = []
-  const refs = []
-  let index = 1
-
-  if (pagination) {
-    options.push(`LIMIT $${index} OFFSET $${index + 1}`)
-    refs.push(pagination.perPage)
-    refs.push(pagination.perPage * (pagination.page - 1))
-    index += 2
-  }
+  const refs = [user_id]
+  let index = 2
+  let limit = ''
+  let totalPages = 1
 
   if (keyword) {
-    conditions.push(`d.title ILIKE $${index}`)
+    conditions.push(`title ILIKE $${index}`)
     refs.push(`%${keyword}%`)
     index++
   }
 
   if (filter) {
-    conditions.push(`d.created_at >= $${index}`)
+    conditions.push(`created_at >= $${index}`)
     refs.push(new Date(filter).toISOString())
-    index++
+  }
+
+  const tempResult = await client.query(
+    `SELECT COUNT(*) AS total_documents
+     FROM documents
+     WHERE user_id = $1
+     ${conditions.map((condition) => `AND ${condition}`).join(' ')}
+     LIMIT 1;`,
+    refs
+  )
+
+  if (pagination) {
+    const { page, perPage } = pagination
+    limit = `LIMIT ${perPage} OFFSET ${perPage * (page - 1)}`
+    totalPages = Math.ceil(tempResult.rows[0].total_documents / perPage)
   }
 
   const result = await client.query(
     `SELECT
-      d.document_id,
-      d.title,
-      d.description,
-      d.total_questions,
-      c.title AS course,
-      d.created_at,
-      d.last_updated,
-      d.status,
-      a.display_name AS reviewer,
-      d.reject_reason,
-      COUNT(*) OVER() AS total_pages
-     FROM documents AS d
-     INNER JOIN courses AS c
-     ON d.course_id = c.course_id
-     LEFT OUTER JOIN admins AS a
-     ON d.admin_id = a.admin_id
-     WHERE d.user_id = $${index}
+      document_id,
+      title,
+      created_at
+     FROM documents
+     WHERE user_id = $1
      ${conditions.map((condition) => `AND ${condition}`).join(' ')}
-     ${options.join(' ')};`,
-    [...refs, user_id]
+     ${limit};`,
+    refs
   )
-  return result.rows.map((row) => ({
-    ...row,
-    created_at: timeConvert(row.created_at),
-    last_updated: timeConvert(row.last_updated),
-    total_pages: parseInt(row.total_pages),
-  }))
+
+  return {
+    total_pages: totalPages,
+    documents: result.rows.map((row) => ({
+      ...row,
+      created_at: timeConvert(row.created_at),
+    })),
+  }
 }
