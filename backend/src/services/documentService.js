@@ -92,29 +92,58 @@ export const insertContent = async (
   )
 }
 
-/**
- * Select a document.
- */
-export const selectDocument = async (document_id) => {
+export const selectDocumentDetail = async (document_id) => {
   const result = await client.query(
     `SELECT
       d.title,
       d.description,
-      c.title AS course,
-      u.display_name AS author,
       d.created_at,
       d.last_updated,
+      json_build_object(
+          'id', c.course_id,
+          'title', c.title
+      ) AS course,
       d.status,
       a.display_name AS reviewer,
-      d.reject_reason
+      d.reject_reason,
+      json_agg(
+        json_build_object(
+          'id', q.question_id,
+          'correct_answer', q.correct_answer,
+          'contents', (
+            SELECT json_agg(
+              json_build_object(
+                'id', con.content_id,
+                'text', con.text,
+                'attachment', con.attachment,
+                'attachment_id', con.attachment_id,
+                'type', con."type"
+              )
+            )
+            FROM contents AS con
+            WHERE q.question_id = con.question_id
+          )
+        )
+        ORDER BY q."order"
+      ) AS questions
      FROM documents AS d
      INNER JOIN courses AS c
      ON d.course_id = c.course_id
      LEFT OUTER JOIN admins AS a
      ON d.admin_id = a.admin_id
-     INNER JOIN users AS u
-     ON d.user_id = u.user_id
-     WHERE d.document_id = $1;`,
+     INNER JOIN questions AS q
+     ON d.document_id = q.document_id
+     WHERE d.document_id = $1
+     GROUP BY
+      d.title,
+      d.description,
+      d.created_at,
+      d.last_updated,
+      c.course_id,
+      c.title,
+      d.status,
+      a.display_name,
+      d.reject_reason;`,
     [document_id]
   )
   return result.rows.map((row) => ({

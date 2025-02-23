@@ -29,7 +29,7 @@ import {
   isQuestionExist,
   selectContent,
   selectContents,
-  selectDocument,
+  selectDocumentDetail,
   selectDocuments,
   selectQuestion,
   selectQuestions,
@@ -104,7 +104,6 @@ export const getDocumentDetail = async (req, res) => {
   const { user_id } = req.user
   const { error, value } = getDocumentDetailSchema.validate(req.body)
   const { document } = value
-  const result = {}
 
   // Check validation
   if (error) {
@@ -124,26 +123,12 @@ export const getDocumentDetail = async (req, res) => {
   }
 
   // Get document detail in database
-  const resultDocument = await selectDocument(document)
-  Object.assign(result, resultDocument)
-  result.questions = []
-
-  // Get questions detail in database
-  const resultQuestions = await selectQuestions(document)
-  for (const resultQuestion of resultQuestions) {
-    // Get contents detail in database
-    const resultContents = await selectContents(resultQuestion.id)
-    result.questions.push({
-      ...resultQuestion,
-      content: resultContents,
-    })
-  }
-
+  const resultDocument = await selectDocumentDetail(document)
   return sendResponse(
     res,
     STATUS_CODE.SUCCESS,
     MESSAGE.DOCUMENT.GET_SUCCESS,
-    result
+    resultDocument
   )
 }
 
