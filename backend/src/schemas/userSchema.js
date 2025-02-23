@@ -38,11 +38,14 @@ const emailValidate = joi.object({
 const registerValidate = joi.object({
   display_name: displayNameSchema,
   password: passwordSchema,
-  confirmPassword: joi.string().valid(joi.ref('password')).required().messages({
-    'any.only': 'Confirm password must match password',
-    'any.required': 'Confirm password is required',
-    'string.empty': 'Confirm password cannot be empty',
-  }),
+  confirmPassword: joi.string().trim()
+    .required()
+    .valid(joi.ref('password'))
+    .messages({
+      'any.only': 'Confirm password must match password',
+      'any.required': 'Confirm password is required',
+      'string.empty': 'Confirm password cannot be empty',
+    }),
 })
 
 const displaynameValidate = joi.object({

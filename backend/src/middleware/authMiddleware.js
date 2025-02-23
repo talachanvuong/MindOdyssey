@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken'
 import envConfig from '../config/envConfig.js'
-import { MESSAGE, STATUS_CODE, sendResponse } from '../utils/constant.js'
-import userService from '../services/userService.js'
 import userSchema from '../schemas/userSchema.js'
+import userService from '../services/userService.js'
+import { MESSAGE, STATUS_CODE, sendResponse } from '../utils/constant.js'
 
 const verifyUser = (req, res, next) => {
   const token = req.cookies?.accessToken
@@ -130,4 +130,39 @@ const postRefreshToken = async (req, res) => {
   )
 }
 
-export default { verifyUser, verifyEmail, postRefreshToken }
+const verifyAdmin = (req, res, next) => {
+  const token = req.cookies?.accessToken
+
+  if (!token) {
+    return sendResponse(
+      res,
+      STATUS_CODE.UNAUTHORIZED,
+      MESSAGE.AUTH.ACCESS_TOKEN.MISSING
+    )
+  }
+
+  jwt.verify(token, envConfig.accessTokenSecretKey, (error, decoded) => {
+    if (error) {
+      if (error.name === 'TokenExpiredError') {
+        return sendResponse(
+          res,
+          STATUS_CODE.UNAUTHORIZED,
+          MESSAGE.AUTH.ACCESS_TOKEN.EXPIRED
+        )
+      }
+
+      if (error.name === 'JsonWebTokenError') {
+        return sendResponse(
+          res,
+          STATUS_CODE.UNAUTHORIZED,
+          MESSAGE.AUTH.ACCESS_TOKEN.INVALID
+        )
+      }
+    }
+
+    req.admin = decoded
+    next()
+  })
+}
+
+export default { verifyUser, verifyEmail, postRefreshToken, verifyAdmin }

@@ -1,7 +1,138 @@
-import { reviewDocumentSchema } from '../schemas/adminSchema.js'
-import { updateDocument } from '../services/adminService.js'
+import jwt from 'jsonwebtoken'
+import envConfig from '../config/envConfig.js'
+import {
+  getDocumentDetailSchema,
+  loginSchema,
+  reviewDocumentSchema,
+  selectDocumentsSchema,
+} from '../schemas/adminSchema.js'
+import {
+  isMatchedPassword,
+  isReviewedDocument,
+  selectAdminByDisplayName,
+  selectDocumentDetail,
+  selectDocuments,
+  updateDocument,
+} from '../services/adminService.js'
 import { isDocumentExist } from '../services/documentService.js'
 import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
+
+/**
+ * Login.
+ */
+export const login = async (req, res) => {
+  const { error, value } = loginSchema.validate(req.body)
+  const { display_name, password } = value
+
+  // Check validation
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+  }
+
+  // Check admin exist
+  const resultAdmin = await selectAdminByDisplayName(display_name)
+  if (!resultAdmin) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.ADMIN.NOT_FOUND)
+  }
+
+  const { admin_id, password: hashedPassword } = resultAdmin
+
+  // Check password match
+  const matchedPassword = await isMatchedPassword(password, hashedPassword)
+  if (!matchedPassword) {
+    return sendResponse(
+      res,
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.ADMIN.WRONG_PASSWORD
+    )
+  }
+
+  // Clear old cookies
+  res.clearCookie('accessToken', {
+    httpOnly: true,
+    secure: false,
+    path: '/',
+    sameSite: 'Strict',
+  })
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: false,
+    path: '/',
+    sameSite: 'Strict',
+  })
+
+  // Create access token
+  const accessToken = jwt.sign({ admin_id }, envConfig.accessTokenSecretKey, {
+    expiresIn: '1h',
+  })
+
+  // Send access token
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    secure: false,
+    path: '/',
+    sameSite: 'Strict',
+    maxAge: 3600000,
+  })
+
+  return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.ADMIN.LOGIN_SUCCESS)
+}
+
+/**
+ * Get unapproved documents.
+ */
+export const getUnapprovedDocuments = async (req, res) => {
+  const { error, value } = selectDocumentsSchema.validate(req.body)
+  const { pagination, keyword, filter } = value
+
+  // Check validation
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+  }
+
+  // Get documents in database
+  const resultDocuments = await selectDocuments(pagination, keyword, filter)
+  return sendResponse(
+    res,
+    STATUS_CODE.SUCCESS,
+    MESSAGE.DOCUMENT.GET_SUCCESS,
+    resultDocuments
+  )
+}
+
+/**
+ * Get document detail.
+ */
+export const getDocumentDetail = async (req, res) => {
+  const { error, value } = getDocumentDetailSchema.validate(req.body)
+  const { document } = value
+
+  // Check validation
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+  }
+
+  // Check document exist
+  const existedDocument = await isDocumentExist(document)
+  if (!existedDocument) {
+    return sendResponse(res, STATUS_CODE.NOT_FOUND, MESSAGE.DOCUMENT.NOT_FOUND)
+  }
+
+  // Check get document already review
+  const reviewedDocument = await isReviewedDocument(document)
+  if (reviewedDocument) {
+    return sendResponse(res, STATUS_CODE.FORBIDDEN, MESSAGE.SERVER.PRIVACY)
+  }
+
+  // Get document detail in database
+  const resultDocument = await selectDocumentDetail(document)
+  return sendResponse(
+    res,
+    STATUS_CODE.SUCCESS,
+    MESSAGE.DOCUMENT.GET_SUCCESS,
+    resultDocument
+  )
+}
 
 /**
  * Review a document.
@@ -20,6 +151,12 @@ export const reviewDocument = async (req, res) => {
   const existedDocument = await isDocumentExist(document)
   if (!existedDocument) {
     return sendResponse(res, STATUS_CODE.NOT_FOUND, MESSAGE.DOCUMENT.NOT_FOUND)
+  }
+
+  // Check document already review
+  const reviewDocument = await isReviewedDocument(document)
+  if (reviewDocument) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.DOCUMENT.REVIEWED)
   }
 
   // Update document in database

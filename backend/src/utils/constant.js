@@ -1,8 +1,4 @@
 export const MESSAGE = {
-  VALIDATE: {
-    TIME_PER_QUESTION:
-      'The allowed time for each question must be between 30 seconds and 3 minutes!',
-  },
   COURSE: {
     EXISTED: 'Course already exists!',
     NOT_FOUND: 'Course not found!',
@@ -17,8 +13,7 @@ export const MESSAGE = {
     REMOVE_SUCCESS: 'Remove document successfully!',
     EDIT_SUCCESS: 'Edit document successfully!',
     REVIEW_SUCCESS: 'Review document successfully!',
-    GET_TOTAL_UNAPPROVED:
-      'Get the number of unapproved documents successfully!',
+    REVIEWED: 'This document was reviewed!',
   },
   QUESTION: {
     NOT_FOUND: 'Question not found!',
@@ -43,11 +38,18 @@ export const MESSAGE = {
     RESET_PASSWORD_SUCCESS: 'Reset password successfully!',
     CHANGE_PASSWORD_SUCCESS: 'Change password successfully!',
     LOGOUT_SUCCESS: 'Logout and delete refresh token successfully!',
+    GET_USER_ID_SUCCESS: 'Get user id successfully!',
+  },
+  ADMIN: {
+    LOGIN_SUCCESS: 'Admin login successfully!',
+    NOT_FOUND: 'Admin not found!',
+    WRONG_PASSWORD: 'Wrong password!',
   },
   AUTH: {
     ACCESS_TOKEN: {
       INVALID: 'Invalid access token!',
       EXPIRED: 'Access token expired!',
+      MISSING: 'Missing access token!',
     },
     REFRESH_TOKEN: {
       NOT_FOUND: 'Refresh token not found!',
@@ -57,8 +59,10 @@ export const MESSAGE = {
     },
   },
   PRACTICE: {
+    GET_PRACTICE_HISTORY_SUCCESS: 'Get practice histories successfully!',
     GET_DOCS_SUCCESS: 'Get documents successfully!',
     NOT_FOUND_DOCS: 'No results found for this keyword!',
+    NOT_FOUND_HISTORY: 'No practice history found!',
     PAGE_EXCEEDS_TOTAL: 'The requested page exceeds the total number of pages!',
   },
   SERVER: {
@@ -80,7 +84,7 @@ export const STATUS_CODE = {
 }
 
 export const EVENT = {
-  STATISTIC: 'statistic',
+  PRACTICE: {},
 }
 
 export const sendResponse = (res, status, message, result = null) => {
@@ -90,4 +94,13 @@ export const sendResponse = (res, status, message, result = null) => {
   }
 
   return res.status(status).json(response)
+}
+
+export const messageResponse = (status, message, result = null) => {
+  const response = { status, message }
+  if (result !== null) {
+    response.result = result
+  }
+
+  return response
 }

@@ -92,29 +92,58 @@ export const insertContent = async (
   )
 }
 
-/**
- * Select a document.
- */
-export const selectDocument = async (document_id) => {
+export const selectDocumentDetail = async (document_id) => {
   const result = await client.query(
     `SELECT
       d.title,
       d.description,
-      c.title AS course,
-      u.display_name AS author,
       d.created_at,
       d.last_updated,
+      json_build_object(
+          'id', c.course_id,
+          'title', c.title
+      ) AS course,
       d.status,
       a.display_name AS reviewer,
-      d.reject_reason
+      d.reject_reason,
+      json_agg(
+        json_build_object(
+          'id', q.question_id,
+          'correct_answer', q.correct_answer,
+          'contents', (
+            SELECT json_agg(
+              json_build_object(
+                'id', con.content_id,
+                'text', con.text,
+                'attachment', con.attachment,
+                'attachment_id', con.attachment_id,
+                'type', con."type"
+              )
+            )
+            FROM contents AS con
+            WHERE q.question_id = con.question_id
+          )
+        )
+        ORDER BY q."order"
+      ) AS questions
      FROM documents AS d
      INNER JOIN courses AS c
      ON d.course_id = c.course_id
      LEFT OUTER JOIN admins AS a
      ON d.admin_id = a.admin_id
-     INNER JOIN users AS u
-     ON d.user_id = u.user_id
-     WHERE d.document_id = $1;`,
+     INNER JOIN questions AS q
+     ON d.document_id = q.document_id
+     WHERE d.document_id = $1
+     GROUP BY
+      d.title,
+      d.description,
+      d.created_at,
+      d.last_updated,
+      c.course_id,
+      c.title,
+      d.status,
+      a.display_name,
+      d.reject_reason;`,
     [document_id]
   )
   return result.rows.map((row) => ({
@@ -476,57 +505,55 @@ export const arrangeOrderAfterUpdate = async (
  * Select documents.
  */
 export const selectDocuments = async (pagination, keyword, filter, user_id) => {
-  const options = []
   const conditions = []
-  const refs = []
-  let index = 1
-
-  if (pagination) {
-    options.push(`LIMIT $${index} OFFSET $${index + 1}`)
-    refs.push(pagination.perPage)
-    refs.push(pagination.perPage * (pagination.page - 1))
-    index += 2
-  }
+  const refs = [user_id]
+  let index = 2
+  let limit = ''
+  let totalPages = 1
 
   if (keyword) {
-    conditions.push(`d.title ILIKE $${index}`)
+    conditions.push(`title ILIKE $${index}`)
     refs.push(`%${keyword}%`)
     index++
   }
 
   if (filter) {
-    conditions.push(`d.created_at >= $${index}`)
+    conditions.push(`created_at >= $${index}`)
     refs.push(new Date(filter).toISOString())
-    index++
+  }
+
+  const tempResult = await client.query(
+    `SELECT COUNT(*) AS total_documents
+     FROM documents
+     WHERE user_id = $1
+     ${conditions.map((condition) => `AND ${condition}`).join(' ')}
+     LIMIT 1;`,
+    refs
+  )
+
+  if (pagination) {
+    const { page, perPage } = pagination
+    limit = `LIMIT ${perPage} OFFSET ${perPage * (page - 1)}`
+    totalPages = Math.ceil(tempResult.rows[0].total_documents / perPage)
   }
 
   const result = await client.query(
     `SELECT
-      d.document_id,
-      d.title,
-      d.description,
-      d.total_questions,
-      c.title AS course,
-      d.created_at,
-      d.last_updated,
-      d.status,
-      a.display_name AS reviewer,
-      d.reject_reason,
-      COUNT(*) OVER() AS total_pages
-     FROM documents AS d
-     INNER JOIN courses AS c
-     ON d.course_id = c.course_id
-     LEFT OUTER JOIN admins AS a
-     ON d.admin_id = a.admin_id
-     WHERE d.user_id = $${index}
+      document_id,
+      title,
+      created_at
+     FROM documents
+     WHERE user_id = $1
      ${conditions.map((condition) => `AND ${condition}`).join(' ')}
-     ${options.join(' ')};`,
-    [...refs, user_id]
+     ${limit};`,
+    refs
   )
-  return result.rows.map((row) => ({
-    ...row,
-    created_at: timeConvert(row.created_at),
-    last_updated: timeConvert(row.last_updated),
-    total_pages: parseInt(row.total_pages),
-  }))
+
+  return {
+    total_pages: totalPages,
+    documents: result.rows.map((row) => ({
+      ...row,
+      created_at: timeConvert(row.created_at),
+    })),
+  }
 }

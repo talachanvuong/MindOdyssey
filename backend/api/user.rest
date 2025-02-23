@@ -75,3 +75,7 @@ Content-Type: application/json
 ### Refresh token
 POST {{host}}/refreshtoken
 Content-Type: application/json
+
+### Get user_id
+GET {{host}}/getuserid
+Content-Type: application/json

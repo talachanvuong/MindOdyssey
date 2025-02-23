@@ -1,0 +1,42 @@
+@host = http://localhost:{{$dotenv SERVER_PORT}}/api/admin
+
+### Login
+POST {{host}}/login
+Content-Type: application/json
+
+{
+    "display_name": "",
+    "password": ""
+}
+
+### Get unapproved documents
+GET {{host}}/document
+Content-Type: application/json
+
+{
+    "pagination": {
+        "page": 0,
+        "perPage": 0
+    },
+    "keyword": "",
+    // Timestamp in milliseconds
+    "filter": 0 
+}
+
+### Get document detail
+GET {{host}}/detail
+Content-Type: application/json
+
+{
+    "document": 0
+}
+
+### Review document
+POST {{host}}/review
+Content-Type: application/json
+
+{
+    "document": 0,
+    "isApproved": false,
+    "reason": ""
+}
