@@ -62,17 +62,11 @@ export const updateDocument = async (
 }
 
 export const selectDocuments = async (pagination, keyword, filter) => {
-  const options = []
   const conditions = []
-  const refs = []
-  let index = 1
-
-  if (pagination) {
-    options.push(`LIMIT $${index} OFFSET $${index + 1}`)
-    refs.push(pagination.perPage)
-    refs.push(pagination.perPage * (pagination.page - 1))
-    index += 2
-  }
+  const refs = ['Chưa duyệt']
+  let index = 2
+  let limit = ''
+  let totalPages = 1
 
   if (keyword) {
     conditions.push(`title ILIKE $${index}`)
@@ -83,26 +77,42 @@ export const selectDocuments = async (pagination, keyword, filter) => {
   if (filter) {
     conditions.push(`created_at >= $${index}`)
     refs.push(new Date(filter).toISOString())
-    index++
+  }
+
+  const tempResult = await client.query(
+    `SELECT COUNT(*) AS total_documents
+     FROM documents
+     WHERE status = $1
+     ${conditions.map((condition) => `AND ${condition}`).join(' ')}
+     LIMIT 1;`,
+    refs
+  )
+
+  if (pagination) {
+    const { page, perPage } = pagination
+    limit = `LIMIT ${perPage} OFFSET ${perPage * (page - 1)}`
+    totalPages = Math.ceil(tempResult.rows[0].total_documents / perPage)
   }
 
   const result = await client.query(
     `SELECT
       document_id,
       title,
-      created_at,
-      COUNT(*) OVER() AS total_pages
+      created_at
      FROM documents
-     WHERE status = $${index}
+     WHERE status = $1
      ${conditions.map((condition) => `AND ${condition}`).join(' ')}
-     ${options.join(' ')};`,
-    [...refs, 'Chưa duyệt']
+     ${limit};`,
+    refs
   )
-  return result.rows.map((row) => ({
-    ...row,
-    created_at: timeConvert(row.created_at),
-    total_pages: parseInt(row.total_pages),
-  }))
+
+  return {
+    total_pages: totalPages,
+    documents: result.rows.map((row) => ({
+      ...row,
+      created_at: timeConvert(row.created_at),
+    })),
+  }
 }
 
 export const selectDocumentDetail = async (document_id) => {
