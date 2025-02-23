@@ -138,7 +138,8 @@ export const selectDocumentDetail = async (document_id) => {
             FROM contents AS con
             WHERE q.question_id = con.question_id
           )
-        ) ORDER BY q."order"
+        )
+        ORDER BY q."order"
       ) AS questions
      FROM documents AS d
      INNER JOIN courses AS c
