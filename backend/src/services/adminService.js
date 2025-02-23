@@ -104,3 +104,52 @@ export const selectDocuments = async (pagination, keyword, filter) => {
     total_pages: parseInt(row.total_pages),
   }))
 }
+
+export const selectDocumentDetail = async (document_id) => {
+  const result = await client.query(
+    `SELECT
+      d.title,
+      d.description,
+      c.title AS course,
+      u.display_name AS author,
+      d.created_at,
+      d.last_updated,
+      json_agg(
+        json_build_object(
+          'correct_answer', q.correct_answer,
+          'contents', (
+            SELECT json_agg(
+              json_build_object(
+                'text', con.text,
+                'attachment', con.attachment,
+                'type', con."type"
+              )
+            )
+            FROM contents AS con
+            WHERE q.question_id = con.question_id
+          )
+        ) ORDER BY q."order"
+      ) AS questions
+     FROM documents AS d
+     INNER JOIN courses AS c
+     ON d.course_id = c.course_id
+     INNER JOIN users AS u
+     ON d.user_id = u.user_id
+     INNER JOIN questions AS q
+     ON d.document_id = q.document_id
+     WHERE d.document_id = $1
+     GROUP BY
+      d.title,
+      d.description,
+      c.title,
+      u.display_name,
+      d.created_at,
+      d.last_updated;`,
+    [document_id]
+  )
+  return result.rows.map((row) => ({
+    ...row,
+    created_at: timeConvert(row.created_at),
+    last_updated: timeConvert(row.last_updated),
+  }))[0]
+}

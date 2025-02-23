@@ -14,6 +14,10 @@ export const reviewDocumentSchema = Joi.object({
   }),
 })
 
+export const getDocumentDetailSchema = Joi.object({
+  document: Joi.number().integer().strict().min(1).required(),
+})
+
 export const selectDocumentsSchema = Joi.object({
   pagination: Joi.object({
     page: Joi.number().integer().strict().min(1).required(),

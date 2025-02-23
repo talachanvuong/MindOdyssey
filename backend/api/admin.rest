@@ -23,6 +23,14 @@ Content-Type: application/json
     "filter": 0 
 }
 
+### Get document detail
+GET {{host}}/detail
+Content-Type: application/json
+
+{
+    "document": 0
+}
+
 ### Review document
 POST {{host}}/review
 Content-Type: application/json

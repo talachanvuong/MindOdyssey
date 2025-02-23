@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import {
+  getDocumentDetail,
   getUnapprovedDocuments,
   login,
   reviewDocument,
@@ -18,6 +19,14 @@ router.get(
   '/document',
   authMiddleware.verifyAdmin,
   asyncHandler(getUnapprovedDocuments),
+  errorHandler
+)
+
+// Get document detail
+router.get(
+  '/detail',
+  authMiddleware.verifyAdmin,
+  asyncHandler(getDocumentDetail),
   errorHandler
 )
 
