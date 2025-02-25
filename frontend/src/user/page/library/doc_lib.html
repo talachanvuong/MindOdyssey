@@ -8,14 +8,14 @@
   <body class="h-screen">
     <header class="flex h-12 flex-row justify-between bg-cyan-300 pr-5">
       <div id="popupMenuBtn" class="ml-2 mt-1">
-        <img class="h-10" src="../../img/menu.png" />
+        <img class="h-10" src="../img/menu.png" />
       </div>
       <div id="user" class="h-12">
         <a
-          href="../../account/user_information.html"
+          href="../account/user_information.html"
           class="flex flex-row justify-between gap-2 p-1 items-center"
         >
-          <img src="../../img/user.png" class="h-10" />
+          <img src="../img/user.png" class="h-10" />
           <!-- call API to get user name -->
           <div id="userName" class="font-bold"></div>
         </a>
@@ -39,7 +39,7 @@
           id="filter"
           class="ml-2 cursor-pointer rounded-md border border-stone-300 hover:border hover:bg-slate-50"
         >
-          <img src="../../img/filter.png" class="h-10" />
+          <img src="../img/filter.png" class="h-10" />
         </div>
       </div>
 
@@ -51,20 +51,20 @@
             class="flex flex-row items-center gap-2 border-b-2 border-black"
           >
             <p class="" id="nameOfDocument">Name of doc</p>
-            <img src="../../img/folder.png" class="h-5" />
+            <img src="../img/folder.png" class="h-5" />
           </div>
           <ul id="listOfDoc" class="">
             <li class="border-b-2 border-dashed border-black p-3">
               <!-- the href is the detail information of this document page -->
               <!-- this is just a sample =D -->
               <a href="#" class="flex flex-row items-center justify-between">
-                <img src="../../img/pdfIcon.png" class="h-6" />
+                <img src="../img/pdfIcon.png" class="h-6" />
                 <div id="nameOfDoc" class="w-full">
                   <p class="ml-2">NameOfDoc</p>
                 </div>
                 <img
                   id="detailInfo"
-                  src="../../img/threeDot.png"
+                  src="../img/threeDot.png"
                   class="right-1 h-6"
                 />
               </a>
@@ -83,7 +83,7 @@
           id="next"
           class="cursor-pointer rounded-lg bg-cyan-200 p-2 hover:bg-cyan-300"
         >
-          <img src="../../img/back.png" class="h-6" />
+          <img src="../img/back.png" class="h-6" />
         </div>
         <div id="pageNumber">
           <!-- api for calculation of the number of pages -->
@@ -92,7 +92,7 @@
           id="previous"
           class="cursor-pointer rounded-lg bg-cyan-200 p-2 hover:bg-cyan-300"
         >
-          <img src="../../img/next.png" class="h-6" />
+          <img src="../img/next.png" class="h-6" />
         </div>
       </div>
 
@@ -102,16 +102,16 @@
         class="mx-auto flex flex-row justify-around sm:w-2/5 w-full"
       >
         <a
-          href="../../account/lobby.html"
+          href="../account/lobby.html"
           class="p-auto flex h-10 w-1/3 flex-row items-center rounded-xl bg-orange-300 text-center font-bold"
-          ><img src="../../img/back.png" class="ml-3 h-5" />
+          ><img src="../img/back.png" class="ml-3 h-5" />
           <p class="w-full">Back</p></a
         >
         <div
           id="refresh"
           class="flex w-1/3 cursor-pointer flex-row items-center justify-around rounded-xl bg-cyan-300 text-center"
         >
-          <img src="../../img/refresh.png" class="ml-3 h-6" />
+          <img src="../img/refresh.png" class="ml-3 h-6" />
           <p class="w-full font-bold">Refresh</p>
         </div>
       </div>
@@ -128,13 +128,13 @@
       >
         <div id="closePopupInfo">
           <img
-            src="../../img/close.png"
+            src="../img/close.png"
             class="absolute left-2 h-6 cursor-pointer rounded-md bg-red-300 p-1 sm:h-10"
           />
         </div>
         <!-- name -->
         <div class="mx-auto flex flex-row items-center justify-center p-3">
-          <img src="../../img/pdfIcon.png" class="h-10" />
+          <img src="../img/pdfIcon.png" class="h-10" />
           <p id="popupNameOfDocument" class="truncate text-3xl">
             Name Of Document
           </p>
@@ -144,7 +144,7 @@
           <!-- course -->
           <div class="flex flex-col">
             <div class="itmes-center flex flex-row gap-1">
-              <img src="../../img/folder.png" class="h-6" />
+              <img src="../img/folder.png" class="h-6" />
               <p class="font-bold">Course</p>
             </div>
             <p id="courseName" class="truncate rounded-2xl bg-stone-300 p-1">
@@ -155,7 +155,7 @@
           <!-- description -->
           <div class="flex flex-col">
             <div class="flex flex-row items-center">
-              <img src="../../img/description.png" class="h-8" />
+              <img src="../img/description.png" class="h-8" />
               <p class="font-bold">Description</p>
             </div>
             <p id="description" class="truncate rounded-2xl bg-stone-300 p-1">
@@ -166,7 +166,7 @@
           <!-- author -->
           <div class="flex flex-col">
             <div class="flex flex-row items-center">
-              <img src="../../img/author.png" class="h-8" />
+              <img src="../img/author.png" class="h-8" />
               <p class="font-bold">Author</p>
             </div>
             <p id="author" class="rounded-2xl bg-stone-300 p-1">
@@ -186,7 +186,7 @@
           href="#"
           class="mt-10 flex w-1/2 flex-row items-center justify-around gap-2 rounded-xl bg-orange-300 p-2 shadow-md shadow-gray-600"
         >
-          <img src="../../img/play.png" class="h-10" />
+          <img src="../img/play.png" class="h-10" />
           <p class="w-full text-center text-xl font-bold">Play</p>
         </a>
       </div>
@@ -213,16 +213,16 @@
      <!-- popup menu -->
       <div id="popupMenu" class="invisible h-screen w-screen fixed top-0 bg-gray-600 bg-opacity-50">
         <div class=" flex flex-col gap-2 p-2 mt-12 ml-2 bg-white h-1/3 w-3/5 rounded-xl">
-          <a id="home" class="p-2 items-center gap-2 rounded-lg shadow-gray-500 shadow-md flex flex-row bg-stone-300 h-full w-full " href="../../account/lobby.html">
-            <img src="../../img/home.png" class="h-10">
+          <a id="home" class="p-2 items-center gap-2 rounded-lg shadow-gray-500 shadow-md flex flex-row bg-stone-300 h-full w-full " href="../account/lobby.html">
+            <img src="../img/home.png" class="h-10">
             <p class="w-full">Trở về trang chủ</p>
           </a>
-          <a href="../../document/create.html" id="create_doc" class="p-2 items-center gap-2 rounded-lg shadow-gray-500 shadow-md flex flex-row bg-stone-300 h-full w-full ">
-            <img src="../../img/create_doc_feature.png" class="h-10">
+          <a href="../document/create.html" id="create_doc" class="p-2 items-center gap-2 rounded-lg shadow-gray-500 shadow-md flex flex-row bg-stone-300 h-full w-full ">
+            <img src="../img/create_doc_feature.png" class="h-10">
             <p class="w-full">Tạo tài liệu</p>
           </a>
           <a href="#" id="completed_doc"  class="p-2 items-center gap-2 rounded-lg shadow-gray-500 shadow-md flex flex-row bg-stone-300 h-full w-full ">
-            <img src="../../img/completed_document.png" class="h-10">
+            <img src="../img/completed_document.png" class="h-10">
             <p class="w-full">Xem Tài liệu đã xong</p>
           </a>
         </div>
@@ -230,7 +230,7 @@
     <footer class="h-10 bg-cyan-300"></footer>
     <script
       type="module"
-      src="../../../js/document/library/doc_lib.js"
+      src="../../js/library/doc_lib.js"
     ></script>
   </body>
 </html>

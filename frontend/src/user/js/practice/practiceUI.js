@@ -1,8 +1,8 @@
-import '../../../../style.css'
-import callApi from '../../model/callApi.js'
-import api from '../../config/envConfig.js'
+import '../../../style.css'
+import callApi from '../model/callApi.js'
+import api from '../config/envConfig.js'
+
 document.addEventListener('DOMContentLoaded', () => {
-    //get user info
   async function userInfo() {
     const userName = document.getElementById('userName')
 
@@ -14,26 +14,30 @@ document.addEventListener('DOMContentLoaded', () => {
       userName.textContent = 'display_error'
     }
   }
-//   popup menu
-  function popupMenu(){
-    const button = document.getElementById('popupMenuBtn')
-    const modal = document.getElementById('popupMenu')
 
-    //open
-    button.addEventListener('click',()=>{
+  function popupAlert() {
+    const modal = document.getElementById('alert')
+    const openBtn = document.getElementById('submitBtn')
+    const closeBtn = document.getElementById('continueBtn')
+
+    openBtn.addEventListener('click', () => {
       modal.classList.remove('invisible')
       document.body.classList.add('overflow-hidden')
     })
 
-    //close
-    modal.addEventListener('click',(e)=>{
-      if(e.target === modal){
+    closeBtn.addEventListener('click', () => {
+      modal.classList.add('invisible')
+      document.body.classList.remove('overflow-hidden')
+    })
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
         modal.classList.add('invisible')
         document.body.classList.remove('overflow-hidden')
       }
     })
   }
 
-  popupMenu()
+  popupAlert()
   userInfo()
 })

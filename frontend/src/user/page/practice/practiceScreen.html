@@ -8,20 +8,20 @@
   <body class="bg-stone-100">
     <header class="flex h-12 flex-row justify-between bg-cyan-300 pr-5">
       <div class="ml-2 mt-1 flex cursor-pointer flex-row gap-2">
-        <a href="../../document/library/doc_lib.html">
-          <img class="h-10" src="../../img/back.png" />
+        <a href="/../document/library/doc_lib.html">
+          <img class="h-10" src="../img/back.png" />
         </a>
-        <a href="../../account/lobby.html">
-          <img src="../../img/home.png" class="h-10 w-full" />
+        <a href="../account/lobby.html">
+          <img src="../img/home.png" class="h-10 w-full" />
         </a>
       </div>
 
       <div id="user" class="h-12">
         <a
-          href="../../account/user_information.html"
+          href="../account/user_information.html"
           class="flex flex-row items-center justify-between gap-2 p-1"
         >
-          <img src="../../img/user.png" class="h-10" />
+          <img src="../img/user.png" class="h-10" />
           <!-- call API to get user name -->
           <div id="userName" class="font-bold"></div>
         </a>
@@ -39,30 +39,30 @@
         <div
           class="col-span-2 flex w-full flex-row items-center rounded-xl bg-cyan-200 p-2 shadow-md shadow-gray-500"
         >
-          <img src="../../img/docIcon.png" class="h-10" />
+          <img src="../img/docIcon.png" class="h-10" />
           <p id="docName" class="truncate text-2xl">Name of document</p>
         </div>
 
         <!-- author -->
         <div class="col-span-2 flex flex-row items-center gap-2">
-          <img src="../../img/author.png" class="h-10" />
+          <img src="../img/author.png" class="h-10" />
           <p class="text-2xl" id="authorName">Name of author</p>
         </div>
 
         <!-- subject -->
         <div class="col-span-2 flex flex-row items-center gap-2">
-          <img src="../../img/subject.png" class="ml-2 h-10" />
+          <img src="../img/subject.png" class="ml-2 h-10" />
           <p id="subject" class="text-2xl">Subject</p>
         </div>
 
         <!-- time of test -->
         <div class="col-span-1 flex flex-row items-center gap-2">
-          <img src="../../img/timer.png" class="h-10" />
+          <img src="../img/timer.png" class="h-10" />
           <p class="text-2xl">Timer</p>
         </div>
 
         <div class="col-span-1 flex flex-row items-center gap-2">
-          <img src="../../img/quantity.png" class="h-10" />
+          <img src="../img/quantity.png" class="h-10" />
           <p class="text-2xl">N questions</p>
         </div>
       </div>
@@ -71,7 +71,7 @@
       <div
         class="mt-3 h-full rounded-xl bg-cyan-300 p-1 shadow-md shadow-gray-600"
       >
-        <a href="reviewUI.html">
+        <a href="practiceUI.html">
           <div
             id="startBtn"
             class="mx-auto cursor-pointer  mb-2 mt-3 h-14 w-1/2 rounded-lg bg-yellow-300 pt-3 text-center text-2xl font-bold opacity-80 shadow-md shadow-gray-600"
@@ -187,7 +187,7 @@
     </main>
     <script
       type="module"
-      src="../../../js/document/review/reviewScreen.js"
+      src="../../js/practice/practiceScreen.js"
     ></script>
   </body>
 </html>

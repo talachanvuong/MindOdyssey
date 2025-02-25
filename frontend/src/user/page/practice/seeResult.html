@@ -8,17 +8,17 @@
   <body>
     <header class="flex h-12 flex-row justify-between bg-cyan-300 pr-5">
       <div class="ml-2 mt-1 flex cursor-pointer flex-row gap-2">
-        <a href="../../account/lobby.html">
-          <img src="../../img/home.png" class="h-10 w-full" />
+        <a href="../account/lobby.html">
+          <img src="../img/home.png" class="h-10 w-full" />
         </a>
       </div>
 
       <div id="user" class="h-12">
         <a
-          href="../../account/user_information.html"
+          href="../account/user_information.html"
           class="flex flex-row items-center justify-between gap-2 p-1"
         >
-          <img src="../../img/user.png" class="h-10" />
+          <img src="../img/user.png" class="h-10" />
           <!-- call API to get user name -->
           <div id="userName" class="font-bold"></div>
         </a>
@@ -34,7 +34,7 @@
       >
         <!-- score -->
         <div class="flex flex-row items-center">
-          <img src="../../img/score.png" class="h-10" />
+          <img src="../img/score.png" class="h-10" />
           <div class="flex flex-row gap-2">
             <p class="text-2xl">Score:</p>
             <p id="score" class="text-2xl">30</p>
@@ -43,7 +43,7 @@
 
         <!-- correct answer -->
         <div class="flex flex-row">
-          <img src="../../img/done.png" class="h-10" />
+          <img src="../img/done.png" class="h-10" />
           <div class="flex flex-row items-center gap-2">
             <p class="text-2xl">correct:</p>
             <p id="score" class="text-2xl">25/30</p>
@@ -161,13 +161,13 @@
 
       <!-- button -->
       <div class="flex flex-row justify-around gap-3 mt-2">
-        <a href="reviewScreen.html" class="bg-orange-300 rounded p-3 w-full  shadow-md shadow-gray-500 text-center font-bold text-2xl">trở về</a>
+        <a href="practiceScreen.html" class="bg-orange-300 rounded p-3 w-full  shadow-md shadow-gray-500 text-center font-bold text-2xl">trở về</a>
         <a href="searchDoc.html" class= "bg-orange-300 rounded p-3 w-full  shadow-md shadow-gray-500 text-center font-bold text-2xl">tìm tài liệu</a>
       </div>
     </main>
     <script
       type="module"
-      src="../../../js/document/review/seeResult.js"
+      src="../../js/practice/seeResult.js"
     ></script>
   </body>
 </html>

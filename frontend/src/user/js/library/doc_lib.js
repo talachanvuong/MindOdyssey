@@ -1,6 +1,6 @@
-import '../../../../style.css'
-import callApi from '../../model/callApi.js'
-import api from '../../config/envConfig.js'
+import '../../../style.css'
+import callApi from '../model/callApi.js'
+import api from '../config/envConfig.js'
 
 document.addEventListener('DOMContentLoaded', () => {
   //popup detail info of document
