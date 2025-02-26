@@ -1,67 +1,18 @@
-import bcrypt from 'bcryptjs'
 import client from '../db/db.js'
-import { timeConvert } from '../utils/convert.js'
+import { timeConvert } from '../utils/convertUtils.js'
 
-export const isMatchedPassword = async (password, hashedPassword) => {
-  return await bcrypt.compare(password, hashedPassword)
-}
-
-export const isReviewedDocument = async (document_id) => {
-  const result = await client.query(
-    `SELECT 1
-     FROM documents
-     WHERE status <> 'Chưa duyệt'
-     AND document_id = $1
-     LIMIT 1;`,
-    [document_id]
-  )
-  return result.rowCount > 0
-}
-
-export const selectAdminByDisplayName = async (display_name) => {
+const getAdminByDisplayName = async (display_name) => {
   const result = await client.query(
     `SELECT admin_id, "password"
      FROM admins
-     WHERE display_name = $1;`,
+     WHERE display_name = $1
+     LIMIT 1;`,
     [display_name]
   )
   return result.rows[0]
 }
 
-export const updateDocument = async (
-  admin_id,
-  isApproved,
-  reason,
-  document_id
-) => {
-  const updates = []
-  const refs = []
-  let index = 3
-
-  // Reviewer
-  updates.push('admin_id = $1')
-  refs.push(admin_id)
-
-  // Status
-  updates.push('status = $2')
-  refs.push(isApproved ? 'Đã duyệt' : 'Từ chối')
-
-  // Reason
-  if (reason !== undefined) {
-    updates.push(`reject_reason = $${index}`)
-    refs.push(reason)
-    index++
-  }
-
-  await client.query(
-    `UPDATE documents
-     SET ${updates.join(', ')}
-     WHERE document_id = $${index};`,
-    [...refs, document_id]
-  )
-}
-
-export const selectDocuments = async (pagination, keyword, filter) => {
+const getUnapprovedDocuments = async (pagination, keyword, filter) => {
   const conditions = []
   const refs = ['Chưa duyệt']
   let index = 2
@@ -80,7 +31,7 @@ export const selectDocuments = async (pagination, keyword, filter) => {
   }
 
   const tempResult = await client.query(
-    `SELECT COUNT(*) AS total_documents
+    `SELECT COUNT(*) AS filtered_documents
      FROM documents
      WHERE status = $1
      ${conditions.map((condition) => `AND ${condition}`).join(' ')}
@@ -91,7 +42,7 @@ export const selectDocuments = async (pagination, keyword, filter) => {
   if (pagination) {
     const { page, perPage } = pagination
     limit = `LIMIT ${perPage} OFFSET ${perPage * (page - 1)}`
-    totalPages = Math.ceil(tempResult.rows[0].total_documents / perPage)
+    totalPages = Math.ceil(tempResult.rows[0].filtered_documents / perPage)
   }
 
   const result = await client.query(
@@ -115,7 +66,19 @@ export const selectDocuments = async (pagination, keyword, filter) => {
   }
 }
 
-export const selectDocumentDetail = async (document_id) => {
+const isDocumentReview = async (document_id) => {
+  const result = await client.query(
+    `SELECT 1
+     FROM documents
+     WHERE status <> 'Chưa duyệt'
+     AND document_id = $1
+     LIMIT 1;`,
+    [document_id]
+  )
+  return result.rowCount > 0
+}
+
+const getDocumentDetail = async (document_id) => {
   const result = await client.query(
     `SELECT
       d.title,
@@ -163,4 +126,34 @@ export const selectDocumentDetail = async (document_id) => {
     created_at: timeConvert(row.created_at),
     last_updated: timeConvert(row.last_updated),
   }))[0]
+}
+
+const reviewDocument = async (
+  admin_id,
+  isApproved,
+  reject_reason,
+  document_id
+) => {
+  const updates = ['admin_id = $2', 'status = $3']
+  const refs = [document_id, admin_id, isApproved ? 'Đã duyệt' : 'Từ chối']
+
+  if (reject_reason !== undefined) {
+    updates.push(`reject_reason = $4`)
+    refs.push(reject_reason)
+  }
+
+  await client.query(
+    `UPDATE documents
+     SET ${updates.join(', ')}
+     WHERE document_id = $1;`,
+    refs
+  )
+}
+
+export default {
+  getAdminByDisplayName,
+  getUnapprovedDocuments,
+  isDocumentReview,
+  getDocumentDetail,
+  reviewDocument,
 }

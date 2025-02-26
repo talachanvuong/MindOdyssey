@@ -4,7 +4,7 @@ import { timeConvert } from '../utils/convert.js'
 /**
  * Check document exist.
  */
-export const isDocumentExist = async (document_id) => {
+const isDocumentExist = async (document_id) => {
   const result = await client.query(
     `SELECT 1
      FROM documents
@@ -556,4 +556,8 @@ export const selectDocuments = async (pagination, keyword, filter, user_id) => {
       created_at: timeConvert(row.created_at),
     })),
   }
+}
+
+export default {
+  isDocumentExist,
 }
