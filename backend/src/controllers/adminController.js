@@ -7,9 +7,6 @@ import jwtUtils from '../utils/jwtUtils.js'
 import passwordUtils from '../utils/passwordUtils.js'
 import { sendResponse } from '../utils/responseUtils.js'
 
-/**
- * Login.
- */
 const login = async (req, res) => {
   const { error, value } = adminSchema.login.validate(req.body)
   const { display_name, password } = value
@@ -57,9 +54,6 @@ const login = async (req, res) => {
   return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.ADMIN.LOGIN_SUCCESS)
 }
 
-/**
- * Get unapproved documents.
- */
 const getUnapprovedDocuments = async (req, res) => {
   const { error, value } = adminSchema.getUnapprovedDocuments.validate(req.body)
   const { pagination, keyword, filter } = value
@@ -84,9 +78,6 @@ const getUnapprovedDocuments = async (req, res) => {
   )
 }
 
-/**
- * Get document detail.
- */
 const getDocumentDetail = async (req, res) => {
   const { error, value } = adminSchema.getDocumentDetail.validate(req.body)
   const { document } = value
@@ -119,9 +110,6 @@ const getDocumentDetail = async (req, res) => {
   )
 }
 
-/**
- * Review document.
- */
 const reviewDocument = async (req, res) => {
   const { admin_id } = req.admin
   const { error, value } = adminSchema.reviewDocument.validate(req.body)
