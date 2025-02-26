@@ -1,16 +1,10 @@
-import {
-  insertCourse,
-  isCourseExistByTitle,
-  selectCourses,
-} from '../services/courseService.js'
-import { createCourseSchema, getCoursesSchema } from '../schemas/courseSchema.js'
-import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
+import courseSchema from '../schemas/courseSchema.js'
+import courseService from '../services/courseService.js'
+import { MESSAGE, STATUS_CODE } from '../utils/constantUtils.js'
+import { sendResponse } from '../utils/responseUtils.js'
 
-/**
- * Create a new course.
- */
-export const createCourse = async (req, res) => {
-  const { error, value } = createCourseSchema.validate(req.body)
+const createCourse = async (req, res) => {
+  const { error, value } = courseSchema.createCourse.validate(req.body)
   const { title } = value
 
   // Check validation
@@ -19,21 +13,23 @@ export const createCourse = async (req, res) => {
   }
 
   // Check course exist
-  const existedCourse = await isCourseExistByTitle(title)
-  if (existedCourse) {
+  const isCourseExist = await courseService.isCourseExistByTitle(title)
+  if (isCourseExist) {
     return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.COURSE.EXISTED)
   }
 
-  // Insert new course
-  await insertCourse(title)
-  return sendResponse(res, STATUS_CODE.CREATED, MESSAGE.COURSE.CREATE_SUCCESS)
+  // Create course
+  await courseService.createCourse(title)
+
+  return sendResponse(
+    res,
+    STATUS_CODE.CREATED,
+    MESSAGE.COURSE.CREATE_COURSE_SUCCESS
+  )
 }
 
-/**
- * Get list of courses.
- */
-export const getCourses = async (req, res) => {
-  const { error, value } = getCoursesSchema.validate(req.query)
+const getCourses = async (req, res) => {
+  const { error, value } = courseSchema.getCourses.validate(req.query)
   const { keyword } = value
 
   // Check validation
@@ -42,11 +38,17 @@ export const getCourses = async (req, res) => {
   }
 
   // Get courses
-  const courses = await selectCourses(keyword)
+  const courses = await courseService.getCourses(keyword)
+
   return sendResponse(
     res,
     STATUS_CODE.SUCCESS,
-    MESSAGE.COURSE.GET_SUCCESS,
+    MESSAGE.COURSE.GET_COURSES_SUCCESS,
     courses
   )
+}
+
+export default {
+  createCourse,
+  getCourses,
 }

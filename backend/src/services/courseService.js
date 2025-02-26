@@ -1,23 +1,18 @@
 import client from '../db/db.js'
 
-/**
- * Check course exist by id.
- */
-export const isCourseExistById = async (id) => {
+const isCourseExistById = async (course_id) => {
   const result = await client.query(
     `SELECT 1
      FROM courses
      WHERE course_id = $1
      LIMIT 1;`,
-    [id]
+    [course_id]
   )
+
   return result.rowCount > 0
 }
 
-/**
- * Check course exist by title.
- */
-export const isCourseExistByTitle = async (title) => {
+const isCourseExistByTitle = async (title) => {
   const result = await client.query(
     `SELECT 1
      FROM courses
@@ -25,13 +20,11 @@ export const isCourseExistByTitle = async (title) => {
      LIMIT 1;`,
     [title]
   )
+
   return result.rowCount > 0
 }
 
-/**
- * Insert new course.
- */
-export const insertCourse = async (title) => {
+const createCourse = async (title) => {
   await client.query(
     `INSERT INTO courses (title)
      VALUES ($1);`,
@@ -39,15 +32,28 @@ export const insertCourse = async (title) => {
   )
 }
 
-/**
- * Select courses.
- */
-export const selectCourses = async (keyword) => {
+const getCourses = async (keyword) => {
+  const refs = []
+  let condition = ''
+
+  if (keyword !== undefined) {
+    condition = `WHERE title ILIKE $1`
+    refs.push(`%${keyword}%`)
+  }
+
   const result = await client.query(
     `SELECT course_id, title
      FROM courses
-     WHERE title ILIKE $1;`,
-    keyword === undefined ? ['%%'] : [`%${keyword}%`]
+     ${condition};`,
+    refs
   )
+  
   return result.rows
+}
+
+export default {
+  isCourseExistById,
+  isCourseExistByTitle,
+  createCourse,
+  getCourses,
 }

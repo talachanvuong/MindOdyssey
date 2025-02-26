@@ -2,8 +2,8 @@ export const MESSAGE = {
   COURSE: {
     EXISTED: 'Course already exists!',
     NOT_FOUND: 'Course not found!',
-    CREATE_SUCCESS: 'Create course successfully!',
-    GET_SUCCESS: 'Get course(s) successfully!',
+    CREATE_COURSE_SUCCESS: 'Create course successfully!',
+    GET_COURSES_SUCCESS: 'Get courses successfully!',
   },
   DOCUMENT: {
     NOT_FOUND: 'Document not found!',
