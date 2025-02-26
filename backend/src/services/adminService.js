@@ -9,6 +9,7 @@ const getAdminByDisplayName = async (display_name) => {
      LIMIT 1;`,
     [display_name]
   )
+
   return result.rows[0]
 }
 
@@ -75,6 +76,7 @@ const isDocumentReview = async (document_id) => {
      LIMIT 1;`,
     [document_id]
   )
+
   return result.rowCount > 0
 }
 
@@ -121,6 +123,7 @@ const getDocumentDetail = async (document_id) => {
       d.last_updated;`,
     [document_id]
   )
+  
   return result.rows.map((row) => ({
     ...row,
     created_at: timeConvert(row.created_at),
