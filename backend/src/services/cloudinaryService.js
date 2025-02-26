@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from 'cloudinary'
 
-export const uploadCloudinary = async (link) => {
+const upload = async (link) => {
   if (!link) {
     return
   }
@@ -8,6 +8,11 @@ export const uploadCloudinary = async (link) => {
   return await cloudinary.uploader.upload(link)
 }
 
-export const destroyCloudinary = async (public_id) => {
+const destroy = async (public_id) => {
   await cloudinary.uploader.destroy(public_id)
+}
+
+export default {
+  upload,
+  destroy,
 }

@@ -5,10 +5,7 @@ import {
   getDocumentsSchema,
   removeDocumentSchema,
 } from '../schemas/documentSchema.js'
-import {
-  destroyCloudinary,
-  uploadCloudinary,
-} from '../services/cloudinaryService.js'
+import cloudinaryService from '../services/cloudinaryService.js'
 import { isCourseExistById } from '../services/courseService.js'
 import {
   arrangeOrderAfterDelete,
@@ -81,7 +78,7 @@ export const createDocument = async (req, res) => {
 
     for (const content of question.content) {
       // Upload attachment to cloudinary
-      const attachment = await uploadCloudinary(content.attachment)
+      const attachment = await cloudinaryService.upload(content.attachment)
 
       // Insert new content in database
       await insertContent(
@@ -169,7 +166,7 @@ export const removeDocument = async (req, res) => {
     for (const resultContent of resultContents) {
       // Remove attachment in cloudinary
       if (resultContent.attachment) {
-        await destroyCloudinary(resultContent.attachment_id)
+        await cloudinaryService.destroy(resultContent.attachment_id)
       }
     }
   }
@@ -246,7 +243,7 @@ export const editDocument = async (req, res) => {
 
         for (const content of question.content) {
           // Upload attachment to cloudinary
-          const attachment = await uploadCloudinary(content.attachment)
+          const attachment = await cloudinaryService.upload(content.attachment)
 
           // Insert new content in database
           await insertContent(
@@ -299,7 +296,7 @@ export const editDocument = async (req, res) => {
         for (const resultContent of resultContents) {
           // Remove attachment in cloudinary
           if (resultContent.attachment) {
-            await destroyCloudinary(resultContent.attachment_id)
+            await cloudinaryService.destroy(resultContent.attachment_id)
           }
         }
 
@@ -404,7 +401,7 @@ export const editDocument = async (req, res) => {
               }
 
               // Remove attachment in cloudinary
-              await destroyCloudinary(resultContent.attachment_id)
+              await cloudinaryService.destroy(resultContent.attachment_id)
 
               // Update content in database
               await updateContent(content.text, null, null, content.id)
@@ -412,12 +409,14 @@ export const editDocument = async (req, res) => {
             // Set attachment to new value
             else if (content.attachment !== undefined) {
               // Upload attachment to cloudinary
-              const attachment = await uploadCloudinary(content.attachment)
+              const attachment = await cloudinaryService.upload(
+                content.attachment
+              )
 
               // Get attachment_id of content
               const resultContent = await selectContent(content.id)
               // Remove attachment in cloudinary
-              await destroyCloudinary(resultContent.attachment_id)
+              await cloudinaryService.destroy(resultContent.attachment_id)
 
               // Update content in database
               await updateContent(
