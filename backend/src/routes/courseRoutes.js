@@ -1,20 +1,24 @@
 import { Router } from 'express'
-import { createCourse, getCourses } from '../controllers/courseController.js'
+import courseController from '../controllers/courseController.js'
 import { asyncHandler } from '../middleware/asyncMiddleware.js'
 import authMiddleware from '../middleware/authMiddleware.js'
 import { errorHandler } from '../middleware/errorMiddleware.js'
 
 const router = Router()
+
+// Create course
 router.post(
-  '/',
+  '/create-course',
   authMiddleware.verifyUser,
-  asyncHandler(createCourse),
+  asyncHandler(courseController.createCourse),
   errorHandler
 )
+
+// Get courses
 router.get(
-  '/',
+  '/get-courses',
   authMiddleware.verifyUser,
-  asyncHandler(getCourses),
+  asyncHandler(courseController.getCourses),
   errorHandler
 )
 
