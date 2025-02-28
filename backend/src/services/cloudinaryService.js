@@ -9,6 +9,10 @@ const upload = async (source) => {
 }
 
 const destroy = async (public_id) => {
+  if (!public_id) {
+    return
+  }
+
   await cloudinary.uploader.destroy(public_id)
 }
 

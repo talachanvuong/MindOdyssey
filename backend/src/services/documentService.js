@@ -1,9 +1,6 @@
 import client from '../db/db.js'
 import { timeConvert } from '../utils/convert.js'
 
-/**
- * Check document exist.
- */
 const isDocumentExist = async (document_id) => {
   const result = await client.query(
     `SELECT 1
@@ -12,41 +9,11 @@ const isDocumentExist = async (document_id) => {
      LIMIT 1;`,
     [document_id]
   )
+
   return result.rowCount > 0
 }
 
-/**
- * Check question exist.
- */
-export const isQuestionExist = async (question_id) => {
-  const result = await client.query(
-    `SELECT 1
-     FROM questions
-     WHERE question_id = $1
-     LIMIT 1;`,
-    [question_id]
-  )
-  return result.rowCount > 0
-}
-
-/**
- * Check content exist.
- */
-export const isContentExist = async (content_id) => {
-  const result = await client.query(
-    `SELECT 1
-     FROM contents
-     WHERE content_id = $1
-     LIMIT 1;`,
-    [content_id]
-  )
-  return result.rowCount > 0
-}
-
-/**
- * Insert new document.
- */
-export const insertDocument = async (
+const createDocument = async (
   title,
   description,
   total_questions,
@@ -59,40 +26,11 @@ export const insertDocument = async (
      RETURNING document_id;`,
     [title, description, total_questions, course_id, user_id]
   )
+
   return result.rows[0].document_id
 }
 
-/**
- * Insert new question.
- */
-export const insertQuestion = async (order, correct_answer, document_id) => {
-  const result = await client.query(
-    `INSERT INTO questions ("order", correct_answer, document_id)
-     VALUES ($1, $2, $3)
-     RETURNING question_id;`,
-    [order, correct_answer, document_id]
-  )
-  return result.rows[0].question_id
-}
-
-/**
- * Insert new content.
- */
-export const insertContent = async (
-  text,
-  attachment,
-  attachment_id,
-  type,
-  question_id
-) => {
-  await client.query(
-    `INSERT INTO contents (text, attachment, attachment_id, "type", question_id)
-     VALUES ($1, $2, $3, $4, $5);`,
-    [text, attachment, attachment_id, type, question_id]
-  )
-}
-
-export const selectDocumentDetail = async (document_id) => {
+const getDocumentDetailOwner = async (document_id) => {
   const result = await client.query(
     `SELECT
       d.title,
@@ -106,6 +44,7 @@ export const selectDocumentDetail = async (document_id) => {
       d.status,
       a.display_name AS reviewer,
       d.reject_reason,
+      d.total_questions,
       json_agg(
         json_build_object(
           'id', q.question_id,
@@ -143,9 +82,11 @@ export const selectDocumentDetail = async (document_id) => {
       c.title,
       d.status,
       a.display_name,
-      d.reject_reason;`,
+      d.reject_reason,
+      d.total_questions;`,
     [document_id]
   )
+
   return result.rows.map((row) => ({
     ...row,
     created_at: timeConvert(row.created_at),
@@ -153,58 +94,60 @@ export const selectDocumentDetail = async (document_id) => {
   }))[0]
 }
 
-/**
- * Check for illegal access to a document.
- */
-export const illegalAccessDocument = async (user_id, document_id) => {
-  const result = await client.query(
-    `SELECT user_id, status
-     FROM documents
-     WHERE document_id = $1;`,
-    [document_id]
-  )
-  const document = result.rows[0]
-  return document.user_id !== user_id && document.status !== 'Đã duyệt'
-}
-
-/**
- * Select questions.
- */
-export const selectQuestions = async (document_id) => {
+const getDocumentDetailGuest = async (document_id) => {
   const result = await client.query(
     `SELECT
-      question_id AS id,
-      correct_answer
-     FROM questions
-     WHERE document_id = $1
-     ORDER BY "order" ASC;`,
+      d.title,
+      d.description,
+      u.display_name AS author,
+      d.created_at,
+      d.last_updated,
+      c.title AS course,
+      d.total_questions,
+      json_agg(
+        json_build_object(
+          'correct_answer', q.correct_answer,
+          'contents', (
+            SELECT json_agg(
+              json_build_object(
+                'text', con.text,
+                'attachment', con.attachment,
+                'type', con."type"
+              )
+            )
+            FROM contents AS con
+            WHERE q.question_id = con.question_id
+          )
+        )
+        ORDER BY q."order"
+      ) AS questions
+     FROM documents AS d
+     INNER JOIN users AS u
+     ON d.user_id = u.user_id
+     INNER JOIN courses AS c
+     ON d.course_id = c.course_id
+     INNER JOIN questions AS q
+     ON d.document_id = q.document_id
+     WHERE d.document_id = $1
+     GROUP BY
+      d.title,
+      d.description,
+      u.display_name,
+      d.created_at,
+      d.last_updated,
+      c.title,
+      d.total_questions;`,
     [document_id]
   )
-  return result.rows
+
+  return result.rows.map((row) => ({
+    ...row,
+    created_at: timeConvert(row.created_at),
+    last_updated: timeConvert(row.last_updated),
+  }))[0]
 }
 
-/**
- * Select contents.
- */
-export const selectContents = async (question_id) => {
-  const result = await client.query(
-    `SELECT
-      content_id AS id,
-      text,
-      attachment,
-      attachment_id,
-      "type"
-     FROM contents
-     WHERE question_id = $1;`,
-    [question_id]
-  )
-  return result.rows
-}
-
-/**
- * Delete a document.
- */
-export const deleteDocument = async (document_id) => {
+const deleteDocument = async (document_id) => {
   await client.query(
     `DELETE FROM documents
      WHERE document_id = $1;`,
@@ -212,10 +155,7 @@ export const deleteDocument = async (document_id) => {
   )
 }
 
-/**
- * Check author of document.
- */
-export const isDocumentAuthor = async (user_id, document_id) => {
+const isDocumentAuthor = async (user_id, document_id) => {
   const result = await client.query(
     `SELECT 1
      FROM documents
@@ -224,65 +164,14 @@ export const isDocumentAuthor = async (user_id, document_id) => {
      LIMIT 1;`,
     [user_id, document_id]
   )
+
   return result.rowCount > 0
 }
 
-/**
- * Check author of question.
- */
-export const isQuestionAuthor = async (user_id, document_id, question_id) => {
-  const result = await client.query(
-    `SELECT 1
-     FROM documents AS d
-     INNER JOIN questions AS q
-     ON d.document_id = q.document_id
-     WHERE d.user_id = $1
-     AND d.document_id = $2
-     AND q.question_id = $3
-     LIMIT 1;`,
-    [user_id, document_id, question_id]
-  )
-  return result.rowCount > 0
-}
-
-/**
- * Check author of content.
- */
-export const isContentAuthor = async (
-  user_id,
-  document_id,
-  question_id,
-  content_id
-) => {
-  const result = await client.query(
-    `SELECT 1
-     FROM documents AS d
-     INNER JOIN questions AS q
-     ON d.document_id = q.document_id
-     INNER JOIN contents AS c
-     ON q.question_id = c.question_id
-     WHERE d.user_id = $1
-     AND d.document_id = $2
-     AND q.question_id = $3
-     AND c.content_id = $4
-     LIMIT 1;`,
-    [user_id, document_id, question_id, content_id]
-  )
-  return result.rowCount > 0
-}
-
-/**
- * Update a document.
- */
-export const updateDocument = async (
-  title,
-  description,
-  course_id,
-  document_id
-) => {
+const editDocument = async (title, description, course_id, document_id) => {
   const updates = []
-  const refs = []
-  let index = 1
+  const refs = [document_id]
+  let index = 2
 
   if (title) {
     updates.push(`title = $${index}`)
@@ -299,94 +188,19 @@ export const updateDocument = async (
   if (description !== undefined) {
     updates.push(`description = $${index}`)
     refs.push(description)
-    index++
   }
 
   if (updates.length > 0) {
     await client.query(
       `UPDATE documents
        SET ${updates.join(', ')}
-       WHERE document_id = $${index};`,
-      [...refs, document_id]
+       WHERE document_id = $1;`,
+      refs
     )
   }
 }
 
-/**
- * Update a question.
- */
-export const updateQuestion = async (order, correct_answer, question_id) => {
-  const updates = []
-  const refs = []
-  let index = 1
-
-  if (order) {
-    updates.push(`"order" = $${index}`)
-    refs.push(order)
-    index++
-  }
-
-  if (correct_answer) {
-    updates.push(`correct_answer = $${index}`)
-    refs.push(correct_answer)
-    index++
-  }
-
-  if (updates.length > 0) {
-    await client.query(
-      `UPDATE questions
-       SET ${updates.join(', ')}
-       WHERE question_id = $${index};`,
-      [...refs, question_id]
-    )
-  }
-}
-
-/**
- * Update a content.
- */
-export const updateContent = async (
-  text,
-  attachment,
-  attachment_id,
-  content_id
-) => {
-  const updates = []
-  const refs = []
-  let index = 1
-
-  if (text !== undefined) {
-    updates.push(`text = $${index}`)
-    refs.push(text)
-    index++
-  }
-
-  if (attachment !== undefined) {
-    updates.push(`attachment = $${index}`)
-    refs.push(attachment)
-    index++
-  }
-
-  if (attachment_id !== undefined) {
-    updates.push(`attachment_id = $${index}`)
-    refs.push(attachment_id)
-    index++
-  }
-
-  if (updates.length > 0) {
-    await client.query(
-      `UPDATE contents
-       SET ${updates.join(', ')}
-       WHERE content_id = $${index};`,
-      [...refs, content_id]
-    )
-  }
-}
-
-/**
- * Confirm updating a document, including questions/contents inside.
- */
-export const confirmUpdateDocument = async (document_id) => {
+const updateDocument = async (document_id) => {
   await client.query(
     `UPDATE documents
      SET
@@ -399,112 +213,19 @@ export const confirmUpdateDocument = async (document_id) => {
   )
 }
 
-/**
- * Select total questions.
- */
-export const selectTotalQuestions = async (document_id) => {
+const getTotalQuestions = async (document_id) => {
   const result = await client.query(
     `SELECT total_questions
      FROM documents
-     WHERE document_id = $1;`,
+     WHERE document_id = $1
+     LIMIT 1;`,
     [document_id]
   )
+
   return parseInt(result.rows[0].total_questions)
 }
 
-/**
- * Delete a question.
- */
-export const deleteQuestion = async (question_id) => {
-  const result = await client.query(
-    `DELETE FROM questions
-     WHERE question_id = $1
-     RETURNING "order";`,
-    [question_id]
-  )
-  return result.rows[0].order
-}
-
-/**
- * Select a question.
- */
-export const selectQuestion = async (question_id) => {
-  const result = await client.query(
-    `SELECT "order"
-     FROM questions
-     WHERE question_id = $1;`,
-    [question_id]
-  )
-  return result.rows[0]
-}
-
-/**
- * Select a content.
- */
-export const selectContent = async (content_id) => {
-  const result = await client.query(
-    `SELECT
-      text,
-      attachment_id
-     FROM contents
-     WHERE content_id = $1;`,
-    [content_id]
-  )
-  return result.rows[0]
-}
-
-/**
- * Arrange order question after delete.
- */
-export const arrangeOrderAfterDelete = async (order, document_id) => {
-  await client.query(
-    `UPDATE questions
-     SET "order" = "order" - 1
-     WHERE "order" > $1
-     AND document_id = $2;`,
-    [order, document_id]
-  )
-}
-
-/**
- * Arrange order question before insert.
- */
-export const arrangeOrderBeforeInsert = async (order, document_id) => {
-  await client.query(
-    `UPDATE questions
-     SET "order" = "order" + 1
-     WHERE "order" >= $1
-     AND document_id = $2;`,
-    [order, document_id]
-  )
-}
-
-/**
- * Arrange order question after update.
- */
-export const arrangeOrderAfterUpdate = async (
-  old_order,
-  new_order,
-  question_id,
-  document_id
-) => {
-  await client.query(
-    `UPDATE questions
-     SET "order" = CASE
-                    WHEN "order" > $1 AND "order" <= $2 THEN "order" - 1
-                    WHEN "order" < $1 AND "order" >= $2 THEN "order" + 1
-                    ELSE "order"
-                   END
-     WHERE question_id <> $3
-     AND document_id = $4;`,
-    [old_order, new_order, question_id, document_id]
-  )
-}
-
-/**
- * Select documents.
- */
-export const selectDocuments = async (pagination, keyword, filter, user_id) => {
+const getDocuments = async (pagination, keyword, filter, user_id) => {
   const conditions = []
   const refs = [user_id]
   let index = 2
@@ -558,6 +279,29 @@ export const selectDocuments = async (pagination, keyword, filter, user_id) => {
   }
 }
 
+const updateTotalQuestions = async (document_id) => {
+  await client.query(
+    `UPDATE documents AS d
+     SET total_questions = (
+      SELECT COUNT(*)
+      FROM questions AS q
+      WHERE q.document_id = d.document_id
+     )
+     WHERE d.document_id = $1;`,
+    [document_id]
+  )
+}
+
 export default {
   isDocumentExist,
+  createDocument,
+  getDocumentDetailOwner,
+  getDocumentDetailGuest,
+  deleteDocument,
+  isDocumentAuthor,
+  editDocument,
+  updateDocument,
+  getTotalQuestions,
+  getDocuments,
+  updateTotalQuestions,
 }

@@ -7,23 +7,27 @@ export const MESSAGE = {
   },
   DOCUMENT: {
     NOT_FOUND: 'Document not found!',
-    INVALID_AUTHOR: 'Invalid document author!',
-    CREATE_SUCCESS: 'Create document successfully!',
-    GET_SUCCESS: 'Get document(s) successfully!',
-    REMOVE_SUCCESS: 'Remove document successfully!',
-    EDIT_SUCCESS: 'Edit document successfully!',
+    NOT_OWNED: 'Document not owned!',
+    CREATE_DOCUMENT_SUCCESS: 'Create document successfully!',
+    GET_DOCUMENT_DETAIL_SUCCESS: 'Get document detail successfully!',
+    GET_DOCUMENTS_SUCCESS: 'Get documents successfully!',
+    DELETE_DOCMENT_SUCCESS: 'Delete document successfully!',
+    EDIT_DOCUMENT_SUCCESS: 'Edit document successfully!',
+    NOT_REVIEWED: 'This document was not reviewed!',
     REVIEWED: 'This document was reviewed!',
   },
   QUESTION: {
     NOT_FOUND: 'Question not found!',
-    INVALID_AUTHOR: 'Invalid question author!',
+    NOT_OWNED: 'Question not owned!',
     INVALID_ORDER: 'Invalid order!',
-    LAST: 'Cannot delete the last question!',
+    LAST_REMAIN: 'Cannot delete the last question!',
+    NOT_BELONGED: 'Question not belonged!',
   },
   CONTENT: {
     NOT_FOUND: 'Content not found!',
-    INVALID_AUTHOR: 'Invalid content author!',
+    NOT_OWNED: 'Content not owned!',
     EMPTY: 'Neither text nor attachment can be empty!',
+    NOT_BELONGED: 'Content not belonged!',
   },
   USER: {
     EXISTED: 'User already exists!',
@@ -88,5 +92,3 @@ export const STATUS_CODE = {
 export const EVENT = {
   PRACTICE: {},
 }
-
-

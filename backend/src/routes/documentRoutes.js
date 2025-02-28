@@ -1,49 +1,56 @@
 import { Router } from 'express'
-import {
-  createDocument,
-  editDocument,
-  getDocumentDetail,
-  getDocuments,
-  removeDocument,
-} from '../controllers/documentController.js'
+import documentController from '../controllers/documentController.js'
 import { asyncHandler } from '../middleware/asyncMiddleware.js'
 import authMiddleware from '../middleware/authMiddleware.js'
 import { errorHandler } from '../middleware/errorMiddleware.js'
 
 const router = Router()
+
 // Create document
 router.post(
-  '/',
+  '/create-document',
   authMiddleware.verifyUser,
-  asyncHandler(createDocument),
+  asyncHandler(documentController.createDocument),
   errorHandler
 )
-// Get document detail
+
+// Get document detail owner
 router.get(
-  '/detail',
+  '/get-document-detail=owner',
   authMiddleware.verifyUser,
-  asyncHandler(getDocumentDetail),
+  asyncHandler(documentController.getDocumentDetailOwner),
   errorHandler
 )
-// Remove document
+
+// Get document detail guest
+router.get(
+  '/get-document-detail=guest',
+  authMiddleware.verifyUser,
+  asyncHandler(documentController.getDocumentDetailGuest),
+  errorHandler
+)
+
+// Delete document
 router.delete(
-  '/',
+  '/delete-document',
   authMiddleware.verifyUser,
-  asyncHandler(removeDocument),
+  asyncHandler(documentController.deleteDocument),
   errorHandler
 )
-// Update document
+
+// Edit document
 router.patch(
-  '/',
+  '/edit-document',
   authMiddleware.verifyUser,
-  asyncHandler(editDocument),
+  asyncHandler(documentController.editDocument),
   errorHandler
 )
+
 // Get documents
 router.get(
-  '/',
+  '/get-documents',
   authMiddleware.verifyUser,
-  asyncHandler(getDocuments),
+  asyncHandler(documentController.getDocuments),
   errorHandler
 )
 
