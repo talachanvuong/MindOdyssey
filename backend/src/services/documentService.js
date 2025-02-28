@@ -1,5 +1,5 @@
 import client from '../db/db.js'
-import { timeConvert } from '../utils/convert.js'
+import { timeConvert } from '../utils/convertUtils.js'
 
 const isDocumentExist = async (document_id) => {
   const result = await client.query(
