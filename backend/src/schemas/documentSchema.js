@@ -2,18 +2,17 @@ import Joi from 'joi'
 
 // 5 MB
 const maxFileSize = 5 * 1024 * 1024
-// ~ 6.67 MB (↑33%)
-const maxBase64Length = Math.ceil((maxFileSize * 4) / 3)
 // Only allow image/audio
 const mimeTypePattern = /^data:(image|audio)\/([a-zA-Z0-9\-+]+);base64,/
 
-export const createDocumentSchema = Joi.object({
+const createDocument = Joi.object({
   title: Joi.string().trim().min(8).max(256).required(),
   description: Joi.string().trim().max(2048),
   course: Joi.number().integer().strict().min(1).required(),
   questions: Joi.array()
     .items(
       Joi.object({
+        correct: Joi.string().trim().valid('A', 'B', 'C', 'D').required(),
         content: Joi.array()
           .length(5)
           .items(
@@ -23,7 +22,7 @@ export const createDocumentSchema = Joi.object({
                 .trim()
                 .dataUri()
                 .regex(mimeTypePattern)
-                .max(maxBase64Length),
+                .max(maxFileSize),
               type: Joi.string()
                 .trim()
                 .valid('A', 'B', 'C', 'D', 'Q')
@@ -32,22 +31,21 @@ export const createDocumentSchema = Joi.object({
           )
           .unique('type')
           .required(),
-        correct: Joi.string().trim().valid('A', 'B', 'C', 'D').required(),
       })
     )
     .min(1)
     .required(),
 })
 
-export const getDocumentDetailSchema = Joi.object({
+const getDocumentDetail = Joi.object({
   document: Joi.number().integer().strict().min(1).required(),
 })
 
-export const removeDocumentSchema = Joi.object({
+const removeDocument = Joi.object({
   document: Joi.number().integer().strict().min(1).required(),
 })
 
-export const editDocumentSchema = Joi.object({
+const editDocument = Joi.object({
   document: Joi.number().integer().strict().min(1).required(),
   title: Joi.string().trim().min(8).max(256),
   description: Joi.string().trim().max(2048).allow(null),
@@ -55,10 +53,12 @@ export const editDocumentSchema = Joi.object({
   questions: Joi.array()
     .items(
       Joi.object({
-        action: Joi.string().trim().valid('add', 'remove', 'edit').required(),
+        action: Joi.string().trim().valid('add', 'delete', 'edit').required(),
       })
         .when(Joi.object({ action: 'add' }).unknown(), {
           then: Joi.object({
+            order: Joi.number().integer().strict().min(1).required(),
+            correct: Joi.string().trim().valid('A', 'B', 'C', 'D').required(),
             content: Joi.array()
               .length(5)
               .items(
@@ -68,7 +68,7 @@ export const editDocumentSchema = Joi.object({
                     .trim()
                     .dataUri()
                     .regex(mimeTypePattern)
-                    .max(maxBase64Length),
+                    .max(maxFileSize),
                   type: Joi.string()
                     .trim()
                     .valid('A', 'B', 'C', 'D', 'Q')
@@ -77,11 +77,9 @@ export const editDocumentSchema = Joi.object({
               )
               .unique('type')
               .required(),
-            order: Joi.number().integer().strict().min(1).required(),
-            correct: Joi.string().trim().valid('A', 'B', 'C', 'D').required(),
           }),
         })
-        .when(Joi.object({ action: 'remove' }).unknown(), {
+        .when(Joi.object({ action: 'delete' }).unknown(), {
           then: Joi.object({
             id: Joi.number().integer().strict().min(1).required(),
           }),
@@ -89,6 +87,8 @@ export const editDocumentSchema = Joi.object({
         .when(Joi.object({ action: 'edit' }).unknown(), {
           then: Joi.object({
             id: Joi.number().integer().strict().min(1).required(),
+            order: Joi.number().integer().strict().min(1),
+            correct: Joi.string().trim().valid('A', 'B', 'C', 'D'),
             content: Joi.array()
               .items(
                 Joi.object({
@@ -98,7 +98,7 @@ export const editDocumentSchema = Joi.object({
                     .trim()
                     .dataUri()
                     .regex(mimeTypePattern)
-                    .max(maxBase64Length)
+                    .max(maxFileSize)
                     .allow(null),
                 })
                   .or('text', 'attachment')
@@ -106,24 +106,31 @@ export const editDocumentSchema = Joi.object({
                     if (value.text === null && value.attachment === null) {
                       return helpers.error('any.invalid')
                     }
+
                     return value
                   })
               )
               .min(1)
               .max(5),
-            order: Joi.number().integer().strict().min(1),
-            correct: Joi.string().trim().valid('A', 'B', 'C', 'D'),
           }).or('order', 'correct', 'content'),
         })
     )
     .min(1),
 }).or('title', 'description', 'course', 'questions')
 
-export const getDocumentsSchema = Joi.object({
+const getDocuments = Joi.object({
   pagination: Joi.object({
     page: Joi.number().integer().strict().min(1).required(),
     perPage: Joi.number().integer().strict().min(1).required(),
   }),
   keyword: Joi.string().trim(),
-  filter: Joi.date().timestamp()
+  filter: Joi.date().timestamp(),
 })
+
+export default {
+  createDocument,
+  getDocumentDetail,
+  removeDocument,
+  editDocument,
+  getDocuments,
+}
