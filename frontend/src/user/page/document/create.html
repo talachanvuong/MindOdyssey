@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+
     <title>Document Create</title>
   </head>
   <body class="p-22 bg-gray-100">
@@ -57,6 +59,16 @@
 
       <div class="mx-auto mt-10 max-w-xl rounded-lg bg-white p-6 shadow-md">
         <h1 class="mb-1 text-center text-xl font-bold">Document Create</h1>
+
+<!-- Popup thông báo -->
+<div id="popupMessage" class="hidden fixed inset-0 items-center justify-center bg-black bg-opacity-50 ">
+  <div class="bg-white rounded-lg p-6 shadow-lg w-96 ml-96 mt-32">
+    <p id="popupText" class="text-center text-lg font-semibold"></p>
+    <button onclick="closePopup()" class="mt-4 w-full bg-blue-500 text-black py-2 rounded-lg bg-red-500" >OK</button>
+  </div>
+</div>
+
+
         <form id="projectForm" class="space-y-4">
           <div>
             <label for="documentName" class="block pl-2 font-semibold"
@@ -83,27 +95,17 @@
           </div>
 
           <div>
-            <label for="author" class="block pl-2 font-semibold">Author</label>
-            <input
-              type="text"
-              id="author"
-              placeholder="Enter author"
-              class="w-full rounded-2xl border border-gray-300 p-2"
-            />
-          </div>
-
-          <div>
             <div class="flex items-center justify-between">
               <label for="course" class="text-sm font-semibold">Course</label>
               <div class="flex items-center space-x-2">
                 <span class="cursor-pointer text-sm font-semibold text-gray-700"
                   >Create new course</span
                 >
-                <button
+                <!-- <button
                   class="flex h-6 w-6 items-center justify-center rounded-md bg-gray-200 text-gray-400"
                 >
                   +
-                </button>
+                </button> -->
               </div>
             </div>
             <div class="flex items-center space-x-2">
@@ -111,66 +113,75 @@
                 id="course"
                 class="w-full rounded-2xl border border-gray-300 p-2"
               >
-                <option value="course1">Đồ án cơ sở ngành</option>
-                <option value="course2">Other course</option>
+              <option value="">Chọn khóa học</option>
               </select>
             </div>
           </div>
 
           <div>
             <div class="flex items-center justify-between">
-              <label class="text-sm font-semibold">Question:</label>
-              <div class="flex items-center space-x-2">
-                <span
-                  class="cursor-pointer text-xs text-sky-500 hover:underline"
-                  >Upload file</span
-                >
-                <div
-                  class="flex h-6 w-6 items-center justify-center rounded-full bg-gray-200"
-                >
-                  <svg
-                    class="h-4 w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 384 512"
-                  >
-                    <path
-                      d="M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-288-128 0c-17.7 0-32-14.3-32-32L224 0 64 0zM256 0l0 128 128 0L256 0zM216 408c0 13.3-10.7 24-24 24s-24-10.7-24-24l0-102.1-31 31c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l72-72c9.4-9.4 24.6-9.4 33.9 0l72 72c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-31-31L216 408z"
-                    />
-                  </svg>
-                </div>
+              <label class="text-lg font-semibold">Question:</label>
+              <div>
+              <input type="file" id="fileInput" class="text-sm hover:underline ml-60">
+              <button onclick="uploadFile()" class="flex items-center space-x-2">
               </div>
+            
+    
+          </div>
+          <div id="questionsContainer" class="rounded border border-black p-4 mt-1">
+            <div class="flex items-center justify-between">
+              <label class="block p-1 font-semibold">Question 1: The content of question</label>
             </div>
-            <div class="rounded border border-black p-4">
-              <label class="block p-1 font-semibold"
-                >Question 1: The content of question</label
-              >
-              <div class="space-y-2">
-                <label class="flex items-center space-x-2">
-                  <input type="radio" name="question1" class="text-blue-600" />
-                  <span>content_1</span>
-                </label>
-                <label class="flex items-center space-x-2">
-                  <input type="radio" name="question1" class="text-blue-600" />
-                  <span>content_2</span>
-                </label>
-                <label class="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    name="question1"
-                    class="text-blue-600"
-                    checked
-                  />
-                  <span>content_3</span>
-                </label>
-                <label class="flex items-center space-x-2">
-                  <input type="radio" name="question1" class="text-blue-600" />
-                  <span>content_4</span>
-                </label>
+          
+            <!-- Upload ảnh cho câu hỏi -->
+            <div class="mt-2">
+              <label>Upload Image for Question:</label>
+              <input type="file" accept="image/*" onchange="handleFileUpload(event, 0, 'question')">
+              <img id="questionImage0" class="mt-2 w-32 h-32 object-cover hidden">
+            </div>
+          
+            <div class="space-y-2">
+              <label class="flex items-center space-x-2">
+                <input type="radio" name="question1" class="text-blue-600" />
+                <span>content_1</span>
+          
+                <!-- Upload ảnh cho câu trả lời -->
+                <input type="file" accept="image/*" onchange="handleFileUpload(event, 0, 'answer', 0)">
+                <img id="answerImage0_0" class="mt-2 w-16 h-16 object-cover hidden">
+              </label>
+          
+              <label class="flex items-center space-x-2">
+                <input type="radio" name="question1" class="text-blue-600" />
+                <span>content_2</span>
+          
+                <!-- Upload ảnh cho câu trả lời -->
+                <input type="file" accept="image/*" onchange="handleFileUpload(event, 0, 'answer', 0)">
+                <img id="answerImage0_1" class="mt-2 w-16 h-16 object-cover hidden">
+              </label>
+          
+              <label class="flex items-center space-x-2">
+                <input type="radio" name="question1" class="text-blue-600" />
+                <span>content_3</span>
+          
+                <!-- Upload ảnh cho câu trả lời -->
+                <input type="file" accept="image/*" onchange="handleFileUpload(event, 0, 'answer', 0)">
+                <img id="answerImage0_2" class="mt-2 w-16 h-16 object-cover hidden">
+              </label>
+          
+              <label class="flex items-center space-x-2">
+                <input type="radio" name="question1" class="text-blue-600" />
+                <span>content_4</span>
+          
+                <!-- Upload ảnh cho câu trả lời -->
+                <input type="file" accept="image/*" onchange="handleFileUpload(event, 0, 'answer', 0)">
+                <img id="answerImage0_3" class="mt-2 w-16 h-16 object-cover hidden">
+              </label>
+
               </div>
             </div>
             <button
               type="button"
-              class="hover:border-blue-500 hover:text-blue-500 group mt-2 flex w-full items-center justify-center rounded-md border-2 border-dashed border-slate-300 py-2 text-sm font-thin leading-4 text-gray-700 hover:border-solid hover:bg-white"
+              class="group mt-2 flex w-full items-center justify-center rounded-md border-2 border-dashed border-slate-300 py-2 text-sm font-thin leading-4 text-gray-700 hover:border-solid hover:bg-white"
             >
               + Add question
             </button>
@@ -181,10 +192,12 @@
           >
             Create
           </button>
+        </div>  
         </form>
       </div>
     </div>
 
     <script type="module" src="../../js/document/create.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   </body>
 </html>
