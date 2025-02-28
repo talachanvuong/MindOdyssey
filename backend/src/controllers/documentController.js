@@ -407,12 +407,14 @@ const editDocument = async (req, res) => {
           )
 
           // Arrange other questions in order after edit
-          await questionService.arrangeOrderAfterEdit(
-            tempQuestion.order,
-            question.order,
-            question.id,
-            document
-          )
+          if (question.order) {
+            await questionService.arrangeOrderAfterEdit(
+              tempQuestion.order,
+              question.order,
+              question.id,
+              document
+            )
+          }
 
           // Edit contents
           if (question.content) {
