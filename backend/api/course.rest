@@ -1,7 +1,7 @@
 @host = http://localhost:{{$dotenv SERVER_PORT}}/api/course
 
 ### Create course
-POST {{host}}
+POST {{host}}/create-course
 Content-Type: application/json
 
 {
@@ -9,5 +9,9 @@ Content-Type: application/json
 }
 
 ### Get courses
-GET {{host}}?keyword=
+GET {{host}}/get-courses
 Content-Type: application/json
+
+{
+    "keyword": ""
+}

@@ -29,7 +29,7 @@ const createCourse = async (req, res) => {
 }
 
 const getCourses = async (req, res) => {
-  const { error, value } = courseSchema.getCourses.validate(req.query)
+  const { error, value } = courseSchema.getCourses.validate(req.body)
   const { keyword } = value
 
   // Check validation
