@@ -1,27 +1,14 @@
-import jwt from 'jsonwebtoken'
-import envConfig from '../config/envConfig.js'
-import {
-  getDocumentDetailSchema,
-  loginSchema,
-  reviewDocumentSchema,
-  selectDocumentsSchema,
-} from '../schemas/adminSchema.js'
-import {
-  isMatchedPassword,
-  isReviewedDocument,
-  selectAdminByDisplayName,
-  selectDocumentDetail,
-  selectDocuments,
-  updateDocument,
-} from '../services/adminService.js'
-import { isDocumentExist } from '../services/documentService.js'
-import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
+import adminSchema from '../schemas/adminSchema.js'
+import adminService from '../services/adminService.js'
+import documentService from '../services/documentService.js'
+import { MESSAGE, STATUS_CODE } from '../utils/constantUtils.js'
+import cookieUtils from '../utils/cookieUtils.js'
+import jwtUtils from '../utils/jwtUtils.js'
+import passwordUtils from '../utils/passwordUtils.js'
+import { sendResponse } from '../utils/responseUtils.js'
 
-/**
- * Login.
- */
-export const login = async (req, res) => {
-  const { error, value } = loginSchema.validate(req.body)
+const login = async (req, res) => {
+  const { error, value } = adminSchema.login.validate(req.body)
   const { display_name, password } = value
 
   // Check validation
@@ -30,16 +17,20 @@ export const login = async (req, res) => {
   }
 
   // Check admin exist
-  const resultAdmin = await selectAdminByDisplayName(display_name)
-  if (!resultAdmin) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.ADMIN.NOT_FOUND)
+  const admin = await adminService.getAdminByDisplayName(display_name)
+  if (!admin) {
+    return sendResponse(res, STATUS_CODE.NOT_FOUND, MESSAGE.ADMIN.NOT_FOUND)
   }
 
-  const { admin_id, password: hashedPassword } = resultAdmin
+  // Get admin info
+  const { admin_id, password: hashedPassword } = admin
 
-  // Check password match
-  const matchedPassword = await isMatchedPassword(password, hashedPassword)
-  if (!matchedPassword) {
+  // Check password correct
+  const isPasswordCorrect = await passwordUtils.isPasswordCorrect(
+    password,
+    hashedPassword
+  )
+  if (!isPasswordCorrect) {
     return sendResponse(
       res,
       STATUS_CODE.BAD_REQUEST,
@@ -48,41 +39,23 @@ export const login = async (req, res) => {
   }
 
   // Clear old cookies
-  res.clearCookie('accessToken', {
-    httpOnly: true,
-    secure: false,
-    path: '/',
-    sameSite: 'Strict',
-  })
-  res.clearCookie('refreshToken', {
-    httpOnly: true,
-    secure: false,
-    path: '/',
-    sameSite: 'Strict',
-  })
+  cookieUtils.clearCookie(res, 'accessToken')
+  cookieUtils.clearCookie(res, 'refreshToken')
 
   // Create access token
-  const accessToken = jwt.sign({ admin_id }, envConfig.accessTokenSecretKey, {
-    expiresIn: '1h',
-  })
+  const payload = {
+    admin_id,
+  }
+  const accessToken = jwtUtils.signAccessToken(payload)
 
   // Send access token
-  res.cookie('accessToken', accessToken, {
-    httpOnly: true,
-    secure: false,
-    path: '/',
-    sameSite: 'Strict',
-    maxAge: 3600000,
-  })
+  cookieUtils.setCookie(res, 'accessToken', accessToken, 3600000)
 
   return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.ADMIN.LOGIN_SUCCESS)
 }
 
-/**
- * Get unapproved documents.
- */
-export const getUnapprovedDocuments = async (req, res) => {
-  const { error, value } = selectDocumentsSchema.validate(req.body)
+const getUnapprovedDocuments = async (req, res) => {
+  const { error, value } = adminSchema.getUnapprovedDocuments.validate(req.body)
   const { pagination, keyword, filter } = value
 
   // Check validation
@@ -90,21 +63,23 @@ export const getUnapprovedDocuments = async (req, res) => {
     return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
   }
 
-  // Get documents in database
-  const resultDocuments = await selectDocuments(pagination, keyword, filter)
+  // Get unapproved documents
+  const unapprovedDocuments = await adminService.getUnapprovedDocuments(
+    pagination,
+    keyword,
+    filter
+  )
+
   return sendResponse(
     res,
     STATUS_CODE.SUCCESS,
-    MESSAGE.DOCUMENT.GET_SUCCESS,
-    resultDocuments
+    MESSAGE.ADMIN.GET_UNAPPROVED_DOCUMENTS_SUCCESS,
+    unapprovedDocuments
   )
 }
 
-/**
- * Get document detail.
- */
-export const getDocumentDetail = async (req, res) => {
-  const { error, value } = getDocumentDetailSchema.validate(req.body)
+const getDocumentDetail = async (req, res) => {
+  const { error, value } = adminSchema.getDocumentDetail.validate(req.body)
   const { document } = value
 
   // Check validation
@@ -113,33 +88,31 @@ export const getDocumentDetail = async (req, res) => {
   }
 
   // Check document exist
-  const existedDocument = await isDocumentExist(document)
-  if (!existedDocument) {
+  const isDocumentExist = await documentService.isDocumentExist(document)
+  if (!isDocumentExist) {
     return sendResponse(res, STATUS_CODE.NOT_FOUND, MESSAGE.DOCUMENT.NOT_FOUND)
   }
 
-  // Check get document already review
-  const reviewedDocument = await isReviewedDocument(document)
-  if (reviewedDocument) {
-    return sendResponse(res, STATUS_CODE.FORBIDDEN, MESSAGE.SERVER.PRIVACY)
+  // Check document review
+  const isDocumentReview = await adminService.isDocumentReview(document)
+  if (isDocumentReview) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.DOCUMENT.REVIEWED)
   }
 
-  // Get document detail in database
-  const resultDocument = await selectDocumentDetail(document)
+  // Get document detail
+  const documentDetail = await adminService.getDocumentDetail(document)
+
   return sendResponse(
     res,
     STATUS_CODE.SUCCESS,
-    MESSAGE.DOCUMENT.GET_SUCCESS,
-    resultDocument
+    MESSAGE.ADMIN.GET_DOCUMENT_DETAIL_SUCCESS,
+    documentDetail
   )
 }
 
-/**
- * Review a document.
- */
-export const reviewDocument = async (req, res) => {
+const reviewDocument = async (req, res) => {
   const { admin_id } = req.admin
-  const { error, value } = reviewDocumentSchema.validate(req.body)
+  const { error, value } = adminSchema.reviewDocument.validate(req.body)
   const { document, isApproved, reason } = value
 
   // Check validation
@@ -148,18 +121,30 @@ export const reviewDocument = async (req, res) => {
   }
 
   // Check document exist
-  const existedDocument = await isDocumentExist(document)
-  if (!existedDocument) {
+  const isDocumentExist = await documentService.isDocumentExist(document)
+  if (!isDocumentExist) {
     return sendResponse(res, STATUS_CODE.NOT_FOUND, MESSAGE.DOCUMENT.NOT_FOUND)
   }
 
-  // Check document already review
-  const reviewDocument = await isReviewedDocument(document)
-  if (reviewDocument) {
+  // Check document review
+  const isDocumentReview = await adminService.isDocumentReview(document)
+  if (isDocumentReview) {
     return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.DOCUMENT.REVIEWED)
   }
 
-  // Update document in database
-  await updateDocument(admin_id, isApproved, reason, document)
-  return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.DOCUMENT.REVIEW_SUCCESS)
+  // Review document
+  await adminService.reviewDocument(admin_id, isApproved, reason, document)
+
+  return sendResponse(
+    res,
+    STATUS_CODE.SUCCESS,
+    MESSAGE.ADMIN.REVIEW_DOCUMENT_SUCCESS
+  )
+}
+
+export default {
+  login,
+  getUnapprovedDocuments,
+  getDocumentDetail,
+  reviewDocument,
 }

@@ -2,8 +2,8 @@ export const MESSAGE = {
   COURSE: {
     EXISTED: 'Course already exists!',
     NOT_FOUND: 'Course not found!',
-    CREATE_SUCCESS: 'Create course successfully!',
-    GET_SUCCESS: 'Get course(s) successfully!',
+    CREATE_COURSE_SUCCESS: 'Create course successfully!',
+    GET_COURSES_SUCCESS: 'Get courses successfully!',
   },
   DOCUMENT: {
     NOT_FOUND: 'Document not found!',
@@ -12,7 +12,6 @@ export const MESSAGE = {
     GET_SUCCESS: 'Get document(s) successfully!',
     REMOVE_SUCCESS: 'Remove document successfully!',
     EDIT_SUCCESS: 'Edit document successfully!',
-    REVIEW_SUCCESS: 'Review document successfully!',
     REVIEWED: 'This document was reviewed!',
   },
   QUESTION: {
@@ -41,9 +40,12 @@ export const MESSAGE = {
     GET_USER_ID_SUCCESS: 'Get user id successfully!',
   },
   ADMIN: {
-    LOGIN_SUCCESS: 'Admin login successfully!',
     NOT_FOUND: 'Admin not found!',
     WRONG_PASSWORD: 'Wrong password!',
+    LOGIN_SUCCESS: 'Admin login successfully!',
+    GET_UNAPPROVED_DOCUMENTS_SUCCESS: 'Get unapproved documents successfully!',
+    GET_DOCUMENT_DETAIL_SUCCESS: 'Get document detail successfully!',
+    REVIEW_DOCUMENT_SUCCESS: 'Review document successfully!',
   },
   AUTH: {
     ACCESS_TOKEN: {
@@ -87,20 +89,4 @@ export const EVENT = {
   PRACTICE: {},
 }
 
-export const sendResponse = (res, status, message, result = null) => {
-  const response = { message }
-  if (result !== null) {
-    response.result = result
-  }
 
-  return res.status(status).json(response)
-}
-
-export const messageResponse = (status, message, result = null) => {
-  const response = { status, message }
-  if (result !== null) {
-    response.result = result
-  }
-
-  return response
-}
