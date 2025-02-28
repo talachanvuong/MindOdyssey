@@ -85,10 +85,11 @@ const getDocumentDetail = async (document_id) => {
     `SELECT
       d.title,
       d.description,
-      c.title AS course,
       u.display_name AS author,
       d.created_at,
       d.last_updated,
+      c.title AS course,
+      d.total_questions,
       json_agg(
         json_build_object(
           'correct_answer', q.correct_answer,
@@ -107,20 +108,21 @@ const getDocumentDetail = async (document_id) => {
         ORDER BY q."order"
       ) AS questions
      FROM documents AS d
-     INNER JOIN courses AS c
-     ON d.course_id = c.course_id
      INNER JOIN users AS u
      ON d.user_id = u.user_id
+     INNER JOIN courses AS c
+     ON d.course_id = c.course_id
      INNER JOIN questions AS q
      ON d.document_id = q.document_id
      WHERE d.document_id = $1
      GROUP BY
       d.title,
       d.description,
-      c.title,
       u.display_name,
       d.created_at,
-      d.last_updated;`,
+      d.last_updated,
+      c.title,
+      d.total_questions;`,
     [document_id]
   )
   
