@@ -139,7 +139,7 @@ const getDocumentDetailGuest = async (document_id) => {
       d.total_questions;`,
     [document_id]
   )
-  
+
   return result.rows.map((row) => ({
     ...row,
     created_at: timeConvert(row.created_at),
@@ -279,6 +279,19 @@ const getDocuments = async (pagination, keyword, filter, user_id) => {
   }
 }
 
+const updateTotalQuestions = async (document_id) => {
+  await client.query(
+    `UPDATE documents AS d
+     SET total_questions = (
+      SELECT COUNT(*)
+      FROM questions AS q
+      WHERE q.document_id = d.document_id
+     )
+     WHERE d.document_id = $1;`,
+    [document_id]
+  )
+}
+
 export default {
   isDocumentExist,
   createDocument,
@@ -290,4 +303,5 @@ export default {
   updateDocument,
   getTotalQuestions,
   getDocuments,
+  updateTotalQuestions,
 }

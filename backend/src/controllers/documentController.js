@@ -511,6 +511,9 @@ const editDocument = async (req, res) => {
         }
       }
     }
+
+    // Update total questions
+    await documentService.updateTotalQuestions(document)
   }
 
   // Update document
