@@ -247,11 +247,8 @@ const editDocument = async (req, res) => {
             )
           }
 
-          // Arrange other questions in order before insert
-          await questionService.arrangeOrderBeforeInsert(
-            question.order,
-            document
-          )
+          // Arrange other questions in order before add
+          await questionService.arrangeOrderBeforeAdd(question.order, document)
 
           // Create question
           const question_id = await questionService.createQuestion(
@@ -409,8 +406,8 @@ const editDocument = async (req, res) => {
             question.id
           )
 
-          // Arrange other questions in order after update
-          await questionService.arrangeOrderAfterUpdate(
+          // Arrange other questions in order after edit
+          await questionService.arrangeOrderAfterEdit(
             tempQuestion.order,
             question.order,
             question.id,

@@ -112,7 +112,7 @@ const arrangeOrderAfterDelete = async (order, document_id) => {
   )
 }
 
-const arrangeOrderBeforeInsert = async (order, document_id) => {
+const arrangeOrderBeforeAdd = async (order, document_id) => {
   await client.query(
     `UPDATE questions
      SET "order" = "order" + 1
@@ -122,7 +122,7 @@ const arrangeOrderBeforeInsert = async (order, document_id) => {
   )
 }
 
-const arrangeOrderAfterUpdate = async (
+const arrangeOrderAfterEdit = async (
   old_order,
   new_order,
   question_id,
@@ -163,7 +163,7 @@ export default {
   deleteQuestion,
   getQuestion,
   arrangeOrderAfterDelete,
-  arrangeOrderBeforeInsert,
-  arrangeOrderAfterUpdate,
+  arrangeOrderBeforeAdd,
+  arrangeOrderAfterEdit,
   isQuestionBelong,
 }
