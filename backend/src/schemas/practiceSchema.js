@@ -1,4 +1,4 @@
-import joi from 'joi'
+import joi from 'Joi'
 const keywordSchema = joi.string().trim().min(1).max(255).optional().messages({
   'string.base': 'Keyword must be a string',
   'string.empty': 'Keyword cannot be empty',
@@ -23,9 +23,63 @@ const course_idSchema = joi.number().integer().min(1).optional().messages({
   'number.integer': 'course_id must be an integer.',
   'number.min': 'course_id must be greater than or equal to 1.',
 })
-const modeSchema = joi.string().valid('practice', 'arena').required()
-const doc_idSchema = joi.number().integer().min(1).required()
-const answerStatus=joi.string().valid('A', 'B', 'C', 'D').required()
+const question_idSchema = joi.number().integer().min(1).required().messages({
+  'number.base': 'question_id must be a number.',
+  'number.integer': 'question_id must be an integer.',
+  'number.min': 'question_id must be at least 1.',
+  'any.required': 'question_id is required.',
+})
+
+const doc_idSchema = joi.number().integer().min(1).required().messages({
+  'number.base': 'doc_id must be a number.',
+  'number.integer': 'doc_id must be an integer.',
+  'number.min': 'doc_id must be at least 1.',
+  'any.required': 'doc_id is required.',
+})
+
+const questionorderSchema = joi.array()
+  .items(joi.number().integer().min(1).messages({
+    'number.base': 'Each item in the array must be a number.',
+    'number.integer': 'Each item in the array must be an integer.',
+    'number.min': 'Each item in the array must be at least 1.'
+  }))
+  .required()
+  .messages({
+    'array.base': 'The data must be an array.',
+    'array.includes': 'The array must contain only positive integers.',
+    'any.required': 'This field is required.'
+  })
+
+const answerSchema = joi
+  .string()
+  .valid('A', 'B', 'C', 'D')
+  .required()
+  .messages({
+    'any.only': 'userAnswer must be one of A, B, C, or D.',
+    'any.required': 'userAnswer is required.',
+  })
+
+const practice_history_idSchema = joi
+  .number()
+  .integer()
+  .min(1)
+  .required()
+  .messages({
+    'number.base': 'practice_history_id must be a number.',
+    'number.integer': 'practice_history_id must be an integer.',
+    'number.min': 'practice_history_id must be at least 1.',
+    'any.required': 'practice_history_id is required.',
+  })
+  const scoreSchema = joi.number()
+  .min(0)
+  .max(100)
+  .required()
+  .messages({
+    "number.base": "Score must be a number.",
+    "number.min": "Score cannot be less than 0.",
+    "number.max": "Score cannot be more than 100.",
+    "any.required": "Score is required."
+  });
 const getDocumentforPraticeValidate = joi.object({
   keyword: keywordSchema,
   page: pageSchema,
@@ -36,20 +90,27 @@ const getPracticeHistoryValidate = joi.object({
   page: pageSchema,
   limit: limitSchema,
 })
-const modeValidate = joi.object({
-  mode: modeSchema,
-})
 const doc_idValidate = joi.object({
   doc_id: doc_idSchema,
 })
-const answerStatusValidate = joi.object({
-  answerStatus: answerStatus,
+const answerValidate = joi.object({
+  userAnswer: answerSchema,
+  question_id: question_idSchema,
+  practice_history_id: practice_history_idSchema,
 })
-
+const getNewQuestionValidate = joi.object({
+  doc_id: doc_idSchema,
+  questionorder: questionorderSchema,
+})
+const finishedValidate = joi.object({
+  practice_history_id: practice_history_idSchema,
+  score: scoreSchema
+})
 export default {
   getDocumentforPraticeValidate,
   getPracticeHistoryValidate,
-  modeValidate,
   doc_idValidate,
-  answerStatusValidate
+  answerValidate,
+  getNewQuestionValidate,
+  finishedValidate
 }
