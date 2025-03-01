@@ -54,7 +54,6 @@ const countDocumentsByKeyword = async (keyword, limit, course_id) => {
 }
 
 const sendQuestion = async (doc_id, questionorder) => {
-  // Truyền tham số questionorder vào dưới dạng mảng số nguyên
   const query = `
     SELECT 
       q.question_id,
@@ -83,25 +82,24 @@ const sendQuestion = async (doc_id, questionorder) => {
     GROUP BY 
       q.question_id, q."order", q.correct_answer
     LIMIT 1;
-  `;
+  `
 
-  const result = await client.query(query, [doc_id, questionorder]);
-  return result.rows[0]; // Chỉ trả về một câu hỏi
-};
+  const result = await client.query(query, [doc_id, questionorder])
+  return result.rows[0] // Chỉ trả về một câu hỏi
+}
 
-const getCorrectAnswer = async (question_id)=>{
-  const query=`
+const selectCorrectAnswer = async (question_id) => {
+  const query = `
     SELECT correct_answer
     FROM questions
     WHERE question_id=$1
     LIMIT 1
   `
-  const result = await client.query(query,[question_id])
-  return result.rows[0]
+  const result = await client.query(query, [question_id])
+  return result.rows[0].correct_answer
 }
 
-
-const sendAllQuestions = async (doc_id) => {
+const selectAllQuestions = async (doc_id) => {
   const query = `
   SELECT 
     q.question_id,
@@ -133,18 +131,42 @@ const sendAllQuestions = async (doc_id) => {
 
 const insertPracticeHistory = async (user_id, score, detail) => {
   const query = `
-  INSERT INTO practice_histories(user_id,score,detail)
-  VALUES($1,$2,$3)
+    INSERT INTO practice_histories (user_id, score, detail)
+    VALUES ($1, $2, $3::jsonb)
+    RETURNING practice_history_id
   `
-  await client.query(query, [user_id, score, detail])
+  const result = await client.query(query, [user_id, score, JSON.stringify(detail)])
+  return result.rows[0].practice_history_id
 }
 
-const selectPracticeHistory = async (user_id, limit,page) => {
+const updatePracticeHistory = async (
+  userAnswer,
+  question_id,
+  practice_history_id
+) => {
+  const query = `
+    UPDATE practice_histories
+SET detail = (
+  SELECT jsonb_agg(
+    CASE 
+      WHEN obj->>'question_id' = $2::text 
+      THEN jsonb_set(obj, '{userAnswer}', to_jsonb($1::text))
+      ELSE obj 
+    END
+  )
+  FROM jsonb_array_elements(detail) AS obj
+)
+WHERE practice_history_id = $3;
+  `
+
+  return await client.query(query, [userAnswer, question_id, practice_history_id])
+}
+const selectPracticeHistory = async (user_id, limit, page) => {
   const offset = (page - 1) * limit
   const query = `
     SELECT 
       score,
-      detail::jsonb AS detail,
+      detail,
       created_at
     FROM 
       practice_histories
@@ -157,7 +179,7 @@ const selectPracticeHistory = async (user_id, limit,page) => {
   const result = await client.query(query, [user_id, limit, offset])
   return result.rows
 }
-const countPracticeHistory = async (user_id,limit) => {
+const countPracticeHistory = async (user_id, limit) => {
   const countQuery = `
     SELECT COUNT(*) AS total
     FROM practice_histories
@@ -169,14 +191,54 @@ const countPracticeHistory = async (user_id,limit) => {
   return { totalPages, totalPracticeHistory }
 }
 
+const updateScore = async(score,practice_history_id) =>{
+  const query = `
+    UPDATE practice_histories
+    SET 
+    score = $1,
+    WHERE 
+    practice_history_id = $2;
+
+  `
+  await client.query(query,[score,practice_history_id])
+}
+const ispractice_history_idExist = async (practice_history_id)=>{
+  const query = `
+      SELECT 1
+      FROM practice_histories
+      WHERE practice_history_id = $1
+      LIMIT 1
+  `
+  const result = await client.query(query,[practice_history_id])
+  return result.rowCount>0
+}
+
+const selectPracticeHistorybyID = async(practice_history_id)=>{
+  const query=`
+    SELECT 
+      score,
+      detail,
+      created_at
+    FROM 
+      practice_histories
+    WHERE 
+      practice_history_id= $1
+  `
+  const result = await client.query(query,[practice_history_id])
+  return result.rows
+}
 
 export default {
   selectDocumentforPractice,
   countDocumentsByKeyword,
   sendQuestion,
-  sendAllQuestions,
+  selectAllQuestions,
   insertPracticeHistory,
-  getCorrectAnswer,
+  selectCorrectAnswer,
   selectPracticeHistory,
-  countPracticeHistory
+  countPracticeHistory,
+  updatePracticeHistory,
+  ispractice_history_idExist,
+  selectPracticeHistorybyID,
+  updateScore
 }
