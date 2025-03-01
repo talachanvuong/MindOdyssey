@@ -13,7 +13,7 @@ const createDocument = Joi.object({
     .items(
       Joi.object({
         correct: Joi.string().trim().valid('A', 'B', 'C', 'D').required(),
-        content: Joi.array()
+        contents: Joi.array()
           .length(5)
           .items(
             Joi.object({
@@ -59,7 +59,7 @@ const editDocument = Joi.object({
           then: Joi.object({
             order: Joi.number().integer().strict().min(1).required(),
             correct: Joi.string().trim().valid('A', 'B', 'C', 'D').required(),
-            content: Joi.array()
+            contents: Joi.array()
               .length(5)
               .items(
                 Joi.object({
@@ -89,7 +89,7 @@ const editDocument = Joi.object({
             id: Joi.number().integer().strict().min(1).required(),
             order: Joi.number().integer().strict().min(1),
             correct: Joi.string().trim().valid('A', 'B', 'C', 'D'),
-            content: Joi.array()
+            contents: Joi.array()
               .items(
                 Joi.object({
                   id: Joi.number().integer().strict().min(1).required(),

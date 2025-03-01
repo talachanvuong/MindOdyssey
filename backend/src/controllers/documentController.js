@@ -44,7 +44,7 @@ const createDocument = async (req, res) => {
       document_id
     )
 
-    for (const content of question.content) {
+    for (const content of question.contents) {
       // Upload attachment to Cloudinary
       const attachment = await cloudinaryService.upload(content.attachment)
 
@@ -257,7 +257,7 @@ const editDocument = async (req, res) => {
             document
           )
 
-          for (const content of question.content) {
+          for (const content of question.contents) {
             // Upload attachment to Cloudinary
             const attachment = await cloudinaryService.upload(
               content.attachment
@@ -417,8 +417,8 @@ const editDocument = async (req, res) => {
           }
 
           // Edit contents
-          if (question.content) {
-            for (const content of question.content) {
+          if (question.contents) {
+            for (const content of question.contents) {
               // Check content exist
               const isContentExist = await contentService.isContentExist(
                 content.id
