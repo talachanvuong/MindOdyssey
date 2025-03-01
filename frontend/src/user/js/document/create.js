@@ -31,7 +31,7 @@ window.closePopup = closePopup
 // Function to load course list
 const loadCourses = async () => {
   try {
-    const response = await fetch(API_COURSE, {
+    const response = await fetch(`${API_COURSE}/get-courses`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -72,7 +72,7 @@ const createCourse = async () => {
   }
 
   try {
-    const createResponse = await fetch(API_COURSE, {
+    const createResponse = await fetch(`${API_COURSE}/create-course`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -179,7 +179,6 @@ window.handleMediaUpload = async (event, index, position) => {
   reader.readAsDataURL(file);
   reader.onload = async () => {
     const base64String = reader.result;
-    console.log(`Ảnh đã tải lên cho câu hỏi ${index}, vị trí ${position}:`, base64String); // Kiểm tra ảnh
 
     if (!questions[index]) {
       console.error(`Lỗi: Không tìm thấy câu hỏi tại index ${index}`);
@@ -286,8 +285,8 @@ const createDocument = async (event) => {
   }
 
   const formattedQuestions = questions.map((q) => ({
-    content: q.content.map((item) => ({
-      text: String(item.text || ''),
+    contents: q.content.map((item) => ({
+      text: item.text && item.text.trim() !== "" ? String(item.text || ''):undefined,
       attachment: item.attachment ? String(item.attachment) : undefined,
       type: item.type,
     })),
@@ -300,19 +299,29 @@ const createDocument = async (event) => {
     course: Number(courseId),
     questions: formattedQuestions,
   };
+console.log("Danh sách câu hỏi:", questions);
+console.log("Dữ liệu gửi đi:", JSON.stringify(requestData, null, 2));
 
   try {
-    const response = await fetch(API_DOCUMENT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
+    const response = await fetch(`${API_DOCUMENT}/create-document`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify(requestData),
     });
+    
+    const responseText = await response.text();
+    console.log("Lỗi từ API:", responseText);
+    
 
     if (!response.ok) {
       throw new Error(`Error creating document: ${response.status}`);
     }
-
+    if (!Array.isArray(requestData.questions) || requestData.questions.length === 0) {
+      console.error("Lỗi: Không có câu hỏi nào được gửi.");
+      return;
+    }
+    
     showPopup('Document created successfully!');
     setTimeout(() => {
       window.location.href = 'manage.html';
