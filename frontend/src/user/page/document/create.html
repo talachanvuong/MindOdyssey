@@ -129,56 +129,47 @@
     
           </div>
           <div id="questionsContainer" class="rounded border border-black p-4 mt-1">
-            <div class="flex items-center justify-between">
-              <label class="block p-1 font-semibold">Question 1: The content of question</label>
-            </div>
-          
-            <!-- Upload ảnh cho câu hỏi -->
-            <div class="mt-2">
-              <label>Upload Image for Question:</label>
-              <input type="file" accept="image/*" onchange="handleFileUpload(event, 0, 'question')">
-              <img id="questionImage0" class="mt-2 w-32 h-32 object-cover hidden">
-            </div>
-          
-            <div class="space-y-2">
-              <label class="flex items-center space-x-2">
-                <input type="radio" name="question1" class="text-blue-600" />
-                <span>content_1</span>
-          
-                <!-- Upload ảnh cho câu trả lời -->
-                <input type="file" accept="image/*" onchange="handleFileUpload(event, 0, 'answer', 0)">
-                <img id="answerImage0_0" class="mt-2 w-16 h-16 object-cover hidden">
+            <div class="rounded-lg border p-4 my-3 shadow bg-white">
+              <label class="block font-semibold text-lg text-gray-800 mb-2">
+                Câu hỏi 1:
               </label>
-          
-              <label class="flex items-center space-x-2">
-                <input type="radio" name="question1" class="text-blue-600" />
-                <span>content_2</span>
-          
-                <!-- Upload ảnh cho câu trả lời -->
-                <input type="file" accept="image/*" onchange="handleFileUpload(event, 0, 'answer', 0)">
-                <img id="answerImage0_1" class="mt-2 w-16 h-16 object-cover hidden">
-              </label>
-          
-              <label class="flex items-center space-x-2">
-                <input type="radio" name="question1" class="text-blue-600" />
-                <span>content_3</span>
-          
-                <!-- Upload ảnh cho câu trả lời -->
-                <input type="file" accept="image/*" onchange="handleFileUpload(event, 0, 'answer', 0)">
-                <img id="answerImage0_2" class="mt-2 w-16 h-16 object-cover hidden">
-              </label>
-          
-              <label class="flex items-center space-x-2">
-                <input type="radio" name="question1" class="text-blue-600" />
-                <span>content_4</span>
-          
-                <!-- Upload ảnh cho câu trả lời -->
-                <input type="file" accept="image/*" onchange="handleFileUpload(event, 0, 'answer', 0)">
-                <img id="answerImage0_3" class="mt-2 w-16 h-16 object-cover hidden">
-              </label>
-
+              <textarea class="w-full border p-2 rounded mb-3 resize-none overflow-hidden" placeholder="Enter question..." rows="1" oninput="updateQuestion(0, this.value, 0); autoResize(this)" style="height: 40px;"></textarea>
+              
+              <input type="file" accept="image/*,audio/*" class="mb-2" onchange="handleMediaUpload(event, 0, 0)">
+              <div id="mediaPreview0_0" class="mt-2"></div>
+              
+              <div class="space-y-2">
+                
+                  <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="question0" onchange="setCorrectAnswer(0, 'A')">
+                    <textarea class="border p-1 w-full rounded resize-none overflow-hidden" placeholder="Enter answer..." rows="1" oninput="updateAnswer(0, 1, this); autoResize(this)" style="height: 32px;"></textarea>
+                    <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, 0, 1)">
+                    <div id="mediaPreview0_1" class="mt-2"></div>
+                  </label>
+                
+                  <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="question0" onchange="setCorrectAnswer(0, 'B')">
+                    <textarea class="border p-1 w-full rounded resize-none overflow-hidden" placeholder="Enter answer..." rows="1" oninput="updateAnswer(0, 2, this); autoResize(this)" style="height: 32px;"></textarea>
+                    <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, 0, 2)">
+                    <div id="mediaPreview0_2" class="mt-2"></div>
+                  </label>
+                
+                  <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="question0" onchange="setCorrectAnswer(0, 'C')">
+                    <textarea class="border p-1 w-full rounded resize-none overflow-hidden" placeholder="Enter answer..." rows="1" oninput="updateAnswer(0, 3, this); autoResize(this)" style="height: 32px;"></textarea>
+                    <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, 0, 3)">
+                    <div id="mediaPreview0_3" class="mt-2"></div>
+                  </label>
+                
+                  <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="question0" onchange="setCorrectAnswer(0, 'D')">
+                    <textarea class="border p-1 w-full rounded resize-none overflow-hidden" placeholder="Enter answer..." rows="1" oninput="updateAnswer(0, 4, this); autoResize(this)" style="height: 32px;"></textarea>
+                    <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, 0, 4)">
+                    <div id="mediaPreview0_4" class="mt-2"></div>
+                  </label>
+                
               </div>
-            </div>
+            </div></div>
             <button
               type="button"
               class="group mt-2 flex w-full items-center justify-center rounded-md border-2 border-dashed border-slate-300 py-2 text-sm font-thin leading-4 text-gray-700 hover:border-solid hover:bg-white"
