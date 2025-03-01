@@ -64,6 +64,7 @@ export const MESSAGE = {
     NOT_FOUND_HISTORY: 'No practice history found!',
     PAGE_EXCEEDS_TOTAL: 'The requested page exceeds the total number of pages!',
     NO_QUESTION: 'No more question available',
+    NOT_EXIST: 'practice_history_id not exist'
   },
   SERVER: {
     ERROR: 'Internal server error!',
