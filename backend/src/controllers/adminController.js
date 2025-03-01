@@ -70,6 +70,15 @@ const getUnapprovedDocuments = async (req, res) => {
     filter
   )
 
+  // Check page valid
+  if (pagination?.page > unapprovedDocuments.total_pages) {
+    return sendResponse(
+      res,
+      STATUS_CODE.NOT_FOUND,
+      MESSAGE.DOCUMENT.PAGE_NOT_VALID
+    )
+  }
+
   return sendResponse(
     res,
     STATUS_CODE.SUCCESS,
