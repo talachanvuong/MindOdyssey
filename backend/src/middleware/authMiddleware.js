@@ -3,7 +3,7 @@ import envConfig from '../config/envConfig.js'
 import { MESSAGE, STATUS_CODE, sendResponse } from '../utils/constant.js'
 import userService from '../services/userService.js'
 import userSchema from '../schemas/userSchema.js'
-
+import cookie from 'cookie'
 const verifyUser = (req, res, next) => {
   const token = req.cookies?.accessToken
 
@@ -118,7 +118,7 @@ const postRefreshToken = async (req, res) => {
         httpOnly: true,
         secure: false,
         path: '/',
-        sameSite: 'strict',
+        sameSite: 'Strict',
         maxAge: 3600000,
       })
       return sendResponse(
@@ -130,4 +130,38 @@ const postRefreshToken = async (req, res) => {
   )
 }
 
-export default { verifyUser, verifyEmail, postRefreshToken }
+const authSocket = (socket, next) => {
+  try {
+    if (!socket.request.headers.cookie) {
+      console.log('Not found cookie')
+      return socket.emit('error', MESSAGE.AUTH.ACCESS_TOKEN.NOT_FOUND)
+    }
+    const cookies = cookie.parse(socket.request.headers.cookie)
+    const token = cookies.accessToken
+
+    const { error } = userSchema.accessTokenValidate.validate(token)
+    if (error) {
+      return socket.emit('error', error.details[0].message)
+    }
+
+    jwt.verify(token, envConfig.accessTokenSecretKey, (error, decoded) => {
+      if (error) {
+        if (error.name === 'TokenExpiredError') {
+          return socket.emit('error', MESSAGE.AUTH.ACCESS_TOKEN.EXPIRED)
+        }
+
+        if (error.name === 'JsonWebTokenError') {
+          return socket.emit('error', MESSAGE.AUTH.ACCESS_TOKEN.INVALID)
+        }
+      }
+
+      socket.user = decoded
+      next()
+    })
+  } catch (error) {
+    console.error(error)
+    socket.emit('error', MESSAGE.SERVER.ERROR)
+  }
+}
+
+export default { verifyUser, verifyEmail, postRefreshToken, authSocket }
