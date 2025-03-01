@@ -292,6 +292,19 @@ const updateTotalQuestions = async (document_id) => {
   )
 }
 
+const isDocumentApprove = async (document_id) => {
+  const result = await client.query(
+    `SELECT 1
+     FROM documents
+     WHERE status = 'Đã duyệt'
+     AND document_id = $1
+     LIMIT 1;`,
+    [document_id]
+  )
+
+  return result.rowCount > 0
+}
+
 export default {
   isDocumentExist,
   createDocument,
@@ -304,4 +317,5 @@ export default {
   getTotalQuestions,
   getDocuments,
   updateTotalQuestions,
+  isDocumentApprove,
 }

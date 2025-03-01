@@ -8,6 +8,7 @@ export const MESSAGE = {
   DOCUMENT: {
     NOT_FOUND: 'Document not found!',
     NOT_OWNED: 'Document not owned!',
+    NOT_APPROVED: 'Document not approved!',
     CREATE_DOCUMENT_SUCCESS: 'Create document successfully!',
     GET_DOCUMENT_DETAIL_SUCCESS: 'Get document detail successfully!',
     GET_DOCUMENTS_SUCCESS: 'Get documents successfully!',

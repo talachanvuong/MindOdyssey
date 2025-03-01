@@ -1,5 +1,4 @@
 import documentSchema from '../schemas/documentSchema.js'
-import adminService from '../services/adminService.js'
 import cloudinaryService from '../services/cloudinaryService.js'
 import contentService from '../services/contentService.js'
 import courseService from '../services/courseService.js'
@@ -121,13 +120,13 @@ const getDocumentDetailGuest = async (req, res) => {
     return sendResponse(res, STATUS_CODE.NOT_FOUND, MESSAGE.DOCUMENT.NOT_FOUND)
   }
 
-  // Check document review
-  const isDocumentReview = await adminService.isDocumentReview(document)
-  if (!isDocumentReview) {
+  // Check document approve
+  const isDocumentApprove = await documentService.isDocumentApprove(document)
+  if (!isDocumentApprove) {
     return sendResponse(
       res,
       STATUS_CODE.BAD_REQUEST,
-      MESSAGE.DOCUMENT.NOT_REVIEWED
+      MESSAGE.DOCUMENT.NOT_APPROVED
     )
   }
 
