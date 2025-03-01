@@ -183,7 +183,7 @@ const deleteDocument = async (req, res) => {
   }
 
   // Delete document
-  await deleteDocument(document)
+  await documentService.deleteDocument(document)
 
   return sendResponse(
     res,
@@ -448,8 +448,8 @@ const editDocument = async (req, res) => {
 
               // Check content belong
               const isContentBelong = await contentService.isContentBelong(
-                question.id,
-                document
+                content.id,
+                question.id
               )
               if (!isContentBelong) {
                 return sendResponse(
