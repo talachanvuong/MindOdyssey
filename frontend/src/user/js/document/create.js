@@ -2,18 +2,18 @@
 // Hàm viết hoa từ thứ 2
 
 import '../../../style.css'
-const CLOUDINARY_UPLOAD_URL = 'https://api.cloudinary.com/v1_1/dht3ebax8/upload';
-const CLOUDINARY_UPLOAD_PRESET = 'DO_AN_NHOM_1';//  API Endpoints
+const CLOUDINARY_UPLOAD_URL = 'https://api.cloudinary.com/v1_1/dht3ebax8/upload'
+const CLOUDINARY_UPLOAD_PRESET = 'DO_AN_NHOM_1' //  API Endpoints
 
 const API_COURSE = 'http://localhost:3000/api/course'
 const API_DOCUMENT = 'http://localhost:3000/api/document'
 
 //  DOM Elements
 const courseSelect = document.getElementById('course')
-const createCourseBtn = document.querySelector('span.cursor-pointer')       //"Create new course" button
+const createCourseBtn = document.querySelector('span.cursor-pointer') //"Create new course" button
 const fileInput = document.getElementById('fileInput')
-const addQuestionBtn = document.querySelector('button[type="button"]')      //"Add question" button
-const createDocumentBtn = document.querySelector('button[type="submit"]')   //"Create" button
+const addQuestionBtn = document.querySelector('button[type="button"]') //"Add question" button
+const createDocumentBtn = document.querySelector('button[type="submit"]') //"Create" button
 const questionsContainer = document.getElementById('questionsContainer')
 
 // Open popup
@@ -93,19 +93,22 @@ const createCourse = async () => {
 // Variable to save questions from Excel file
 let questions = []
 window.handleFileUpload = (event) => {
-  const file = event.target.files[0];
+  const file = event.target.files[0]
   if (!file || (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls'))) {
-    showPopup('Please upload Excel file!');
-    return;
+    showPopup('Please upload Excel file!')
+    return
   }
-  const reader = new FileReader();
-  reader.readAsBinaryString(file);
+  const reader = new FileReader()
+  reader.readAsBinaryString(file)
   reader.onload = (e) => {
-    const workbook = XLSX.read(e.target.result, { type: 'binary' });
-    const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+    const workbook = XLSX.read(e.target.result, { type: 'binary' })
+    const jsonData = XLSX.utils.sheet_to_json(
+      workbook.Sheets[workbook.SheetNames[0]],
+      { header: 1 }
+    )
     if (jsonData.length < 2) {
-      showPopup('Excel file has no data!');
-      return;
+      showPopup('Excel file has no data!')
+      return
     }
     questions = jsonData.slice(1).map((row) => ({
       content: [
@@ -116,10 +119,10 @@ window.handleFileUpload = (event) => {
         { text: row[4] || '', type: 'D' },
       ],
       correct: row[5] || 'A',
-    }));
-    renderQuestions();
-  };
-};
+    }))
+    renderQuestions()
+  }
+}
 
 // Display list of questions
 
@@ -140,7 +143,10 @@ const renderQuestions = () => {
         <div id="mediaPreview${index}_0" class="mt-2">${q.content[0].attachment ? `<img src="${q.content[0].attachment}" class="max-w-full h-auto">` : ''}</div>
         
         <div class="space-y-2">
-          ${q.content.slice(1).map((option, i) => `
+          ${q.content
+            .slice(1)
+            .map(
+              (option, i) => `
             <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
               <input type="radio" name="question${index}" 
                      ${q.correct === ['A', 'B', 'C', 'D'][i] ? 'checked' : ''} 
@@ -152,43 +158,49 @@ const renderQuestions = () => {
               <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, ${index}, ${i + 1})" />
               <div id="mediaPreview${index}_${i + 1}" class="mt-2">${option.attachment ? `<img src="${option.attachment}" class="max-w-full h-auto">` : ''}</div>
             </label>
-          `).join('')}
+          `
+            )
+            .join('')}
         </div>
       </div>`
-    
+
     questionsContainer.innerHTML += questionHTML
   })
   document.querySelectorAll('textarea').forEach(autoResize)
 }
- 
-  // Apply auto-expand to all textareas when rendering
-  
-  window.handleMediaUpload = async (event, index, position) => {
-    const file = event.target.files[0];
-    if (!file) return;
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = async () => {
-        const base64String = reader.result; 
-        questions[index].content[position].attachment = base64String; 
+// Apply auto-expand to all textareas when rendering
 
-        document.getElementById(`mediaPreview${index}_${position}`).innerHTML =
-            file.type.startsWith('audio')
-                ? `<audio controls src="${base64String}"></audio>`
-                : `<img src="${base64String}" class="max-w-full h-auto">`;
+window.handleMediaUpload = async (event, index, position) => {
+  const file = event.target.files[0];
+  if (!file) return;
 
-    };
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = async () => {
+    const base64String = reader.result;
+    console.log(`Ảnh đã tải lên cho câu hỏi ${index}, vị trí ${position}:`, base64String); // Kiểm tra ảnh
 
-    reader.onerror = (error) => {
-        console.error("Error converting file to base64:", error);
-    };
+    if (!questions[index]) {
+      console.error(`Lỗi: Không tìm thấy câu hỏi tại index ${index}`);
+      return;
+    }
+
+    questions[index].content[position].attachment = base64String;
+
+    document.getElementById(`mediaPreview${index}_${position}`).innerHTML =
+      file.type.startsWith('audio')
+        ? `<audio controls src="${base64String}"></audio>`
+        : `<img src="${base64String}" class="max-w-full h-auto">`;
+  };
+
+  reader.onerror = (error) => {
+    console.error('Error converting file to base64:', error);
+  };
 };
 
 
-
 // Function to automatically expand textarea according to content
-
 window.autoResize = (element) => {
   element.style.height = 'auto' // Reset chiều cao để đo chính xác
   element.style.height = element.scrollHeight + 'px' // Update height according to content
@@ -220,27 +232,57 @@ addQuestionBtn.addEventListener('click', () => {
       { text: '', attachment: '', type: 'D' },
     ],
     correct: '',
-  });
-  renderQuestions();
-});
+  })
+  renderQuestions()
+})
 
+document.addEventListener('DOMContentLoaded', () => {
+  if (questions.length === 0) {
+    questions.push({
+      content: [
+        { text: '', attachment: '', type: 'Q' },
+        { text: '', attachment: '', type: 'A' },
+        { text: '', attachment: '', type: 'B' },
+        { text: '', attachment: '', type: 'C' },
+        { text: '', attachment: '', type: 'D' },
+      ],
+      correct: '',
+    })
+  }
+  renderQuestions()
+})
 
 // Send data to API when pressing "Create"
 
 const createDocument = async (event) => {
-  event.preventDefault()
-  createDocumentBtn.innerText = 'Loading...'
-  createDocumentBtn.disabled = true
+  event.preventDefault();
+  createDocumentBtn.innerText = 'Loading...';
+  createDocumentBtn.disabled = true;
 
-  const title = document.getElementById('documentName').value.trim()
-  const description = document.getElementById('description').value.trim()
-  const courseId = courseSelect.value
+  const title = document.getElementById('documentName').value.trim();
+  const description = document.getElementById('description').value.trim();
+  const courseId = courseSelect.value;
 
   if (!title || title.length < 8 || !courseId || questions.length === 0) {
-    showPopup('Please enter complete information!')
-    createDocumentBtn.innerText = 'Create'
-    createDocumentBtn.disabled = false
-    return
+    showPopup('Please enter complete information!');
+    createDocumentBtn.innerText = 'Create';
+    createDocumentBtn.disabled = false;
+    return;
+  }
+
+  // Kiểm tra từng câu hỏi
+  for (let i = 0; i < questions.length; i++) {
+    for (let j = 0; j < questions[i].content.length; j++) {
+      const { text, attachment } = questions[i].content[j];
+
+      // Nếu cả chữ và ảnh đều trống, báo lỗi
+      if ((text.trim() === '' || text.trim() == null) && (!attachment || attachment.trim() === '')) {
+        showPopup(`Câu hỏi ${i + 1} hoặc đáp án ${['Q', 'A', 'B', 'C', 'D'][j]} không có nội dung hoặc hình ảnh!`);
+        createDocumentBtn.innerText = 'Create';
+        createDocumentBtn.disabled = false;
+        return;
+      }
+    }
   }
 
   const formattedQuestions = questions.map((q) => ({
@@ -250,14 +292,14 @@ const createDocument = async (event) => {
       type: item.type,
     })),
     correct: q.correct || '',
-  }))
+  }));
 
   const requestData = {
     title,
     description,
     course: Number(courseId),
     questions: formattedQuestions,
-  }
+  };
 
   try {
     const response = await fetch(API_DOCUMENT, {
@@ -265,23 +307,24 @@ const createDocument = async (event) => {
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify(requestData),
-    })
+    });
 
     if (!response.ok) {
-      throw new Error('Error creating document: ${response.status} - ${responseText}')
+      throw new Error(`Error creating document: ${response.status}`);
     }
 
-    showPopup('Document created successfully!')
+    showPopup('Document created successfully!');
     setTimeout(() => {
-      window.location.href = 'manage.html'
-    }, 2000)
+      window.location.href = 'manage.html';
+    }, 2000);
   } catch (error) {
-    showPopup('Error: ${error.message}')
+    showPopup(`Error: ${error.message}`);
   } finally {
-    createDocumentBtn.innerText = 'Create'
-    createDocumentBtn.disabled = false
+    createDocumentBtn.innerText = 'Create';
+    createDocumentBtn.disabled = false;
   }
-}
+};
+
 
 // Load course when page opens
 createCourseBtn.addEventListener('click', createCourse)
