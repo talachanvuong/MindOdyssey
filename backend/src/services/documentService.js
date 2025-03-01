@@ -229,8 +229,6 @@ const getDocuments = async (pagination, keyword, filter, user_id) => {
   const conditions = []
   const refs = [user_id]
   let index = 2
-  let limit = ''
-  let totalPages = 1
 
   if (keyword) {
     conditions.push(`title ILIKE $${index}`)
@@ -244,18 +242,30 @@ const getDocuments = async (pagination, keyword, filter, user_id) => {
   }
 
   const tempResult = await client.query(
-    `SELECT COUNT(*) AS total_documents
+    `SELECT COUNT(*) AS filtered_documents
      FROM documents
      WHERE user_id = $1
      ${conditions.map((condition) => `AND ${condition}`).join(' ')}
      LIMIT 1;`,
     refs
   )
+  const filteredDocuments = parseInt(tempResult.rows[0].filtered_documents)
+
+  // Empty result
+  if (filteredDocuments === 0) {
+    return {
+      total_pages: 0,
+      documents: [],
+    }
+  }
+
+  let limit = ''
+  let totalPages = 1
 
   if (pagination) {
     const { page, perPage } = pagination
     limit = `LIMIT ${perPage} OFFSET ${perPage * (page - 1)}`
-    totalPages = Math.ceil(tempResult.rows[0].total_documents / perPage)
+    totalPages = Math.ceil(filteredDocuments / perPage)
   }
 
   const result = await client.query(

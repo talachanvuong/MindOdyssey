@@ -542,6 +542,15 @@ const getDocuments = async (req, res) => {
     user_id
   )
 
+  // Check page valid
+  if (pagination?.page > documents.total_pages) {
+    return sendResponse(
+      res,
+      STATUS_CODE.NOT_FOUND,
+      MESSAGE.DOCUMENT.PAGE_NOT_VALID
+    )
+  }
+
   return sendResponse(
     res,
     STATUS_CODE.SUCCESS,
