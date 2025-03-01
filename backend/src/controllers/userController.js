@@ -1,7 +1,8 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import envConfig from '../config/envConfig.js'
-import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
+import { MESSAGE, STATUS_CODE } from '../utils/constantUtils.js'
+import { sendResponse } from '../utils/responseUtils.js'
 import userService from '../services/userService.js'
 import userSchema from '../schemas/userSchema.js'
 

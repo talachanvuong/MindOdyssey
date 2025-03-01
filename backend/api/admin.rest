@@ -10,7 +10,7 @@ Content-Type: application/json
 }
 
 ### Get unapproved documents
-GET {{host}}/document
+GET {{host}}/get-unapproved-documents
 Content-Type: application/json
 
 {
@@ -24,7 +24,7 @@ Content-Type: application/json
 }
 
 ### Get document detail
-GET {{host}}/detail
+GET {{host}}/get-document-detail
 Content-Type: application/json
 
 {
@@ -32,7 +32,7 @@ Content-Type: application/json
 }
 
 ### Review document
-POST {{host}}/review
+POST {{host}}/review-document
 Content-Type: application/json
 
 {

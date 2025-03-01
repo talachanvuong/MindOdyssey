@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body class="bg-stone-200">
+    <header class="flex h-12 flex-row justify-between bg-cyan-300 pr-5">
+      <div class="ml-2 mt-1 flex cursor-pointer flex-row gap-2">
+        <a href="../document/library/doc_lib.html">
+          <img class="h-10" src="../img/back.png" />
+        </a>
+        <a href="../account/lobby.html">
+          <img src="../img/home.png" class="h-10 w-full" />
+        </a>
+      </div>
+
+      <div id="user" class="h-12">
+        <a
+          href="../account/user_information.html"
+          class="flex flex-row items-center justify-between gap-2 p-1"
+        >
+          <img src="../img/user.png" class="h-10" />
+          <!-- call API to get user name -->
+          <div id="userName" class="font-bold"></div>
+        </a>
+      </div>
+    </header>
+
+    <main class="m-3 h-fit rounded-xl bg-white p-3 shadow-md shadow-gray-400 sm:w-4/6 sm:mx-auto">
+      <!-- information -->
+      <div
+        class="flex flex-row justify-between rounded-md bg-cyan-400 p-2 shadow-md shadow-gray-500"
+      >
+        <div id="timer" class="ml-4 flex flex-row items-center gap-2">
+          <img src="../img/timer.png" class="h-10" />
+          <p class="text-2xl">30m</p>
+        </div>
+        <div id="quantity" class="gap--2 mr-10 flex flex-row items-center">
+          <img src="../img/quantity.png" class="h-10" />
+          <p class="text-2xl">2/30</p>
+        </div>
+      </div>
+
+      <!-- content -->
+      <div class="mt-3 rounded-xl bg-cyan-400 p-3 shadow-md shadow-gray-400">
+        <ul class="mb-10 flex flex-col gap-2">
+          <!-- The question -->
+          <li
+            class="h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3"
+          >
+            <p id="question">Question 1:The content of the question</p>
+            <form>
+              <ul>
+                <li class="ml-1 flex flex-row gap-2">
+                  <input
+                    name="question1"
+                    type="radio"
+                    id="ans1"
+                    class="scale-150 cursor-pointer"
+                  />
+                  <label for="ans1">The content of ans</label>
+                </li>
+                <li class="ml-1 flex flex-row gap-2">
+                  <input
+                    name="question1"
+                    type="radio"
+                    id="ans2"
+                    class="scale-150 cursor-pointer"
+                  />
+                  <label for="ans2">The content of ans</label>
+                </li>
+                <li class="ml-1 flex flex-row gap-2">
+                  <input
+                    name="question1"
+                    type="radio"
+                    id="ans3"
+                    class="scale-150 cursor-pointer"
+                  />
+                  <label for="ans3">The content of ans</label>
+                </li>
+                <li class="ml-1 flex flex-row gap-2">
+                  <input
+                    name="question1"
+                    type="radio"
+                    id="ans4"
+                    class="scale-150 cursor-pointer"
+                  />
+                  <label for="ans4">The content of ans</label>
+                </li>
+              </ul>
+            </form>
+          </li>
+
+          <li
+            class="h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3"
+          >
+            <p id="question">Question 2:The content of the question</p>
+            <form>
+              <ul>
+                <li class="ml-1 flex flex-row gap-2">
+                  <input
+                    name="question2"
+                    type="radio"
+                    id="ans1"
+                    class="scale-150 cursor-pointer"
+                  />
+                  <label for="ans1">The content of ans</label>
+                </li>
+                <li class="ml-1 flex flex-row gap-2">
+                  <input
+                    name="question2"
+                    type="radio"
+                    id="ans2"
+                    class="scale-150 cursor-pointer"
+                  />
+                  <label for="ans2">The content of ans</label>
+                </li>
+                <li class="ml-1 flex flex-row gap-2">
+                  <input
+                    type="radio"
+                    name="question2"
+                    id="ans3"
+                    class="scale-150 cursor-pointer"
+                  />
+                  <label for="ans3">The content of ans</label>
+                </li>
+                <li class="ml-1 flex flex-row gap-2">
+                  <input
+                    name="question2"
+                    type="radio"
+                    id="ans4"
+                    class="scale-150 cursor-pointer"
+                  />
+                  <label for="ans4">The content of ans</label>
+                </li>
+              </ul>
+            </form>
+          </li>
+        </ul>
+
+        <div
+          id="submitBtn"
+          class="mx-auto flex h-12 w-1/2 cursor-pointer flex-row items-center justify-center rounded-lg bg-orange-300 text-2xl shadow-md shadow-gray-700"
+        >
+          Submit
+        </div>
+      </div>
+    </main>
+
+    <!-- popup alert submit -->
+    <div
+      id="alert"
+      class="invisible fixed top-0 h-screen w-screen bg-gray-300 bg-opacity-70"
+    >
+      <div
+        class="mx-auto mt-32 flex h-fit w-3/6 flex-col rounded-xl border border-black bg-gray-300 pb-3"
+      >
+        <img src="../img/warning.png" class="mx-auto h-14 w-14" />
+        <p class="mb-4 mt-2 text-center text-2xl">
+          All question are not completed yet!
+        </p>
+        <div
+          id="continueBtn"
+          class="mx-auto mb-2 h-1/6 w-5/6 cursor-pointer rounded-md bg-white py-3 text-center text-2xl font-bold shadow-md shadow-gray-500"
+        >
+          continue
+        </div>
+        <a
+          id="submit"
+          class="mx-auto h-1/6 w-5/6 rounded-lg bg-white py-3 text-center text-2xl font-bold shadow-md shadow-gray-500"
+          href="practiceResult.html"
+          >still Submit</a
+        >
+      </div>
+    </div>
+
+    <script
+      type="module"
+      src="../../js/practice/practiceUI.js"
+    ></script>
+  </body>
+</html>
