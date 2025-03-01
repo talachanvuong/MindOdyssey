@@ -1,5 +1,4 @@
 import documentSchema from '../schemas/documentSchema.js'
-import adminService from '../services/adminService.js'
 import cloudinaryService from '../services/cloudinaryService.js'
 import contentService from '../services/contentService.js'
 import courseService from '../services/courseService.js'
@@ -121,13 +120,13 @@ const getDocumentDetailGuest = async (req, res) => {
     return sendResponse(res, STATUS_CODE.NOT_FOUND, MESSAGE.DOCUMENT.NOT_FOUND)
   }
 
-  // Check document review
-  const isDocumentReview = await adminService.isDocumentReview(document)
-  if (!isDocumentReview) {
+  // Check document approve
+  const isDocumentApprove = await documentService.isDocumentApprove(document)
+  if (!isDocumentApprove) {
     return sendResponse(
       res,
       STATUS_CODE.BAD_REQUEST,
-      MESSAGE.DOCUMENT.NOT_REVIEWED
+      MESSAGE.DOCUMENT.NOT_APPROVED
     )
   }
 
@@ -175,7 +174,7 @@ const deleteDocument = async (req, res) => {
   const questions = await questionService.getQuestions(document)
   for (const question of questions) {
     // Get contents
-    const contents = await contentService.getContents(question.question_id)
+    const contents = await contentService.getContents(question.id)
     for (const content of contents) {
       // Destroy attachment in Cloudinary
       await cloudinaryService.destroy(content.attachment_id)
@@ -183,7 +182,7 @@ const deleteDocument = async (req, res) => {
   }
 
   // Delete document
-  await deleteDocument(document)
+  await documentService.deleteDocument(document)
 
   return sendResponse(
     res,
@@ -448,8 +447,8 @@ const editDocument = async (req, res) => {
 
               // Check content belong
               const isContentBelong = await contentService.isContentBelong(
-                question.id,
-                document
+                content.id,
+                question.id
               )
               if (!isContentBelong) {
                 return sendResponse(
@@ -542,6 +541,15 @@ const getDocuments = async (req, res) => {
     filter,
     user_id
   )
+
+  // Check page valid
+  if (pagination?.page > documents.total_pages) {
+    return sendResponse(
+      res,
+      STATUS_CODE.NOT_FOUND,
+      MESSAGE.DOCUMENT.PAGE_NOT_VALID
+    )
+  }
 
   return sendResponse(
     res,

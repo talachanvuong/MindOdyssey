@@ -17,8 +17,6 @@ const getUnapprovedDocuments = async (pagination, keyword, filter) => {
   const conditions = []
   const refs = ['Chưa duyệt']
   let index = 2
-  let limit = ''
-  let totalPages = 1
 
   if (keyword) {
     conditions.push(`title ILIKE $${index}`)
@@ -39,11 +37,23 @@ const getUnapprovedDocuments = async (pagination, keyword, filter) => {
      LIMIT 1;`,
     refs
   )
+  const filteredDocuments = parseInt(tempResult.rows[0].filtered_documents)
+
+  // Empty result
+  if (filteredDocuments === 0) {
+    return {
+      total_pages: 0,
+      documents: [],
+    }
+  }
+
+  let limit = ''
+  let totalPages = 1
 
   if (pagination) {
     const { page, perPage } = pagination
     limit = `LIMIT ${perPage} OFFSET ${perPage * (page - 1)}`
-    totalPages = Math.ceil(tempResult.rows[0].filtered_documents / perPage)
+    totalPages = Math.ceil(filteredDocuments / perPage)
   }
 
   const result = await client.query(
@@ -125,7 +135,7 @@ const getDocumentDetail = async (document_id) => {
       d.total_questions;`,
     [document_id]
   )
-  
+
   return result.rows.map((row) => ({
     ...row,
     created_at: timeConvert(row.created_at),
