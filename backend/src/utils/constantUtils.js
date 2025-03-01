@@ -2,29 +2,32 @@ export const MESSAGE = {
   COURSE: {
     EXISTED: 'Course already exists!',
     NOT_FOUND: 'Course not found!',
-    CREATE_SUCCESS: 'Create course successfully!',
-    GET_SUCCESS: 'Get course(s) successfully!',
+    CREATE_COURSE_SUCCESS: 'Create course successfully!',
+    GET_COURSES_SUCCESS: 'Get courses successfully!',
   },
   DOCUMENT: {
     NOT_FOUND: 'Document not found!',
-    INVALID_AUTHOR: 'Invalid document author!',
-    CREATE_SUCCESS: 'Create document successfully!',
-    GET_SUCCESS: 'Get document(s) successfully!',
-    REMOVE_SUCCESS: 'Remove document successfully!',
-    EDIT_SUCCESS: 'Edit document successfully!',
-    REVIEW_SUCCESS: 'Review document successfully!',
+    NOT_OWNED: 'Document not owned!',
+    CREATE_DOCUMENT_SUCCESS: 'Create document successfully!',
+    GET_DOCUMENT_DETAIL_SUCCESS: 'Get document detail successfully!',
+    GET_DOCUMENTS_SUCCESS: 'Get documents successfully!',
+    DELETE_DOCMENT_SUCCESS: 'Delete document successfully!',
+    EDIT_DOCUMENT_SUCCESS: 'Edit document successfully!',
+    NOT_REVIEWED: 'This document was not reviewed!',
     REVIEWED: 'This document was reviewed!',
   },
   QUESTION: {
     NOT_FOUND: 'Question not found!',
-    INVALID_AUTHOR: 'Invalid question author!',
+    NOT_OWNED: 'Question not owned!',
     INVALID_ORDER: 'Invalid order!',
-    LAST: 'Cannot delete the last question!',
+    LAST_REMAIN: 'Cannot delete the last question!',
+    NOT_BELONGED: 'Question not belonged!',
   },
   CONTENT: {
     NOT_FOUND: 'Content not found!',
-    INVALID_AUTHOR: 'Invalid content author!',
+    NOT_OWNED: 'Content not owned!',
     EMPTY: 'Neither text nor attachment can be empty!',
+    NOT_BELONGED: 'Content not belonged!',
   },
   USER: {
     EXISTED: 'User already exists!',
@@ -41,9 +44,12 @@ export const MESSAGE = {
     GET_USER_ID_SUCCESS: 'Get user id successfully!',
   },
   ADMIN: {
-    LOGIN_SUCCESS: 'Admin login successfully!',
     NOT_FOUND: 'Admin not found!',
     WRONG_PASSWORD: 'Wrong password!',
+    LOGIN_SUCCESS: 'Admin login successfully!',
+    GET_UNAPPROVED_DOCUMENTS_SUCCESS: 'Get unapproved documents successfully!',
+    GET_DOCUMENT_DETAIL_SUCCESS: 'Get document detail successfully!',
+    REVIEW_DOCUMENT_SUCCESS: 'Review document successfully!',
   },
   AUTH: {
     ACCESS_TOKEN: {
@@ -85,22 +91,4 @@ export const STATUS_CODE = {
 
 export const EVENT = {
   PRACTICE: {},
-}
-
-export const sendResponse = (res, status, message, result = null) => {
-  const response = { message }
-  if (result !== null) {
-    response.result = result
-  }
-
-  return res.status(status).json(response)
-}
-
-export const messageResponse = (status, message, result = null) => {
-  const response = { status, message }
-  if (result !== null) {
-    response.result = result
-  }
-
-  return response
 }

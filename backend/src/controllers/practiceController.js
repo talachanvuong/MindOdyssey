@@ -1,5 +1,6 @@
 import practiceSchema from '../schemas/practiceSchema.js'
-import { MESSAGE, sendResponse, STATUS_CODE } from '../utils/constant.js'
+import { MESSAGE, STATUS_CODE } from '../utils/constantUtils.js'
+import { sendResponse } from '../utils/responseUtils.js'
 import practiceService from '../services/practiceService.js'
 const getDocumentforPratice = async (req, res) => {
   const { error, value } =

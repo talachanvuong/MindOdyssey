@@ -1,13 +1,22 @@
 import { v2 as cloudinary } from 'cloudinary'
 
-export const uploadCloudinary = async (link) => {
-  if (!link) {
+const upload = async (source) => {
+  if (!source) {
     return
   }
 
-  return await cloudinary.uploader.upload(link)
+  return await cloudinary.uploader.upload(source)
 }
 
-export const destroyCloudinary = async (public_id) => {
+const destroy = async (public_id) => {
+  if (!public_id) {
+    return
+  }
+
   await cloudinary.uploader.destroy(public_id)
+}
+
+export default {
+  upload,
+  destroy,
 }

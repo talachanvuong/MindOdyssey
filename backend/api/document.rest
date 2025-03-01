@@ -1,7 +1,7 @@
 @host = http://localhost:{{$dotenv SERVER_PORT}}/api/document
 
 ### Create document
-POST {{host}}
+POST {{host}}/create-document
 Content-Type: application/json
 
 {
@@ -10,7 +10,8 @@ Content-Type: application/json
     "course": 0,
     "questions": [
         {
-            "content": [
+            "correct": "",
+            "contents": [
                 {
                     "text": "",
                     "attachment": "",
@@ -36,30 +37,37 @@ Content-Type: application/json
                     "attachment": "",
                     "type": "D"
                 }
-            ],
-            "correct": ""
+            ]
         }
     ]
 }
 
-### Get document detail
-GET {{host}}/detail
+### Get document detail owner
+GET {{host}}/get-document-detail-owner
 Content-Type: application/json
 
 {
     "document": 0
 }
 
-### Remove document
-DELETE {{host}}
+### Get document detail guest
+GET {{host}}/get-document-detail-guest
 Content-Type: application/json
 
 {
     "document": 0
 }
 
-### Update document
-PATCH {{host}}
+### Delete document
+DELETE {{host}}/delete-document
+Content-Type: application/json
+
+{
+    "document": 0
+}
+
+### Edit document
+PATCH {{host}}/edit-document
 Content-Type: application/json
 
 {
@@ -70,7 +78,9 @@ Content-Type: application/json
     "questions": [
         {
             "action": "add",
-            "content": [
+            "order": 0,
+            "correct": "",
+            "contents": [
                 {
                     "text": "",
                     "attachment": "",
@@ -96,32 +106,30 @@ Content-Type: application/json
                     "attachment": "",
                     "type": "D"
                 }
-            ],
-            "order": 0,
-            "correct": ""
+            ]
         },
         {
-            "action": "remove",
+            "action": "delete",
             "id": 0
         },
         {
             "action": "edit",
             "id": 0,
-            "content": [
+            "order": 0,
+            "correct": "",
+            "contents": [
                 {
                     "id": 0,
                     "text": "",
                     "attachment": ""
                 }
-            ],
-            "order": 0,
-            "correct": ""
+            ]
         }
     ]
 }
 
 ### Get documents
-GET {{host}}
+GET {{host}}/get-documents
 Content-Type: application/json
 
 {

@@ -1,10 +1,5 @@
 import { Router } from 'express'
-import {
-  getDocumentDetail,
-  getUnapprovedDocuments,
-  login,
-  reviewDocument,
-} from '../controllers/adminController.js'
+import adminController from '../controllers/adminController.js'
 import { asyncHandler } from '../middleware/asyncMiddleware.js'
 import authMiddleware from '../middleware/authMiddleware.js'
 import { errorHandler } from '../middleware/errorMiddleware.js'
@@ -12,29 +7,29 @@ import { errorHandler } from '../middleware/errorMiddleware.js'
 const router = Router()
 
 // Login
-router.post('/login', asyncHandler(login), errorHandler)
+router.post('/login', asyncHandler(adminController.login), errorHandler)
 
 // Get unapproved documents
 router.get(
-  '/document',
+  '/get-unapproved-documents',
   authMiddleware.verifyAdmin,
-  asyncHandler(getUnapprovedDocuments),
+  asyncHandler(adminController.getUnapprovedDocuments),
   errorHandler
 )
 
 // Get document detail
 router.get(
-  '/detail',
+  '/get-document-detail',
   authMiddleware.verifyAdmin,
-  asyncHandler(getDocumentDetail),
+  asyncHandler(adminController.getDocumentDetail),
   errorHandler
 )
 
 // Review document
 router.post(
-  '/review',
+  '/review-document',
   authMiddleware.verifyAdmin,
-  asyncHandler(reviewDocument),
+  asyncHandler(adminController.reviewDocument),
   errorHandler
 )
 
