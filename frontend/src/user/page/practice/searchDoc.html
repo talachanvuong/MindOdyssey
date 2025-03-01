@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <header class="flex h-12 flex-row justify-between bg-cyan-300 pr-5">
+      <div id="popupMenuBtn" class="ml-2  cursor-pointer mt-1">
+        <img class="h-10" src="../img/menu.png" />
+      </div>
+      <div id="user" class="h-12">
+        <a
+          href="../account/user_information.html"
+          class="flex flex-row items-center justify-between gap-2 p-1"
+        >
+          <img src="../img/user.png" class="h-10" />
+          <!-- call API to get user name -->
+          <div id="userName" class="font-bold"></div>
+        </a>
+      </div>
+    </header>
+    <main class="flex h-full w-full flex-col items-center bg-stone-300 p-5 ">
+      <div
+        class="flex h-screen w-full flex-col items-center sm:w-4/6 sm:mx-auto rounded-xl bg-white p-5 shadow-md shadow-gray-500"
+      >
+        <p class="text-2xl font-bold">Tìm kiếm đề thi</p>
+
+        <!-- searching box -->
+        <div
+          id="searchBox"
+          class="h-1/4 w-full rounded-xl bg-cyan-400 py-4 shadow-md shadow-gray-500"
+        >
+          <form class="flex flex-col items-center gap-5">
+            <input
+              class="h-12 w-11/12 rounded-lg border bg-[url('../../img/searching.png')] bg-[length:20px] bg-[left_0.5rem_center] bg-no-repeat p-2 pl-10 opacity-70 shadow-md shadow-gray-700 outline-none placeholder:text-gray-700 focus:ring-2 focus:ring-cyan-300"
+              type="text"
+              placeholder="Hôm nay ôn gì đây ?"
+            />
+            <button
+              class="w-11/12 rounded-lg border border-gray-600 bg-cyan-200 text-3xl font-bold shadow-md shadow-gray-700"
+            >
+              Tìm kiếm
+            </button>
+          </form>
+        </div>
+
+        <!-- list of document -->
+        <div
+          id="listOfDoc"
+          class="mt-10 h-fit w-full rounded-xl bg-cyan-300 shadow-md shadow-gray-500"
+        >
+          <!-- list -->
+
+          <!-- gaining list via Api -->
+          <ul class="px-2 py-4">
+            <li
+              class="flex h-10 w-full flex-row items-center rounded-lg bg-white bg-opacity-80 shadow-md"
+            >
+              <img src="../img/docIcon.png" class="h-8" />
+              <p class="w-full text-center" id="nameOfDoc">Name of doc</p>
+            </li>
+          </ul>
+
+          <!-- pagination -->
+          <div id="pagination" class="flex flex-row h-16 gap-4 justify-center items-center">
+            <div id="theFirst"><img src="../img/thefirst.png" class="h-8"></div>
+            <div id="thrPre"><img src="../img/back.png" class="h-8"></div>
+            <div id="theNum" class="text-xl">1 2 3 4</div>
+            <div id="theNext"><img src="../img/next.png" class="h-8"></div>
+            <div id="theLast"><img src="../img/thelast.png" class="h-8"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- popup menu -->
+    <div id="popupMenu" class="invisible  h-screen w-screen fixed top-0 bg-gray-600 bg-opacity-50">
+        <div class=" flex flex-col gap-2 p-2 mt-12 ml-2 bg-white h-3/5 w-3/5 rounded-xl">
+          <a id="home" class="p-2 items-center gap-2 rounded-lg shadow-gray-500 shadow-md flex flex-row bg-stone-300 h-full w-full " href="../account/lobby.html">
+            <img src="../img/home.png" class="h-10">
+            <p class="w-full">Trở về trang chủ</p>
+          </a>
+          <a href="../document/create.html" id="create_doc" class="p-2 items-center gap-2 rounded-lg shadow-gray-500 shadow-md flex flex-row bg-stone-300 h-full w-full ">
+            <img src="../img/create_doc_feature.png" class="h-10">
+            <p class="w-full">Tạo tài liệu</p>
+          </a>
+          <a href="#" id="completed_doc"  class="p-2 items-center gap-2 rounded-lg shadow-gray-500 shadow-md flex flex-row bg-stone-300 h-full w-full ">
+            <img src="../img/completed_document.png" class="h-10">
+            <p class="w-full">Xem Tài liệu đã xong</p>
+          </a>
+          <a href="../library/doc_lib.html" id="library_doc"  class="p-2 items-center gap-2 rounded-lg shadow-gray-500 shadow-md flex flex-row bg-stone-300 h-full w-full ">
+            <img src="../img/storage.png" class="h-10">
+            <p class="w-full">Kho tài liệu</p>
+          </a>
+        </div>
+      </div>
+    <footer class="h-10 bg-cyan-300"></footer>
+    <script
+      type="module"
+      src="../../js/practice/searchDoc.js"
+    ></script>
+  </body>
+</html>
