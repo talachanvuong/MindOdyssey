@@ -174,7 +174,7 @@ const deleteDocument = async (req, res) => {
   const questions = await questionService.getQuestions(document)
   for (const question of questions) {
     // Get contents
-    const contents = await contentService.getContents(question.question_id)
+    const contents = await contentService.getContents(question.id)
     for (const content of contents) {
       // Destroy attachment in Cloudinary
       await cloudinaryService.destroy(content.attachment_id)
