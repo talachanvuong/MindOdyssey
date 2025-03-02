@@ -10,7 +10,7 @@ const router = Router()
 router.post('/login', asyncHandler(adminController.login), errorHandler)
 
 // Get unapproved documents
-router.get(
+router.post(
   '/get-unapproved-documents',
   authMiddleware.verifyAdmin,
   asyncHandler(adminController.getUnapprovedDocuments),
@@ -18,7 +18,7 @@ router.get(
 )
 
 // Get document detail
-router.get(
+router.post(
   '/get-document-detail',
   authMiddleware.verifyAdmin,
   asyncHandler(adminController.getDocumentDetail),

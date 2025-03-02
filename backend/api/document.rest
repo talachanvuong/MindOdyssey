@@ -43,7 +43,7 @@ Content-Type: application/json
 }
 
 ### Get document detail owner
-GET {{host}}/get-document-detail-owner
+POST {{host}}/get-document-detail-owner
 Content-Type: application/json
 
 {
@@ -51,7 +51,7 @@ Content-Type: application/json
 }
 
 ### Get document detail guest
-GET {{host}}/get-document-detail-guest
+POST {{host}}/get-document-detail-guest
 Content-Type: application/json
 
 {
@@ -129,7 +129,7 @@ Content-Type: application/json
 }
 
 ### Get documents
-GET {{host}}/get-documents
+POST {{host}}/get-documents
 Content-Type: application/json
 
 {

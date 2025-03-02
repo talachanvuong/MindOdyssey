@@ -15,7 +15,7 @@ router.post(
 )
 
 // Get document detail owner
-router.get(
+router.post(
   '/get-document-detail-owner',
   authMiddleware.verifyUser,
   asyncHandler(documentController.getDocumentDetailOwner),
@@ -23,7 +23,7 @@ router.get(
 )
 
 // Get document detail guest
-router.get(
+router.post(
   '/get-document-detail-guest',
   authMiddleware.verifyUser,
   asyncHandler(documentController.getDocumentDetailGuest),
@@ -47,7 +47,7 @@ router.patch(
 )
 
 // Get documents
-router.get(
+router.post(
   '/get-documents',
   authMiddleware.verifyUser,
   asyncHandler(documentController.getDocuments),
