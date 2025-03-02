@@ -9,6 +9,14 @@ const router = Router()
 // Login
 router.post('/login', asyncHandler(adminController.login), errorHandler)
 
+// Logout
+router.post(
+  '/logout',
+  authMiddleware.verifyAdmin,
+  asyncHandler(adminController.logout),
+  errorHandler
+)
+
 // Get unapproved documents
 router.post(
   '/get-unapproved-documents',

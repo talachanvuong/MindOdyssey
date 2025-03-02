@@ -54,6 +54,14 @@ const login = async (req, res) => {
   return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.ADMIN.LOGIN_SUCCESS)
 }
 
+const logout = async (req, res) => {
+  // Clear old cookies
+  cookieUtils.clearCookie(res, 'accessToken')
+  cookieUtils.clearCookie(res, 'refreshToken')
+
+  return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.ADMIN.LOGOUT_SUCCESS)
+}
+
 const getUnapprovedDocuments = async (req, res) => {
   const { error, value } = adminSchema.getUnapprovedDocuments.validate(req.body)
   const { pagination, keyword, filter } = value
@@ -153,6 +161,7 @@ const reviewDocument = async (req, res) => {
 
 export default {
   login,
+  logout,
   getUnapprovedDocuments,
   getDocumentDetail,
   reviewDocument,
