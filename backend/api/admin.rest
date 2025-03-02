@@ -9,8 +9,12 @@ Content-Type: application/json
     "password": ""
 }
 
+### Logout
+POST {{host}}/logout
+Content-Type: application/json
+
 ### Get unapproved documents
-GET {{host}}/get-unapproved-documents
+POST {{host}}/get-unapproved-documents
 Content-Type: application/json
 
 {
@@ -24,7 +28,7 @@ Content-Type: application/json
 }
 
 ### Get document detail
-GET {{host}}/get-document-detail
+POST {{host}}/get-document-detail
 Content-Type: application/json
 
 {
