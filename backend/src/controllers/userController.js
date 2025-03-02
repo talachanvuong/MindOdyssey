@@ -340,8 +340,3 @@ export const setCookieForgetPass = (req, res) => {
   return res.redirect(`${envConfig.frontendUrl}${envConfig.forgetPassPath}`)
 }
 
-export const getUserID = async (req, res) => {
-  const {user_id}=req.user
-  return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.GET_USER_ID_SUCCESS, user_id)
-}
-
