@@ -10,8 +10,7 @@ import {
   setCookieForgetPass,
   setCookieRegister,
   update,
-  verifyEmail,
-  getUserID
+  verifyEmail
 } from '../controllers/userController.js'
 import authMiddleware from '../middleware/authMiddleware.js'
 import { asyncHandler } from '../middleware/asyncMiddleware.js'
@@ -99,13 +98,6 @@ router.post(
   asyncHandler(authMiddleware.postRefreshToken),
   errorHandler
 )
-//get user_id
-router.get(
-  '/getuserid',
-  asyncHandler(authMiddleware.verifyUser),
-  mutexLockHandler,
-  asyncHandler(getUserID),
-  errorHandler
-)
+
 
 export default router
