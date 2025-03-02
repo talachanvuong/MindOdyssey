@@ -9,8 +9,16 @@ const router = Router()
 // Login
 router.post('/login', asyncHandler(adminController.login), errorHandler)
 
+// Logout
+router.post(
+  '/logout',
+  authMiddleware.verifyAdmin,
+  asyncHandler(adminController.logout),
+  errorHandler
+)
+
 // Get unapproved documents
-router.get(
+router.post(
   '/get-unapproved-documents',
   authMiddleware.verifyAdmin,
   asyncHandler(adminController.getUnapprovedDocuments),
@@ -18,7 +26,7 @@ router.get(
 )
 
 // Get document detail
-router.get(
+router.post(
   '/get-document-detail',
   authMiddleware.verifyAdmin,
   asyncHandler(adminController.getDocumentDetail),

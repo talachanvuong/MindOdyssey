@@ -49,6 +49,7 @@ export const MESSAGE = {
     NOT_FOUND: 'Admin not found!',
     WRONG_PASSWORD: 'Wrong password!',
     LOGIN_SUCCESS: 'Admin login successfully!',
+    LOGOUT_SUCCESS: 'Admin logout successfully!',
     GET_UNAPPROVED_DOCUMENTS_SUCCESS: 'Get unapproved documents successfully!',
     GET_DOCUMENT_DETAIL_SUCCESS: 'Get document detail successfully!',
     REVIEW_DOCUMENT_SUCCESS: 'Review document successfully!',

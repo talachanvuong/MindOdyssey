@@ -15,7 +15,7 @@ router.post(
 )
 
 // Get courses
-router.get(
+router.post(
   '/get-courses',
   authMiddleware.verifyUser,
   asyncHandler(courseController.getCourses),
