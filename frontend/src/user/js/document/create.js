@@ -32,7 +32,7 @@ window.closePopup = closePopup
 const loadCourses = async () => {
   try {
     const response = await fetch(`${API_COURSE}/get-courses`, {
-      method: 'GET',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     })
@@ -93,36 +93,47 @@ const createCourse = async () => {
 // Variable to save questions from Excel file
 let questions = []
 window.handleFileUpload = (event) => {
-  const file = event.target.files[0]
+  const file = event.target.files[0];
   if (!file || (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls'))) {
-    showPopup('Please upload Excel file!')
-    return
+    showPopup('Vui lòng tải lên tệp Excel hợp lệ!');
+    return;
   }
-  const reader = new FileReader()
-  reader.readAsBinaryString(file)
+
+  const reader = new FileReader();
+  reader.readAsBinaryString(file);
   reader.onload = (e) => {
-    const workbook = XLSX.read(e.target.result, { type: 'binary' })
-    const jsonData = XLSX.utils.sheet_to_json(
-      workbook.Sheets[workbook.SheetNames[0]],
-      { header: 1 }
-    )
+    const workbook = XLSX.read(e.target.result, { type: 'binary' });
+    const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+
     if (jsonData.length < 2) {
-      showPopup('Excel file has no data!')
-      return
+      showPopup('Tệp Excel không có dữ liệu!');
+      return;
     }
-    questions = jsonData.slice(1).map((row) => ({
-      content: [
-        { text: row[0] || '', type: 'Q' },
-        { text: row[1] || '', type: 'A' },
-        { text: row[2] || '', type: 'B' },
-        { text: row[3] || '', type: 'C' },
-        { text: row[4] || '', type: 'D' },
-      ],
-      correct: row[5] || 'A',
-    }))
-    renderQuestions()
-  }
-}
+
+    questions = jsonData.slice(1).map((row, index) => {
+      if (!row[0] || !row[1] || !row[2] || !row[3] || !row[4]) {
+        console.warn(`⚠️ Bỏ qua dòng ${index + 1} do thiếu dữ liệu`);
+        return null;
+      }
+    
+      return {
+        content: [
+          { text: String(row[0] ?? '').trim(), type: 'Q' },
+          { text: String(row[1] ?? '').trim(), type: 'A' },
+          { text: String(row[2] ?? '').trim(), type: 'B' },
+          { text: String(row[3] ?? '').trim(), type: 'C' },
+          { text: String(row[4] ?? '').trim(), type: 'D' },
+        ],
+        correct: String(row[5] ?? 'A').trim(),
+      };
+    }).filter(Boolean); // Loại bỏ phần tử null
+   
+
+    console.log("Danh sách câu hỏi sau khi xử lý Excel:", JSON.stringify(questions, null, 2));
+    renderQuestions();
+  };
+};
+
 
 // Display list of questions
 
@@ -275,7 +286,8 @@ const createDocument = async (event) => {
       const { text, attachment } = questions[i].content[j];
 
       // Nếu cả chữ và ảnh đều trống, báo lỗi
-      if ((text.trim() === '' || text.trim() == null) && (!attachment || attachment.trim() === '')) {
+      if ((String(text || '').trim() === '' && (!attachment || String(attachment).trim() === ''))) 
+        {
         showPopup(`Câu hỏi ${i + 1} hoặc đáp án ${['Q', 'A', 'B', 'C', 'D'][j]} không có nội dung hoặc hình ảnh!`);
         createDocumentBtn.innerText = 'Create';
         createDocumentBtn.disabled = false;
@@ -285,11 +297,20 @@ const createDocument = async (event) => {
   }
 
   const formattedQuestions = questions.map((q) => ({
-    contents: q.content.map((item) => ({
-      text: item.text && item.text.trim() !== "" ? String(item.text || ''):undefined,
-      attachment: item.attachment ? String(item.attachment) : undefined,
-      type: item.type,
-    })),
+    contents: q.content.map((item) => {
+      const text = item.text && typeof item.text === "string" && item.text.trim() !== "" ? item.text.trim() : undefined;
+      const attachment = item.attachment ? String(item.attachment) : undefined;
+    
+      // Đảm bảo có ít nhất một giá trị hợp lệ (text hoặc attachment)
+      if (!text && !attachment) {
+        console.error(`Lỗi: Phần tử ${item.type} không có nội dung hoặc file đính kèm!`);
+        showPopup(`Lỗi: Câu hỏi hoặc đáp án ${item.type} chưa có nội dung hoặc file!`);
+      }
+    
+      return { text, attachment, type: item.type };
+    }),
+    
+    
     correct: q.correct || '',
   }));
 
