@@ -72,7 +72,7 @@ const getUnapprovedDocuments = async (req, res) => {
   }
 
   // Get unapproved documents
-  const unapprovedDocuments = await adminService.getUnapprovedDocuments(
+  const   unapprovedDocuments = await adminService.getUnapprovedDocuments(
     pagination,
     keyword,
     filter

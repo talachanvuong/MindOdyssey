@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const popupModal = document.getElementById('popupModal')
     const redAlertName = document.getElementById('redAlertName')
     const redAlertPass = document.getElementById('redAlertPass')
+    const loading = document.getElementById('loading')
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault()
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const pass = passInput.value.trim()
       msgHandle.redText(redAlertName, ``)
       msgHandle.redText(redAlertPass, ``)
+      loading.classList.remove('invisible')
       const dataResult = await callApi.callApi(
         Api.apiLoginAdmin,
         {
@@ -30,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         msgHandle.popup(popupModal, dataResult.message)
         window.location.href = 'doc_list.html'
       } else {
+        loading.classList.add('invisible')
         const typeMsg = msgHandle.classify(dataResult.message.trim())
         console.log(dataResult.message)
         if (typeMsg === 'redText') {

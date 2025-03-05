@@ -21,13 +21,17 @@ const fetchApi = async (linkApi, body = null, method) => {
 const callApi = async (linkApi, body = null, method) => {
   try {
     let data = await fetchApi(linkApi, body, method)
+    if (data.statusCode == 401) {
+      alert("Login session has expired! Please login again")
+      window.location.href="login.html"
+    }
     if (!data) {
-      return {
-        status: 'error',
-        message: 'fetch api failed',
-      }
+        return {
+          status: 'error',
+          message: 'fetch api failed, Null response',
+        }
     } else {
-      if (data.statusCode === 200 || data.statusCode === 200) {
+      if (data.statusCode == 200 || data.statusCode == 200) {
         return {
           status: 'success',
           message: data.message,
