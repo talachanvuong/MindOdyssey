@@ -112,7 +112,7 @@ const editDocument = Joi.object({
               )
               .min(1)
               .max(5),
-          }).or('order', 'correct', 'content'),
+          }).or('order', 'correct', 'contents'),
         })
     )
     .min(1),
