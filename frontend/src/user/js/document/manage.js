@@ -1,6 +1,6 @@
 import '../../../style.css'
 
-// DOM Elements
+// ======================== DOM Elements ========================
 const searchInput = document.getElementById('search')
 const filterButton = document.getElementById('filterButton')
 const timeFilterModal = document.getElementById('timeFilterModal')
@@ -14,78 +14,77 @@ const pagination = document.getElementById('pagination')
 const displayElement = document.getElementById('display_name')
 const docSumElement = document.getElementById('doc_sum')
 
-// API URLs
+// ======================== API URLs ========================
 const API_DOCUMENTS = 'http://localhost:3000/api/document'
-const API_INF_USER = 'http://localhost:3000/api/user/showinfo'
+const API_INF_USER = 'http://localhost:3000/api/user'
 
-// Pagination Variables
+// ======================== Pagination Variables ========================
 let curPage = 1
 const itemsPerPage = 5
 let allDocuments = []
 
-// Load initial data
+// ======================== Load Initial Data ========================
 document.addEventListener('DOMContentLoaded', async function () {
   await loadInfname()
   await loadDocuments()
 })
 
-// Load user info
+// ======================== Load User Information ========================
 async function loadInfname() {
   try {
-    const response = await fetch(API_INF_USER, {
+    const response = await fetch(`${API_INF_USER}/showinfo`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     })
-    if (!response.ok) throw new Error(`Lỗi API: ${response.status}`)
+    if (!response.ok) throw new Error(`Error API: ${response.status}`)
     const responseData = await response.json()
     if (!responseData.result || typeof responseData.result !== 'object') return
     displayElement.textContent =
-      responseData.result.display_name || 'Không có dữ liệu'
+      responseData.result.display_name || 'No data available'
   } catch (error) {
-    console.error('Lỗi tải thông tin người dùng:', error)
+    console.error('Error loading user information:', error)
   }
 }
 
-// Load and render documents
+// ======================== Load and Render Documents ========================
 async function loadDocuments() {
   try {
-    const response = await fetch(API_DOCUMENTS, {
-      method: 'GET',
+    const response = await fetch(`${API_DOCUMENTS}/get-documents`, {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-    });
+    })
 
-    if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
+    if (!response.ok) throw new Error(`Lỗi API: ${response.status}`)
 
-    const responseData = await response.json();
-    console.log('Dữ liệu API trả về:', responseData);
+    const responseData = await response.json()
+    console.log('API data returned:', responseData)
 
-    // Kiểm tra dữ liệu API có đúng định dạng không
+    // Check if the API data is in the correct format
     if (!responseData.result || !Array.isArray(responseData.result.documents)) {
-      console.error('Dữ liệu không phải mảng:', responseData.result);
-      return;
+      console.error('Data is not an array:', responseData.result)
+      return
     }
 
-    // Gán dữ liệu documents vào biến allDocuments
-    allDocuments = responseData.result.documents;
+    // Assign documents data to the variable allDocuments
+    allDocuments = responseData.result.documents
 
-    updateDocumentCount();
-    renderDocuments(allDocuments);
+    updateDocumentCount()
+    renderDocuments(allDocuments)
   } catch (error) {
-    console.error('Lỗi tải danh sách tài liệu:', error);
+    console.error('Error loading document list:', error)
   }
 }
 
-
-// Cập nhật tổng số tài liệu
+// ======================== Update Document Count ========================
 function updateDocumentCount() {
   if (docSumElement) {
     docSumElement.textContent = `Total documents: ${allDocuments.length}`
   }
 }
 
-// Render documents with pagination
+// ======================== Render Documents with Pagination ========================
 function renderDocuments(documents) {
   if (!docList) return
   docList.innerHTML = ''
@@ -99,6 +98,8 @@ function renderDocuments(documents) {
   paginatedDocs.forEach((doc) => {
     if (!doc.document_id) return
     const listItem = document.createElement('li')
+    listItem.id = `document-item-${doc.document_id}`
+    listItem.dataset.id = doc.document_id
     listItem.classList.add(
       'flex',
       'items-center',
@@ -109,35 +110,29 @@ function renderDocuments(documents) {
       'text-sm/6'
     )
     listItem.innerHTML = `
-      <div class="flex w-0 flex-1 items-center">
+      <div class="flex w-0 flex-1 items-center justify-between">
         <p class="truncate font-medium">${doc.title}</p>
+        <br>
+        <p class="  truncate font-thin">(${doc.created_at})</p>
       </div>
-      <div class="ml-4 shrink-0 space-x-3">
-        <button class="edit-btn" data-id="${doc.document_id}">  <svg
-                  class="h-5 w-5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 512 512"
-                >
-                  <path
-                    d="M441 58.9L453.1 71c9.4 9.4 9.4 24.6 0 33.9L424 134.1 377.9 88 407 58.9c9.4-9.4 24.6-9.4 33.9 0zM209.8 256.2L344 121.9 390.1 168 255.8 302.2c-2.9 2.9-6.5 5-10.4 6.1l-58.5 16.7 16.7-58.5c1.1-3.9 3.2-7.5 6.1-10.4zM373.1 25L175.8 222.2c-8.7 8.7-15 19.4-18.3 31.1l-28.6 100c-2.4 8.4-.1 17.4 6.1 23.6s15.2 8.5 23.6 6.1l100-28.6c11.8-3.4 22.5-9.7 31.1-18.3L487 138.9c28.1-28.1 28.1-73.7 0-101.8L474.9 25C446.8-3.1 401.2-3.1 373.1 25zM88 64C39.4 64 0 103.4 0 152L0 424c0 48.6 39.4 88 88 88l272 0c48.6 0 88-39.4 88-88l0-112c0-13.3-10.7-24-24-24s-24 10.7-24 24l0 112c0 22.1-17.9 40-40 40L88 464c-22.1 0-40-17.9-40-40l0-272c0-22.1 17.9-40 40-40l112 0c13.3 0 24-10.7 24-24s-10.7-24-24-24L88 64z"
-                  />
-                </svg></button>
-        <button class="delete-btn" data-id="${doc.document_id}"><svg
-                  class="h-5 w-5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 448 512"
-                >
-                  <path
-                    d="M170.5 51.6L151.5 80l145 0-19-28.4c-1.5-2.2-4-3.6-6.7-3.6l-93.7 0c-2.7 0-5.2 1.3-6.7 3.6zm147-26.6L354.2 80 368 80l48 0 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-8 0 0 304c0 44.2-35.8 80-80 80l-224 0c-44.2 0-80-35.8-80-80l0-304-8 0c-13.3 0-24-10.7-24-24S10.7 80 24 80l8 0 48 0 13.8 0 36.7-55.1C140.9 9.4 158.4 0 177.1 0l93.7 0c18.7 0 36.2 9.4 46.6 24.9zM80 128l0 304c0 17.7 14.3 32 32 32l224 0c17.7 0 32-14.3 32-32l0-304L80 128zm80 64l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16z"
-                  />
-                </svg></button>
-      </div>
+
     `
+    // Assign event immediately after listItem is added to the DOM
+
+    listItem.addEventListener('click', function () {
+      const docId = this.dataset.id
+      if (!docId) {
+        alert('Document ID not found!')
+        return
+      }
+      window.location.href = `detail.html?documentId=${docId}`
+    })
+
     docList.appendChild(listItem)
   })
   renderPagination(totalPages)
 
-  // Gán sự kiện xóa tài liệu
+  // Assign document deletion event
   document.querySelectorAll('.delete-btn').forEach((button) => {
     const docId = button.getAttribute('data-id')
     if (!docId) return
@@ -147,7 +142,7 @@ function renderDocuments(documents) {
   })
 }
 
-// Render pagination
+// ======================== Render Pagination ========================
 function renderPagination(totalPages) {
   pagination.innerHTML = ''
   if (totalPages <= 1) return
@@ -197,37 +192,66 @@ function changePage(page) {
   renderPagination(totalPages)
 }
 
-// Delete document
+// ======================== Delete Document ========================
 window.deleteDocument = async function (id) {
   if (!id || isNaN(Number(id))) return
-  if (!confirm('Bạn có chắc chắn muốn xóa tài liệu này?')) return
+  if (!confirm('Are you sure you want to delete this document?')) return
   try {
-    const response = await fetch(API_DOCUMENTS, {
+    const response = await fetch(`${API_DOCUMENTS}/delete-document`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({ document: Number(id) }),
     })
-    if (!response.ok) throw new Error(`Lỗi API: ${response.status}`)
+
+    const responseText = await response.text() // Lấy phản hồi chi tiết từ API
+    console.log('Phản hồi từ API:', responseText)
+
+    if (!response.ok)
+      throw new Error(`Error API: ${response.status} - ${responseText}`)
+    alert('Document deletion successful!')
     await loadDocuments()
   } catch (error) {
-    console.error('Lỗi xóa tài liệu:', error)
+    console.error('Error deleting document:', error)
+    showPopup(`Error deleting document: ${error.message}`)
   }
 }
 
-// Search documents
-function searchDocuments() {
-  curPage = 1
-  renderDocuments(allDocuments.filter(filterDocuments))
+// ======================== Search & Filter Documents ========================
+
+function parseDate(dateString) {
+  const parts = dateString.match(
+    /(\d{2}):(\d{2}):(\d{2}) (\w{2}) (\d{2})\/(\d{2})\/(\d{4})/
+  )
+  if (!parts) return null
+
+  const [, hh, mm, ss, , day, month, year] = parts
+  return new Date(`${year}-${month}-${day}T${hh}:${mm}:${ss}`)
 }
 
-function filterDocuments(doc) {
+
+function searchAndFilterDocuments() {
   const query = searchInput.value.toLowerCase()
-  return doc.title.toLowerCase().includes(query)
+  const startDate = startDateInput.value ? new Date(startDateInput.value) : null
+
+  const filteredDocs = allDocuments.filter((doc) => {
+    const docDate = parseDate(doc.created_at)
+    if (!docDate) return false 
+
+    const matchesQuery = doc.title.toLowerCase().includes(query)
+    const matchesDate = !startDate || docDate >= startDate
+
+    return matchesQuery && matchesDate
+  })
+
+  renderDocuments(filteredDocs)
 }
 
-// Event Listeners
-if (searchInput) searchInput.addEventListener('input', searchDocuments)
+// ======================== Event Listeners ========================
+if (searchInput) searchInput.addEventListener('input', searchAndFilterDocuments)
+if (startDateInput)
+  startDateInput.addEventListener('change', searchAndFilterDocuments)
+
 if (filterButton)
   filterButton.addEventListener('click', () =>
     timeFilterModal?.classList.toggle('invisible')
@@ -240,11 +264,13 @@ if (closeModal)
   closeModal.addEventListener('click', () =>
     timeFilterModal?.classList.add('invisible')
   )
+
 if (addButton)
   addButton.addEventListener(
     'click',
     () => (window.location.href = 'create.html')
   )
+
 if (backButton)
   backButton.addEventListener(
     'click',
