@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   const urlParams = new URLSearchParams(window.location.search)
   const documentId = urlParams.get('documentId')
   if (!documentId || isNaN(Number(documentId))) {
-    alert('Không tìm thấy ID tài liệu hợp lệ!')
+    alert('No find document!')
     return
   }
 
