@@ -8,7 +8,7 @@ const state = {
   filterDate: 0,
   keyword: ``,
   page: 1,
-  perPage: 3,
+  perPage: 10,
   totalPages: 0,
   curPage: 1,
   res: null,
@@ -52,9 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
       )
 
       if (result.status === 'success') {
-        showDocs.show('list', result.result.documents)
+        showDocs.showDocList('list', result.result.documents)
         state.totalPages = result.result.total_pages
-        state.res = result
+        state.res = result  
         pagination(result)
       } else {
         console.error('error in calling api')
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
       )
 
       if (result.status === 'success') {
-        showDocs.show('list', result.result.documents)
+        showDocs.showDocList('list', result.result.documents)
         state.totalPages = result.result.total_pages
         state.res = result
         pagination(result)
@@ -157,8 +157,22 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 
+  function logout() {
+    const logoutBtn = document.getElementById('logoutBtn')
+    const loading = document.getElementById('loading')
+    logoutBtn.addEventListener('click',async  () => {
+      loading.classList.remove('invisible')
+      const res =await callApi.callApi(api.apiLogoutAdmin, {}, 'POST')
+      if(res.status === 'success') window.location.href = 'login.html'
+      else{
+        loading.classList.add('invisible')
+        console.log(res)
+      }
+    })
+  }
   PageController()
   searchDocument()
   showAll()
   filterPopup()
+  logout()
 })

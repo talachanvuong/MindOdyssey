@@ -4,10 +4,10 @@ const redText = (id, message) => {
   if (!id) return
   id.innerHTML = `<p class=" ml-2 text-red-500">${message}</p>`
 }
-const popup = (id, message) => {
+const popup = (id, message,locate='') => {
   if (!id) return
   const popup = new Popup_Modal(id.id, message)
-  popup.open()
+  popup.open(locate)
 }
 
 const notification = (id) => {

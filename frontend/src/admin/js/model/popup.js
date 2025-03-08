@@ -1,19 +1,19 @@
 export class Popup_Modal {
-    constructor(id, message) {
-      //console.log(document.getElementById(id))
-      this.idModal = document.getElementById(id)
-      this.message = message
-      if (!this.idModal) {
-        console.log('id can not be found!')
-        return
-      }
-      if (!this.message) {
-        console.log('error occurs in gain information')
-        return
-      }
+  constructor(id, message) {
+    //console.log(document.getElementById(id))
+    this.idModal = document.getElementById(id)
+    this.message = message
+    if (!this.idModal) {
+      console.log('popup id can not be found!')
+      return
     }
-    open() {
-      this.idModal.innerHTML = `<div
+    if (!this.message) {
+      console.log('error occurs in gain information')
+      return
+    }
+  }
+  open(locate = '') {
+    this.idModal.innerHTML = `<div
           class=" fixed top-0 h-screen w-screen bg-gray-400 bg-opacity-55"
         >
           <div
@@ -28,13 +28,16 @@ export class Popup_Modal {
             </button>
           </div>
         </div>`
-      document
-        .getElementById('close')
-        .addEventListener('click', () => this.close())
-    }
-    close() {
-      this.idModal.innerHTML = ''
-    }
-    
+    document
+      .getElementById('close')
+      .addEventListener('click', () => {
+        if (locate) {
+          window.location.href = locate
+        }
+        this.close()
+      })
   }
-  
+  close() {
+    this.idModal.innerHTML = ''
+  }
+}

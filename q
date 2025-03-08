@@ -1,0 +1,118 @@
+[33mbc2d892[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mtruong[m[33m)[m HEAD@{0}: checkout: moving from khang to truong
+[33m1abbe7a[m[33m ([m[1;32mkhang[m[33m)[m HEAD@{1}: reset: moving to HEAD
+[33m1abbe7a[m[33m ([m[1;32mkhang[m[33m)[m HEAD@{2}: commit: completed doc_list
+[33m1a95ec0[m[33m ([m[1;31morigin/khang[m[33m)[m HEAD@{3}: checkout: moving from truong to khang
+[33mbc2d892[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mtruong[m[33m)[m HEAD@{4}: checkout: moving from khang to truong
+[33m1a95ec0[m[33m ([m[1;31morigin/khang[m[33m)[m HEAD@{5}: reset: moving to HEAD
+[33m1a95ec0[m[33m ([m[1;31morigin/khang[m[33m)[m HEAD@{6}: checkout: moving from truong to khang
+[33mbc2d892[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mtruong[m[33m)[m HEAD@{7}: checkout: moving from khang to truong
+[33m1a95ec0[m[33m ([m[1;31morigin/khang[m[33m)[m HEAD@{8}: reset: moving to HEAD
+[33m1a95ec0[m[33m ([m[1;31morigin/khang[m[33m)[m HEAD@{9}: checkout: moving from truong to khang
+[33mbc2d892[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mtruong[m[33m)[m HEAD@{10}: merge refs/remotes/origin/truong: Fast-forward
+[33m146e85c[m HEAD@{11}: checkout: moving from truong to truong
+[33m146e85c[m HEAD@{12}: checkout: moving from khang to truong
+[33m1a95ec0[m[33m ([m[1;31morigin/khang[m[33m)[m HEAD@{13}: commit: catch API
+[33mc2fa788[m HEAD@{14}: merge origin: Merge made by the 'ort' strategy.
+[33m4a40976[m HEAD@{15}: commit: completed admin login
+[33m0d0c8bb[m HEAD@{16}: checkout: moving from khang to khang
+[33m0d0c8bb[m HEAD@{17}: checkout: moving from khang to khang
+[33m0d0c8bb[m HEAD@{18}: checkout: moving from 5b28dea501a5e229870c30bdab8445dad8575650 to khang
+[33m5b28dea[m HEAD@{19}: checkout: moving from khang to 5b28dea
+[33m0d0c8bb[m HEAD@{20}: reset: moving to HEAD
+[33m0d0c8bb[m HEAD@{21}: checkout: moving from khang to khang
+[33m0d0c8bb[m HEAD@{22}: checkout: moving from khang to khang
+[33m0d0c8bb[m HEAD@{23}: checkout: moving from khang to khang
+[33m0d0c8bb[m HEAD@{24}: pull origin master: Fast-forward
+[33m55b10cf[m HEAD@{25}: checkout: moving from khang to khang
+[33m55b10cf[m HEAD@{26}: commit: admin/detail.html
+[33m5b28dea[m HEAD@{27}: commit: admin/doc_list.html
+[33m6b78d3d[m HEAD@{28}: commit: UI login admin
+[33mcb6e3d1[m HEAD@{29}: commit: folder reorganizate
+[33m64d0fdf[m HEAD@{30}: commit: fix
+[33m21172ac[m HEAD@{31}: commit: completed UI
+[33m5cbcbaf[m HEAD@{32}: commit: searching document and the list of them
+[33mf0ed0f8[m HEAD@{33}: commit: completed lib_doc.html and js
+[33md68a0ac[m HEAD@{34}: commit: lib_doc.html
+[33m1d32642[m HEAD@{35}: pull origin master: Fast-forward
+[33m9522806[m HEAD@{36}: commit: change pass hide text
+[33mdbafc56[m HEAD@{37}: commit: delete useless package
+[33mfc84096[m HEAD@{38}: commit: completed updated code
+[33m8c201c2[m HEAD@{39}: commit: logout, newpass, userInfor, changename
+[33mfd02dd1[m HEAD@{40}: commit: verify email fixing, add new message in messageHandle
+[33mfde10aa[m HEAD@{41}: commit: fix new password, update message in msgHandle
+[33mebeab13[m HEAD@{42}: commit: updated code in callApi function
+[33m7ec3bc3[m HEAD@{43}: commit: Change Algorithm of login
+[33m8d32a96[m HEAD@{44}: commit: api calling function, messageHandle function, fix login, re write code
+[33m5c3eb1e[m HEAD@{45}: commit: fixed display error, refreshToken fucntion
+[33m9860f35[m HEAD@{46}: checkout: moving from khang to khang
+[33m9860f35[m HEAD@{47}: checkout: moving from master to khang
+[33m56b0744[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{48}: checkout: moving from khang to master
+[33m9860f35[m HEAD@{49}: pull origin master: Merge made by the 'ort' strategy.
+[33m1aa30fa[m HEAD@{50}: reset: moving to HEAD
+[33m1aa30fa[m HEAD@{51}: reset: moving to HEAD
+[33m1aa30fa[m HEAD@{52}: checkout: moving from khang to khang
+[33m1aa30fa[m HEAD@{53}: commit: add comment, clean code somewhere, build a popup modal
+[33m75778fd[m HEAD@{54}: commit: commpleted Show user info and change user name
+[33m23251c6[m HEAD@{55}: commit: language change
+[33m30a4d9f[m HEAD@{56}: commit: ChangePassword, Logout, refreshToken after 1hr in lobby
+[33mcfd34cd[m HEAD@{57}: commit: delete useless comment
+[33m87f7e33[m HEAD@{58}: commit: completed forget password
+[33m48726c8[m HEAD@{59}: pull origin master: Fast-forward
+[33m87a8535[m HEAD@{60}: commit (amend): alert of error of catch
+[33m7bcb6a3[m HEAD@{61}: commit: delete console.log in JS file
+[33m85aadb6[m HEAD@{62}: commit: delete console.log in JS file
+[33md15e5dd[m HEAD@{63}: commit: completed register logic
+[33ma62928d[m HEAD@{64}: commit: checking validation of login, lobby.html
+[33mc3ea829[m HEAD@{65}: checkout: moving from master to khang
+[33m56b0744[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{66}: checkout: moving from khang to master
+[33mc3ea829[m HEAD@{67}: commit: completed verify email and (logic and html)
+[33m56b0744[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{68}: merge master: Fast-forward
+[33m90cbe8c[m HEAD@{69}: checkout: moving from master to khang
+[33m56b0744[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{70}: checkout: moving from khang to master
+[33m90cbe8c[m HEAD@{71}: checkout: moving from khang to khang
+[33m90cbe8c[m HEAD@{72}: checkout: moving from master to khang
+[33m56b0744[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{73}: checkout: moving from khang to master
+[33m90cbe8c[m HEAD@{74}: checkout: moving from master to khang
+[33m56b0744[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{75}: pull: Fast-forward
+[33mdc40f84[m HEAD@{76}: checkout: moving from khang to master
+[33m90cbe8c[m HEAD@{77}: pull origin khang: Fast-forward
+[33meb87f55[m HEAD@{78}: commit: add new_pass.html
+[33m7fc1d2e[m HEAD@{79}: commit: format
+[33m728772d[m HEAD@{80}: commit: check extendsion
+[33m78cfd8b[m HEAD@{81}: checkout: moving from truong to khang
+[33m146e85c[m HEAD@{82}: checkout: moving from khang to truong
+[33m78cfd8b[m HEAD@{83}: checkout: moving from truong to khang
+[33m146e85c[m HEAD@{84}: pull --rebase=false origin --prune --verbose --progress: Fast-forward
+[33m77c4168[m HEAD@{85}: checkout: moving from khang to truong
+[33m78cfd8b[m HEAD@{86}: commit: completed user information UI
+[33mab72fe0[m HEAD@{87}: commit: completed change pass UI
+[33m11465b3[m HEAD@{88}: commit: Completed forget password!
+[33m8ba9feb[m HEAD@{89}: commit: effect for login page, completed register page, include effect
+[33ma77b27f[m HEAD@{90}: commit: completed login page
+[33m9c25f26[m HEAD@{91}: commit: effect fade-in for introduction page
+[33ma819b13[m HEAD@{92}: checkout: moving from master to khang
+[33mdc40f84[m HEAD@{93}: checkout: moving from khang to master
+[33ma819b13[m HEAD@{94}: checkout: moving from tam to khang
+[33mc58ba32[m[33m ([m[1;32mtam[m[33m)[m HEAD@{95}: checkout: moving from khang to tam
+[33ma819b13[m HEAD@{96}: checkout: moving from master to khang
+[33mdc40f84[m HEAD@{97}: checkout: moving from khang to master
+[33ma819b13[m HEAD@{98}: checkout: moving from master to khang
+[33mdc40f84[m HEAD@{99}: checkout: moving from khang to master
+[33ma819b13[m HEAD@{100}: commit: Introduction page completed !
+[33m4f27259[m HEAD@{101}: checkout: moving from master to khang
+[33mdc40f84[m HEAD@{102}: checkout: moving from tam to master
+[33mc58ba32[m[33m ([m[1;32mtam[m[33m)[m HEAD@{103}: checkout: moving from khang to tam
+[33m4f27259[m HEAD@{104}: checkout: moving from master to khang
+[33mdc40f84[m HEAD@{105}: checkout: moving from khang to master
+[33m4f27259[m HEAD@{106}: commit: UI home
+[33mdc40f84[m HEAD@{107}: checkout: moving from master to khang
+[33mdc40f84[m HEAD@{108}: commit: Khang làm trang home
+[33mc60168c[m HEAD@{109}: pull: Fast-forward
+[33mc5b2521[m HEAD@{110}: reset: moving to HEAD
+[33mc5b2521[m HEAD@{111}: checkout: moving from master to master
+[33mc5b2521[m HEAD@{112}: checkout: moving from master to master
+[33mc5b2521[m HEAD@{113}: checkout: moving from tam to master
+[33mc58ba32[m[33m ([m[1;32mtam[m[33m)[m HEAD@{114}: checkout: moving from c58ba326ebdd468f2e46ca05937378c7abec2771 to tam
+[33mc58ba32[m[33m ([m[1;32mtam[m[33m)[m HEAD@{115}: checkout: moving from master to origin/tam
+[33mc5b2521[m HEAD@{116}: pull --tags origin master: Fast-forward
+[33m77c4168[m HEAD@{117}: clone: from https://github.com/talachanvuong/MindOdyssey.git
