@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   const createCourseBtn = document.querySelector('span.cursor-pointer')
   const questionsContainer = document.getElementById('questionsContainer')
   const saveButton = document.querySelector('button[type="submit"]')
+  const backButton = document.getElementById('btn_back')
 
   const urlParams = new URLSearchParams(window.location.search)
   const documentId = urlParams.get('documentId')
@@ -528,4 +529,10 @@ document.addEventListener('DOMContentLoaded', async function () {
   ;(async () => {
     await loadDocument()
   })()
+  if (backButton)
+    backButton.addEventListener(
+      'click',
+      () => (window.location.href = 'detail.html')
+    )
+
 })
