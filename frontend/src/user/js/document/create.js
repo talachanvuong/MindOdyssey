@@ -1,4 +1,5 @@
 import '../../../style.css'
+import callApi from '../model/callApi.js'
 
 // ======================== DOM Elements ========================
 const courseSelect = document.getElementById('course');
@@ -24,21 +25,30 @@ const closePopup = () => {
 window.closePopup = closePopup;
 
 // ======================== Load Course List ========================
+
 const loadCourses = async () => {
   try {
-    const response = await fetch(`${API_COURSE}/get-courses`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-    });
+    const response = await callApi.callApi(`${API_COURSE}/get-courses`, null, 'POST');
 
-    if (!response.ok) throw new Error(`API Error: ${response.status}`);
+    if (!response || response.status !== 'success') {
+      throw new Error(`API Error: ${response?.status || 'Unknown error'}`);
+    }
 
-    const responseData = await response.json();
+    const responseData = response.data; 
 
-    if (!responseData.result || !Array.isArray(responseData.result)) return;
+    if (!Array.isArray(responseData)) {
+      console.warn("Invalid course data format:", responseData);
+      return;
+    }
 
-    const courses = responseData.result;
+    const courses = responseData;
+    console.log("Courses:", courses);
+
+    if (!courseSelect) {
+      console.error("courseSelect element not found!");
+      return;
+    }
+
     courseSelect.innerHTML = '<option value="">Select course</option>';
 
     courses.forEach((course) => {
@@ -47,10 +57,14 @@ const loadCourses = async () => {
       option.textContent = course.title;
       courseSelect.appendChild(option);
     });
+
+    console.log("Courses loaded successfully!");
   } catch (error) {
     console.error('Course loading error:', error);
   }
 };
+
+
 
 // Load courses when the page opens
 document.addEventListener('DOMContentLoaded', loadCourses);
@@ -129,7 +143,7 @@ const renderQuestions = () => {
   questionsContainer.innerHTML = '';
   questions.forEach((q, index) => {
     const questionDiv = document.createElement('div');
-    questionDiv.className = 'relative rounded-lg border p-4 my-3 shadow bg-white';
+    questionDiv.className = 'rounded-lg border p-4 my-3 shadow bg-white';
     questionDiv.innerHTML = `
       <label class="block font-semibold text-lg text-gray-800 mb-2">
         Question ${index + 1}:
@@ -342,7 +356,8 @@ console.log("Data sent:", JSON.stringify(requestData, null, 2));
     }
     
     showPopup('Document created successfully!');
-   window.location.href = 'manage.html';
+    setTimeout(() => window.location.href = 'manage.html', 2000);
+
   
   } catch (error) {
     showPopup(`Error: ${error.message}`);
