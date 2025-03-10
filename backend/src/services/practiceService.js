@@ -53,51 +53,6 @@ const countDocumentsByKeyword = async (keyword, limit, course_id) => {
   return { totalPages, totalDocs }
 }
 
-const sendQuestion = async (doc_id, questionorder) => {
-  const query = `
-    SELECT 
-      q.question_id,
-      q."order",
-      JSON_AGG(
-        JSON_BUILD_OBJECT(
-          'content_id', c.content_id,
-          'text', c.text,
-          'attachment', c.attachment,
-          'attachment_id', c.attachment_id,
-          'type', c.type
-        )
-      ) AS contents
-    FROM 
-      questions q
-    LEFT JOIN 
-      contents c 
-    ON 
-      q.question_id = c.question_id
-    WHERE 
-      q.document_id = $1
-      AND (
-        cardinality($2::int[]) = 0 
-        OR q."order" NOT IN (SELECT unnest($2::int[]))
-      )
-    GROUP BY 
-      q.question_id, q."order", q.correct_answer
-    LIMIT 1;
-  `
-
-  const result = await client.query(query, [doc_id, questionorder])
-  return result.rows[0] // Chỉ trả về một câu hỏi
-}
-
-const selectCorrectAnswer = async (question_id) => {
-  const query = `
-    SELECT correct_answer
-    FROM questions
-    WHERE question_id=$1
-    LIMIT 1
-  `
-  const result = await client.query(query, [question_id])
-  return result.rows[0].correct_answer
-}
 
 const selectAllQuestions = async (doc_id) => {
   const query = `
@@ -129,38 +84,16 @@ const selectAllQuestions = async (doc_id) => {
   return result.rows
 }
 
-const insertPracticeHistory = async (user_id, score, detail) => {
+const insertPracticeHistory = async (user_id, score, detail,start_time,end_time) => {
   const query = `
-    INSERT INTO practice_histories (user_id, score, detail)
-    VALUES ($1, $2, $3::jsonb)
+    INSERT INTO practice_histories (user_id, score, detail,start_time,end_time)
+    VALUES ($1, $2, $3::jsonb,$4,$5)
     RETURNING practice_history_id
   `
-  const result = await client.query(query, [user_id, score, JSON.stringify(detail)])
+  const result = await client.query(query, [user_id, score, JSON.stringify(detail),start_time,end_time])
   return result.rows[0].practice_history_id
 }
 
-const updatePracticeHistory = async (
-  userAnswer,
-  question_id,
-  practice_history_id
-) => {
-  const query = `
-    UPDATE practice_histories
-SET detail = (
-  SELECT jsonb_agg(
-    CASE 
-      WHEN obj->>'question_id' = $2::text 
-      THEN jsonb_set(obj, '{userAnswer}', to_jsonb($1::text))
-      ELSE obj 
-    END
-  )
-  FROM jsonb_array_elements(detail) AS obj
-)
-WHERE practice_history_id = $3;
-  `
-
-  return await client.query(query, [userAnswer, question_id, practice_history_id])
-}
 const selectPracticeHistory = async (user_id, limit, page) => {
   const offset = (page - 1) * limit
   const query = `
@@ -191,34 +124,14 @@ const countPracticeHistory = async (user_id, limit) => {
   return { totalPages, totalPracticeHistory }
 }
 
-const updateScore = async(score,practice_history_id) =>{
-  const query = `
-    UPDATE practice_histories
-    SET 
-    score = $1,
-    WHERE 
-    practice_history_id = $2;
-
-  `
-  await client.query(query,[score,practice_history_id])
-}
-const ispractice_history_idExist = async (practice_history_id)=>{
-  const query = `
-      SELECT 1
-      FROM practice_histories
-      WHERE practice_history_id = $1
-      LIMIT 1
-  `
-  const result = await client.query(query,[practice_history_id])
-  return result.rowCount>0
-}
 
 const selectPracticeHistorybyID = async(practice_history_id)=>{
   const query=`
     SELECT 
       score,
       detail,
-      created_at
+      start_time,
+      end_time
     FROM 
       practice_histories
     WHERE 
@@ -231,14 +144,9 @@ const selectPracticeHistorybyID = async(practice_history_id)=>{
 export default {
   selectDocumentforPractice,
   countDocumentsByKeyword,
-  sendQuestion,
   selectAllQuestions,
   insertPracticeHistory,
-  selectCorrectAnswer,
   selectPracticeHistory,
   countPracticeHistory,
-  updatePracticeHistory,
-  ispractice_history_idExist,
-  selectPracticeHistorybyID,
-  updateScore
+  selectPracticeHistorybyID
 }
