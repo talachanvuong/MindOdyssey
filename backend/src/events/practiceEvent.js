@@ -3,10 +3,10 @@ import practiceSocket from '../sockets/practiceSocket.js'
 export default (io, socket) => {
   /**
    * get started to practice 
-   * server send practice_history_id to client
+   * reupload all questions
    */
-  socket.on('getStarted',(data,callback)=>{
-    practiceSocket.getStarted(socket,data,callback)
+  socket.on('getStarted',async (data,callback)=>{
+    await practiceSocket.getStarted(socket,data,callback)
   })
 
   /**
@@ -17,10 +17,20 @@ export default (io, socket) => {
   })
   
   /**
-   * client post userAnswer and question_id,practice_history_id to check 
-   * server check,send response then update practice_histories
+   * client post userAnswer and order of question  to check 
+   * server check,send response 
    */
   socket.on('postUserAnswer', ( data,callback) => {
     practiceSocket.postUserAnswer(socket,data,callback)
   })
+
+  /**
+   * client emit finished event to finish practice 
+   * server insert practice_histories
+   */
+  socket.on('finished', (data,callback) => {
+    practiceSocket.finished(socket,data,callback)
+  })
+
+
 }
