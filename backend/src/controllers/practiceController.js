@@ -28,7 +28,8 @@ const getDocumentforPratice = async (req, res) => {
   const docs = await practiceService.selectDocumentforPractice(
     keyword,
     page,
-    limit
+    limit,
+    course_id
   )
   return sendResponse(
     res,
