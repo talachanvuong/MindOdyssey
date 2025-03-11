@@ -9,6 +9,20 @@ const popup = (id, message) => {
   const popup = new Popup_Modal(id.id, message)
   popup.open()
 }
+
+const notification = (id) => {
+  if (!id) {
+    console.log('You need a did ID to display notification')
+    return
+  } else {
+    const display = document.getElementById(id)
+    display.innerHTML = ``
+    display.innerHTML = `<div class="  mx-auto w-full bg-white p-2 rounded-xl shadow-gray-300 shadow-md">
+          <img src="../img/notfound.png" class="h-20 mx-auto">
+          <p class="text-2xl text-center font-bold">Không tìm thấy tài liệu </p>
+         </div>`
+  }
+}
 const redMessage = [
   'Invalid email format',
   'Password must be at least 8 characters long',
@@ -53,4 +67,4 @@ function classify(message) {
   console.error('this message is need to updated!')
 }
 
-export default { classify, redText, popup }
+export default { classify, redText, popup, notification }

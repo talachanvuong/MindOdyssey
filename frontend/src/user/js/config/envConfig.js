@@ -1,4 +1,5 @@
 export default {
+    //user
     apiLogin: import.meta.env.VITE_API_LOGIN,
     apiShowInfo: import.meta.env.VITE_API_SHOW_INFO,
     apiRegister: import.meta.env.VITE_API_REGISTER,
@@ -9,4 +10,10 @@ export default {
     apiChangePassword: import.meta.env.VITE_API_CHANGE_PASSWORD,
     apiUpdate: import.meta.env.VITE_API_UPDATE,
     apiRefreshToken: import.meta.env.VITE_API_REFRESH_TOKEN,
+
+    //get course
+    apiGetCourse: import.meta.env.VITE_API_GET_COURSE,
+
+    //get document
+    apiGetDocument: import.meta.env.VITE_API_GET_DOCUMENT,
 }
