@@ -26,31 +26,31 @@
           <!-- name of document -->
           <div class="flex flex-row items-center">
             <img src="../img/docIcon.png" class="h-10" />
-            <p id="nameOfDoc">Tên tài liệu</p>
+            <p id="nameOfDoc"></p>
           </div>
 
           <!-- author -->
           <div class="flex flex-row items-center">
             <img src="../img/author.png" class="h-10" />
-            <p id="author">Tác giả</p>
+            <p id="author"></p>
           </div>
 
           <!-- subject -->
           <div class="flex flex-row items-center">
             <img src="../img/subject.png" class="h-10" />
-            <p id="subject">Môn học</p>
+            <p id="subject"></p>
           </div>
 
           <!-- last edit -->
           <div class="flex flex-row items-center">
             <img src="../img/setting.png" class="h-10" />
-            <p id="lastEdit">dd/mm/yyyy</p>
+            <p id="lastEdit"></p>
           </div>
 
           <!-- create time -->
           <div class="flex flex-row items-center">
             <img src="../img/time.png" class="h-10" />
-            <p id="createTime">dd/mm/yyyy</p>
+            <p id="createTime"></p>
           </div>
         </div>
 
@@ -58,12 +58,12 @@
         <div class="flex flex-col items-center">
           <div class="flex w-full flex-row items-center">
             <img src="../img/description.png" class="h-10" />
-            <p id="nameOfDoc">Mô tả</p>
+            <p>Mô tả</p>
           </div>
           <p
-            class="h-fit w-full rounded-xl border border-black bg-white p-2 shadow-md shadow-gray-300"
+          id="description"
+            class="h-fit w-full rounded-md border border-black  p-2 opacity-70"
           >
-            ở đây ghi mô tả
           </p>
         </div>
 
@@ -75,213 +75,64 @@
               Danh sách câu hỏi
             </p>
             <div class="flex w-fit flex-row gap-3">
-              <p class="w-full text-xl font-bold">Tổng câu hỏi:</p>
-              <p id="quantity" class="text-xl font-bold">n</p>
+              <p class="w-full text-xl font-bold">Total Question:</p>
+              <p id="quantity" class="text-xl font-bold"></p>
             </div>
           </div>
+
+          <!-- The question -->
           <ul
-            class="mb-10 flex h-96 flex-col gap-2 overflow-y-auto rounded-xl border border-black bg-white p-2"
-          >
-            <!-- The question -->
-            <li
-              class="h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3"
-            >
-              <p id="question">Question 1:The content of the question</p>
-              <form>
-                <ul>
-                  <li class="ml-1 flex flex-row gap-2">
-                    <input
-                      name="question1"
-                      type="radio"
-                      id="ans1"
-                      class="scale-150 cursor-pointer"
-                    />
-                    <label for="ans1">The content of ans</label>
-                  </li>
-                  <li class="ml-1 flex flex-row gap-2">
-                    <input
-                      name="question1"
-                      type="radio"
-                      id="ans2"
-                      class="scale-150 cursor-pointer"
-                    />
-                    <label for="ans2">The content of ans</label>
-                  </li>
-                  <li class="ml-1 flex flex-row gap-2">
-                    <input
-                      name="question1"
-                      type="radio"
-                      id="ans3"
-                      class="scale-150 cursor-pointer"
-                    />
-                    <label for="ans3">The content of ans</label>
-                  </li>
-                  <li class="ml-1 flex flex-row gap-2">
-                    <input
-                      name="question1"
-                      type="radio"
-                      id="ans4"
-                      class="scale-150 cursor-pointer"
-                    />
-                    <label for="ans4">The content of ans</label>
-                  </li>
-                </ul>
-              </form>
-            </li>
-
-            <li
-              class="h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3"
-            >
-              <p id="question">Question 1:The content of the question</p>
-              <form>
-                <ul>
-                  <li class="ml-1 flex flex-row gap-2">
-                    <input
-                      name="question1"
-                      type="radio"
-                      id="ans1"
-                      class="scale-150 cursor-pointer"
-                    />
-                    <label for="ans1">The content of ans</label>
-                  </li>
-                  <li class="ml-1 flex flex-row gap-2">
-                    <input
-                      name="question1"
-                      type="radio"
-                      id="ans2"
-                      class="scale-150 cursor-pointer"
-                    />
-                    <label for="ans2">The content of ans</label>
-                  </li>
-                  <li class="ml-1 flex flex-row gap-2">
-                    <input
-                      name="question1"
-                      type="radio"
-                      id="ans3"
-                      class="scale-150 cursor-pointer"
-                    />
-                    <label for="ans3">The content of ans</label>
-                  </li>
-                  <li class="ml-1 flex flex-row gap-2">
-                    <input
-                      name="question1"
-                      type="radio"
-                      id="ans4"
-                      class="scale-150 cursor-pointer"
-                    />
-                    <label for="ans4">The content of ans</label>
-                  </li>
-                </ul>
-              </form>
-            </li>
-
-            <li
-              class="h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3"
-            >
-              <p id="question">Question 1:The content of the question</p>
-              <form>
-                <ul>
-                  <li class="ml-1 flex flex-row gap-2">
-                    <input
-                      name="question1"
-                      type="radio"
-                      id="ans1"
-                      class="scale-150 cursor-pointer"
-                    />
-                    <label for="ans1">The content of ans</label>
-                  </li>
-                  <li class="ml-1 flex flex-row gap-2">
-                    <input
-                      name="question1"
-                      type="radio"
-                      id="ans2"
-                      class="scale-150 cursor-pointer"
-                    />
-                    <label for="ans2">The content of ans</label>
-                  </li>
-                  <li class="ml-1 flex flex-row gap-2">
-                    <input
-                      name="question1"
-                      type="radio"
-                      id="ans3"
-                      class="scale-150 cursor-pointer"
-                    />
-                    <label for="ans3">The content of ans</label>
-                  </li>
-                  <li class="ml-1 flex flex-row gap-2">
-                    <input
-                      name="question1"
-                      type="radio"
-                      id="ans4"
-                      class="scale-150 cursor-pointer"
-                    />
-                    <label for="ans4">The content of ans</label>
-                  </li>
-                </ul>
-              </form>
-            </li>
-
-            <li
-              class="h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3"
-            >
-              <p id="question">Question 2:The content of the question</p>
-              <form>
-                <ul>
-                  <li class="ml-1 flex flex-row gap-2">
-                    <input
-                      name="question2"
-                      type="radio"
-                      id="ans1"
-                      class="scale-150 cursor-pointer"
-                    />
-                    <label for="ans1">The content of ans</label>
-                  </li>
-                  <li class="ml-1 flex flex-row gap-2">
-                    <input
-                      name="question2"
-                      type="radio"
-                      id="ans2"
-                      class="scale-150 cursor-pointer"
-                    />
-                    <label for="ans2">The content of ans</label>
-                  </li>
-                  <li class="ml-1 flex flex-row gap-2">
-                    <input
-                      type="radio"
-                      name="question2"
-                      id="ans3"
-                      class="scale-150 cursor-pointer"
-                    />
-                    <label for="ans3">The content of ans</label>
-                  </li>
-                  <li class="ml-1 flex flex-row gap-2">
-                    <input
-                      name="question2"
-                      type="radio"
-                      id="ans4"
-                      class="scale-150 cursor-pointer"
-                    />
-                    <label for="ans4">The content of ans</label>
-                  </li>
-                </ul>
-              </form>
-            </li>
+          id="list"
+            class="mb-10 flex max-h-96 h-fit flex-col gap-2 overflow-y-auto rounded-xl border border-black bg-white p-2"
+          > 
           </ul>
         </div>
         <!-- control -->
         <div class="h-10 w-full flex flex-row items-center justify-around gap-5">
             <!-- approve-->
-            <button class="bg-green-400 rounded-xl shadow-yellow-100 shadow-md p-3 w-full ">
-                Duyệt
+            <button id="approveBtn" class="bg-green-400 rounded-xl shadow-yellow-100 shadow-md p-3 w-full ">
+                Approve
             </button>
-
             <!-- disapprove -->
-            <button class="bg-red-400 rounded-xl shadow-yellow-100 shadow-md p-3 w-full">
-                Không Duyệt
+            <button id="openDisapproveBtn" class="bg-red-400 rounded-xl shadow-yellow-100 shadow-md p-3 w-full">
+               Disapprove
             </button>
         </div>
       </div>
     </main>
+    <!-- reason for disapproving -->
+    <div id="disapprovePopup" class="invisible h-screen w-screen seft-start  bg-gray-300 top-0 fixed bg-opacity-50">
+      <div  class="relative p-2 flex flex-col items-center h-1/2 w-1/2 bg-white mx-auto mt-28 rounded-xl shadow-gray-300 shadow-md">
+        <img id="closePopup" src="../img/close.png" class="cursor-pointer h-8 absolute top-2 left-1">
+        <p class=" text-center font-bold text-2xl border-b-2 border-black mb-2">Disapprove Document</p>
+        <p id="nameDocDisapprove" class="text-xl text-center"></p>
+        <form class="w-full h-full flex flex-col ">
+          <p class="text-sm">Enter reason</p>
+         <textarea placeholder="Enter reason..." required id="reason" class=" overflow-y w-full resize-none border border-black rounded-md h-full"></textarea>
+         <button id="disapproveBtn" class="h-24 shadow-md shadw-gray-200 w-1/2 mx-auto bg-red-300 rounded-md mt-2">Confirm</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- verify activities -->
+    <div id="verifyApprovePopup" class="invisible h-screen w-screen seft-start  bg-gray-300 top-0 fixed bg-opacity-50">
+      <div class="relative h-fit py-3 w-1/3 mx-auto mt-40 rounded-xl bg-white flex flex-col">
+        <img id="closePopupVerifyApprove" src="../img/close.png" class="cursor-pointer h-8 absolute top-2 left-1">
+        <img src="../img/accept.png" class="h-16 w-16 mx-auto mt-2">
+        <p class="mx-auto font-bold text-center">Are you sure you want to approve this document?</p>
+        <div id="verifyApprove" class="cursor-pointer mt-3 text-center pt-1  mx-auto bg-green-300 rounded-xl shadow-md shadow-gray-200 w-1/3 h-10 ">Accept</div>
+      </div>
+    </div>
+
+    <div id="verifyDisapprovePopup" class="invisible h-screen w-screen seft-start  bg-gray-300 top-0 fixed bg-opacity-50">
+      <div class="relative h-fit py-3 w-1/3 mx-auto mt-40 rounded-xl bg-white flex flex-col">
+        <img id="closePopupVerifyDisapprove" src="../img/close.png" class="cursor-pointer h-8 absolute top-2 left-1">
+        <img src="../img/accept.png" class="h-16 w-16 mx-auto mt-2">
+        <p class="mx-auto font-bold text-center">Are you sure you want to disapprove this document?</p>
+        <div id="verifyDisapprove" class="cursor-pointer mt-3 text-center pt-1  mx-auto bg-green-300 rounded-xl shadow-md shadow-gray-200 w-1/3 h-10 ">Accept</div>
+      </div>
+    </div>
+    <div id="popupModal"></div>
     <script type="module" src="../js/detail.js"></script>
   </body>
 </html>
