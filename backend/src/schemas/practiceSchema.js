@@ -23,9 +23,39 @@ const course_idSchema = joi.number().integer().min(1).optional().messages({
   'number.integer': 'course_id must be an integer.',
   'number.min': 'course_id must be greater than or equal to 1.',
 })
-const modeSchema = joi.string().valid('practice', 'arena').required()
-const doc_idSchema = joi.number().integer().min(1).required()
-const answerStatus=joi.string().valid('A', 'B', 'C', 'D').required()
+const orderSchema = joi.number().integer().min(1).required().messages({
+  'number.base': 'order must be a number.',
+  'number.integer': 'order must be an integer.',
+  'number.min': 'order must be at least 1.',
+  'any.required': 'order is required.',
+})
+
+const doc_idSchema = joi.number().integer().min(1).required().messages({
+  'number.base': 'doc_id must be a number.',
+  'number.integer': 'doc_id must be an integer.',
+  'number.min': 'doc_id must be at least 1.',
+  'any.required': 'doc_id is required.',
+})
+
+const answerSchema = joi
+  .string()
+  .valid('A', 'B', 'C', 'D')
+  .required()
+  .messages({
+    'any.only': 'userAnswer must be one of A, B, C, or D.',
+    'any.required': 'userAnswer is required.',
+  })
+
+  const scoreSchema = joi.number()
+  .min(0)
+  .max(100)
+  .required()
+  .messages({
+    "number.base": "Score must be a number.",
+    "number.min": "Score cannot be less than 0.",
+    "number.max": "Score cannot be more than 100.",
+    "any.required": "Score is required."
+  });
 const getDocumentforPraticeValidate = joi.object({
   keyword: keywordSchema,
   page: pageSchema,
@@ -36,20 +66,20 @@ const getPracticeHistoryValidate = joi.object({
   page: pageSchema,
   limit: limitSchema,
 })
-const modeValidate = joi.object({
-  mode: modeSchema,
-})
 const doc_idValidate = joi.object({
   doc_id: doc_idSchema,
 })
-const answerStatusValidate = joi.object({
-  answerStatus: answerStatus,
+const answerValidate = joi.object({
+  userAnswer: answerSchema,
+  order: orderSchema
 })
-
+const finishedValidate = joi.object({
+  score: scoreSchema
+})
 export default {
   getDocumentforPraticeValidate,
   getPracticeHistoryValidate,
-  modeValidate,
   doc_idValidate,
-  answerStatusValidate
+  answerValidate,
+  finishedValidate
 }

@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import envConfig from '../config/envConfig.js'
 import userSchema from '../schemas/userSchema.js'
+import cookie from 'cookie'
 import userService from '../services/userService.js'
 import { MESSAGE, STATUS_CODE } from '../utils/constantUtils.js'
 import { sendResponse } from '../utils/responseUtils.js'
@@ -131,6 +132,40 @@ const postRefreshToken = async (req, res) => {
   )
 }
 
+const authSocket = (socket, next) => {
+  try {
+    if (!socket.request.headers.cookie) {
+      console.log('Not found cookie')
+      return socket.emit('error', MESSAGE.AUTH.ACCESS_TOKEN.NOT_FOUND)
+    }
+    const cookies = cookie.parse(socket.request.headers.cookie)
+    const token = cookies.accessToken
+
+    const { error } = userSchema.accessTokenValidate.validate(token)
+    if (error) {
+      return socket.emit('error', error.details[0].message)
+    }
+
+    jwt.verify(token, envConfig.accessTokenSecretKey, (error, decoded) => {
+      if (error) {
+        if (error.name === 'TokenExpiredError') {
+          return socket.emit('error', MESSAGE.AUTH.ACCESS_TOKEN.EXPIRED)
+        }
+
+        if (error.name === 'JsonWebTokenError') {
+          return socket.emit('error', MESSAGE.AUTH.ACCESS_TOKEN.INVALID)
+        }
+      }
+
+      socket.user = decoded
+      next()
+    })
+  } catch (error) {
+    console.error(error)
+    socket.emit('error', MESSAGE.SERVER.ERROR)
+  }
+}
+
 const verifyAdmin = (req, res, next) => {
   const token = req.cookies?.accessToken
 
@@ -166,4 +201,4 @@ const verifyAdmin = (req, res, next) => {
   })
 }
 
-export default { verifyUser, verifyEmail, postRefreshToken, verifyAdmin }
+export default { verifyUser, verifyEmail, authSocket, postRefreshToken, verifyAdmin }
