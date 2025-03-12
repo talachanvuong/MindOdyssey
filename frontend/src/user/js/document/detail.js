@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       if (!documentId) {
         console.error('Invalid documentId:', documentId)
         alert('Error: No valid documentId.')
-        return
+        // return
       }
 
       let response = await fetch(`${API_DOCUMENTS}/get-document-detail-owner`, {
@@ -90,7 +90,8 @@ document.addEventListener('DOMContentLoaded', async function () {
       if (response.ok) {
         data = await response.json()
         console.log('📌 API Owner Response:', data)
-      } else {
+      }
+       else {
         // console.warn('⚠ API Owner thất bại, thử API Guest...');
         // response = await fetch(`${API_DOCUMENTS}/get-document-detail-guest`, {
         //     method: 'POST',
@@ -140,44 +141,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
   }
 
-  function renderQuestions(questions) {
-    questionsContainer.innerHTML = ''
-
-    if (questions.length === 0) {
-      questionsContainer.innerHTML = '<p class="text-gray-500">No questions</p>'
-      return
-    }
-
-    questions.forEach((q, index) => {
-      const questionDiv = document.createElement('div')
-      questionDiv.className = 'rounded-lg border p-4 my-3 shadow bg-white'
-
-      questionDiv.innerHTML = `
-        <label class="block font-semibold text-lg text-gray-800 mb-2">Question ${index + 1}:</label>
-        <p class="font-medium">${q.contents[0]?.text || 'No content'}</p>
-        <div id="mediaPreview${index}_0" class="mt-2">
-          ${q.contents[0].attachment ? `<img src="${q.contents[0].attachment}" class="max-w-full h-auto">` : ''}
-        </div>
-        <div class="mt-2 space-y-2">
-          ${q.contents
-            .slice(1)
-            .map((option, i) => {
-              const optionLetter = ['A', 'B', 'C', 'D'][i]
-              return `
-              <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
-                <input type="radio" name="question${index}" class="form-radio" value="${optionLetter}"
-                ${q.correct_answer === optionLetter ? 'checked' : ''} disabled />
-                <span>${option.text || 'No content'}</span>
-                ${q.correct_answer === optionLetter ? '<span class="text-green-500 font-bold">(Correct answer)</span>' : ''}
-              </label>`
-            })
-            .join('')}
-        </div>
-      `
-
-      questionsContainer.appendChild(questionDiv)
-    })
-  }
 
   function renderQuestions(questions) {
     questionsContainer.innerHTML = ''
@@ -195,24 +158,34 @@ document.addEventListener('DOMContentLoaded', async function () {
       questionDiv.innerHTML = `
         <label class="block font-semibold text-lg text-gray-800 mb-2">Question ${index + 1}:</label>
         <p class="font-medium">${q.contents[0]?.text || 'No content'}</p>
-        <div id="mediaPreview${index}_0" class="mt-2">
-          ${q.contents[0].attachment ? `<img src="${q.contents[0].attachment}" class="max-w-full h-auto">` : ''}
-        </div>
+        <div id="mediaPreview${index}_0" class="mt-4 flex justify-center">
+  ${q.contents[0]?.attachment ? `<img src="${q.contents[0].attachment}" class="max-w-xs h-auto rounded-lg shadow-md">` : ''}
+</div>
+
         <div class="mt-2 space-y-2">
-          ${q.contents
-            .slice(1)
-            .map((option, i) => {
-              const optionLetter = ['A', 'B', 'C', 'D'][i]
-              return `
-              <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
-                <input type="radio" name="question${index}" class="form-radio" value="${optionLetter}"
-                ${q.correct_answer === optionLetter ? 'checked' : ''} disabled />
-                <span>${option.text || 'No content'}</span>
-                ${q.correct_answer === optionLetter ? '<span class="text-green-500 font-bold">(Correct answer)</span>' : ''}
-              </label>`
-            })
-            .join('')}
+  ${q.contents
+    .slice(1)
+    .map((option, i) => {
+      const optionLetter = ['A', 'B', 'C', 'D'][i]
+      return `
+      <div class="border rounded-lg p-2"> 
+        <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-100">
+          <input type="radio" name="question${index}" class="form-radio" value="${optionLetter}"
+          ${q.correct_answer === optionLetter ? 'checked' : ''} disabled />
+          <span>${option.text || 'No content'}</span>
+          ${q.correct_answer === optionLetter ? '<span class="text-green-500 font-bold">(Correct answer)</span>' : ''}
+        </label>
+
+        <!-- Đưa ảnh xuống dưới -->
+        <div id="mediaPreview${index}_${i + 1}" class="mt-4 flex justify-center">
+          ${option.attachment ? `<img src="${option.attachment}" class="max-w-xs h-auto rounded-lg shadow-md">` : ''}
         </div>
+      </div>
+      `
+    })
+    .join('')}
+</div>
+
       `
 
       questionsContainer.appendChild(questionDiv)
@@ -258,8 +231,13 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   editButton.addEventListener('click', () => {
-    window.location.href = `edit.html?documentId=${documentId}`
-  })
+    if (!documentId || isNaN(Number(documentId))) {
+      alert("Error: Document ID is invalid!");
+      return;
+    }
+    window.location.href = `edit.html?documentId=${documentId}`;
+  });
+  
 
   deleteButton.addEventListener('click', async () => {
     if (confirm('Are you sure you want to delete this document?')) {
