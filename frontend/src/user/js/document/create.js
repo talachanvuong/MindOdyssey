@@ -176,14 +176,16 @@ const renderQuestions = () => {
         `).join('')}
       </div>
     `;
-    
+   if(questions.length > 1){ 
 // Delete question button
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'x';
-    deleteButton.className = 'absolute top-2 right-2 text-red-500 hover:text-red-700';
-    deleteButton.onclick = () => deleteQuestion(index);
-    
-    questionDiv.appendChild(deleteButton);
+questionDiv.className ='relative rounded-lg border p-4 my-3 shadow bg-white'
+const deleteButton = document.createElement('button')
+deleteButton.textContent = 'x'
+deleteButton.className =
+  'absolute top-2 right-2 text-red-500 hover:text-red-700' 
+deleteButton.onclick = () => deleteQuestion(index)
+questionDiv.appendChild(deleteButton);
+   }
     questionsContainer.appendChild(questionDiv);
   });
 
@@ -286,8 +288,8 @@ const createDocument = async (event) => {
   const description = document.getElementById('description').value.trim();
   const courseId = courseSelect.value;
 
-  if (!title || title.length < 8 || !courseId || questions.length === 0) {
-    showPopup('Please enter complete information!');
+  if (!title || title.length < 8 || !courseId) {
+    showPopup('Title and course must not be less than 8 characters!');
     createDocumentBtn.innerText = 'Create';
     createDocumentBtn.disabled = false;
     return;
@@ -343,12 +345,25 @@ console.log("Data sent:", JSON.stringify(requestData, null, 2));
       body: JSON.stringify(requestData),
     });
     
-    const responseText = await response.text();
+    const responseText = await response.text(); 
     console.log("Error API:", responseText);
-    
 
-    if (!response.ok) {
-      throw new Error(`Error creating document: ${response.status}`);
+    if (!response.ok) {  
+      let errorMessage = `Error ${response.status}: ${response.statusText}`;
+
+
+      try {
+        const errorData = JSON.parse(responseText);
+        if (errorData.message) {
+          errorMessage = errorData.message; 
+        }
+      } catch (e) {
+        console.warn("Error while parse JSON from API, error type text.");
+        errorMessage = `Error ${response.status}: ${responseText}`;
+      }
+
+      showPopup(errorMessage); 
+      throw new Error(errorMessage); 
     }
     if (!Array.isArray(requestData.questions) || requestData.questions.length === 0) {
       console.error("Error: No questions submitted.");
@@ -360,7 +375,8 @@ console.log("Data sent:", JSON.stringify(requestData, null, 2));
 
   
   } catch (error) {
-    showPopup(`Error: ${error.message}`);
+    console.error("Catch error:", error); 
+    showPopup(error.message); 
   } finally {
     createDocumentBtn.innerText = 'Create';
     createDocumentBtn.disabled = false;
