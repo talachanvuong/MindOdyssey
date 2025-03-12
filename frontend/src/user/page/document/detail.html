@@ -109,59 +109,48 @@
         </section>
 
         <section class="mt-6 w-full space-y-4">
-          <div class="w-full rounded-md border p-4">
-            <h2 class="font-bold">Question 1: The content of question</h2>
-            <div class="mt-2 space-y-2">
-              <label class="flex items-center space-x-2">
-                <input type="radio" name="question1" class="form-radio" />
-                <span>content_1</span>
+          <div id="questionsContainer" class="rounded border border-black p-4 mt-1">
+            <div class="rounded-lg border p-4 my-3 shadow bg-white">
+              <label class="block font-semibold text-lg text-gray-800 mb-2">
+                Câu hỏi 1:
               </label>
-              <label class="flex items-center space-x-2">
-                <input type="radio" name="question1" class="form-radio" />
-                <span>content_2</span>
-              </label>
-              <label class="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="question1"
-                  class="form-radio"
-                  checked
-                />
-                <span>content_3</span>
-              </label>
-              <label class="flex items-center space-x-2">
-                <input type="radio" name="question1" class="form-radio" />
-                <span>content_4</span>
-              </label>
+              <textarea class="w-full border p-2 rounded mb-3 resize-none overflow-hidden" placeholder="Enter question..." rows="1" oninput="updateQuestion(0, this.value, 0); autoResize(this)" style="height: 40px;"></textarea>
+              
+              <input type="file" accept="image/*,audio/*" class="mb-2" onchange="handleMediaUpload(event, 0, 0)">
+              <div id="mediaPreview0_0" class="mt-2"></div>
+              
+              <div class="space-y-2">
+                
+                  <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="question0" onchange="setCorrectAnswer(0, 'A')">
+                    <textarea class="border p-1 w-full rounded resize-none overflow-hidden" placeholder="Enter answer..." rows="1" oninput="updateAnswer(0, 1, this); autoResize(this)" style="height: 32px;"></textarea>
+                    <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, 0, 1)">
+                    <div id="mediaPreview0_1" class="mt-2"></div>
+                  </label>
+                
+                  <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="question0" onchange="setCorrectAnswer(0, 'B')">
+                    <textarea class="border p-1 w-full rounded resize-none overflow-hidden" placeholder="Enter answer..." rows="1" oninput="updateAnswer(0, 2, this); autoResize(this)" style="height: 32px;"></textarea>
+                    <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, 0, 2)">
+                    <div id="mediaPreview0_2" class="mt-2"></div>
+                  </label>
+                
+                  <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="question0" onchange="setCorrectAnswer(0, 'C')">
+                    <textarea class="border p-1 w-full rounded resize-none overflow-hidden" placeholder="Enter answer..." rows="1" oninput="updateAnswer(0, 3, this); autoResize(this)" style="height: 32px;"></textarea>
+                    <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, 0, 3)">
+                    <div id="mediaPreview0_3" class="mt-2"></div>
+                  </label>
+                
+                  <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="question0" onchange="setCorrectAnswer(0, 'D')">
+                    <textarea class="border p-1 w-full rounded resize-none overflow-hidden" placeholder="Enter answer..." rows="1" oninput="updateAnswer(0, 4, this); autoResize(this)" style="height: 32px;"></textarea>
+                    <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, 0, 4)">
+                    <div id="mediaPreview0_4" class="mt-2"></div>
+                  </label>
+                
+              </div>
             </div>
-          </div>
-
-          <div class="rounded-md border p-4">
-            <h2 class="font-bold">Question 2: The content of question</h2>
-            <div class="mt-2 space-y-2">
-              <label class="flex items-center space-x-2">
-                <input type="radio" name="question2" class="form-radio" />
-                <span>content_1</span>
-              </label>
-              <label class="flex items-center space-x-2">
-                <input type="radio" name="question2" class="form-radio" />
-                <span>content_2</span>
-              </label>
-              <label class="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="question2"
-                  class="form-radio"
-                  checked
-                />
-                <span>content_3</span>
-              </label>
-              <label class="flex items-center space-x-2">
-                <input type="radio" name="question2" class="form-radio" />
-                <span>content_4</span>
-              </label>
-            </div>
-          </div>
         </section>
         <div class="flex justify-center">
           <button id="btn_back"
