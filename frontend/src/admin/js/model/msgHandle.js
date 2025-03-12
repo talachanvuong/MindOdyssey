@@ -4,10 +4,10 @@ const redText = (id, message) => {
   if (!id) return
   id.innerHTML = `<p class=" ml-2 text-red-500">${message}</p>`
 }
-const popup = (id, message) => {
+const popup = (id, message,locate='') => {
   if (!id) return
   const popup = new Popup_Modal(id.id, message)
-  popup.open()
+  popup.open(locate)
 }
 
 const notification = (id) => {
@@ -24,30 +24,20 @@ const notification = (id) => {
   }
 }
 const redMessage = [
-  'Invalid email format',
-  'Password must be at least 8 characters long',
-  'Confirm new password must match new password',
-  'Password cannot be empty',
-  'Confirm password cannot be empty',
-  'Email cannot be empty',
-  'Display name must be at least 8 characters long',
-  'Display name cannot be empty',
-  'Confirm password must match password',
-  'Confirm password is required',
-  'Email cannot be empty',
-  'Display name must be at most 64 characters long',
-  'Password must be at most 32 characters long'
+  '"display_name" length must be at least 8 characters long',
+  '"display_name" is not allowed to be empty',
+  '"password" is not allowed to be empty',
+  '"display_name" length must be less than or equal to 64 characters long',
+  '"password" length must be less than or equal to 32 characters long',
+  '"password" length must be at least 8 characters long',
 ]
 const popupMessage = [
-  'User not found!',
+  'Admin not found!',
   'Wrong password!',
-  'Send email successfully!',
-  'User already exists!',
-  'Update user successfully!',
-  'Request is already being processed!',
-  'New password must be different from old password',
-  
+  'Admin login successfully!',
 ]
+
+const commonAlert = ['Page not valid!']
 
 const alertMessage = ['Access token is required']
 function classify(message) {
@@ -64,16 +54,10 @@ function classify(message) {
   if (alertMessage.includes(message)) {
     return 'alert'
   }
-  console.warn(`⚠️ Chưa có quy tắc xử lý cho message: "${message}"`)
-  return 'redText' // Mặc định hiển thị lỗi chữ đỏ nếu chưa được định nghĩa
-
-}
-
-const showMessage = (id, message) => {
-  const type = classify(message)
-  if (type === 'redText') redText(id, message)
-  else if (type === 'popup') popup(id, message)
-  else if (type === 'alert') alert(message)
+  if (commonAlert.includes(message)) {
+    return 'notification'
+  }
+  console.error('this message is need to updated!')
 }
 
 export default { classify, redText, popup, notification }

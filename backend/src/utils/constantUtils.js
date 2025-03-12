@@ -43,7 +43,6 @@ export const MESSAGE = {
     RESET_PASSWORD_SUCCESS: 'Reset password successfully!',
     CHANGE_PASSWORD_SUCCESS: 'Change password successfully!',
     LOGOUT_SUCCESS: 'Logout and delete refresh token successfully!',
-    GET_USER_ID_SUCCESS: 'Get user id successfully!',
   },
   ADMIN: {
     NOT_FOUND: 'Admin not found!',
@@ -73,6 +72,7 @@ export const MESSAGE = {
     NOT_FOUND_DOCS: 'No results found for this keyword!',
     NOT_FOUND_HISTORY: 'No practice history found!',
     PAGE_EXCEEDS_TOTAL: 'The requested page exceeds the total number of pages!',
+    NO_QUESTION: 'No more question available',
   },
   SERVER: {
     ERROR: 'Internal server error!',
@@ -93,5 +93,6 @@ export const STATUS_CODE = {
 }
 
 export const EVENT = {
-  PRACTICE: {},
+  STATISTIC: 'statistic',
 }
+

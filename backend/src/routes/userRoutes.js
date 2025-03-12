@@ -3,7 +3,6 @@ import {
   changePassword,
   forgetPassword,
   getInfo,
-  getUserID,
   login,
   logout,
   register,
@@ -82,13 +81,6 @@ router.get(
 router.post(
   '/refreshtoken',
   asyncHandler(authMiddleware.postRefreshToken),
-  errorHandler
-)
-//get user_id
-router.get(
-  '/getuserid',
-  asyncHandler(authMiddleware.verifyUser),
-  asyncHandler(getUserID),
   errorHandler
 )
 

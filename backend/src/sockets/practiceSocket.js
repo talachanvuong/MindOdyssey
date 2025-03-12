@@ -1,94 +1,86 @@
-import { nanoid } from 'nanoid'
 import practiceService from '../services/practiceService.js'
+import documentService from '../services/documentService.js'
 import practiceSchema from '../schemas/practiceSchema.js'
+import { MESSAGE } from '../utils/constantUtils.js'
+import cloudinaryService from '../services/cloudinaryService.js'
 
-const createRoom = (socket, rooms, mode, user_id) => {
-  // Kiểm tra mode hợp lệ
-  const { error } = practiceSchema.modeValidate.validate(JSON.parse(mode))
-
+const getStarted = async (socket, data, callback) => {
+  const { error, value } = practiceSchema.doc_idValidate.validate(data)
   if (error) {
-    socket.emit('message', 'Invalid mode')
-    return
+    return socket.emit('error', error.details[0].message)
   }
 
-  const roomId = randomRoomID(rooms)
-  socket.join(roomId)
-
-  // Nếu phòng chưa tồn tại, tạo mới
-  rooms[roomId] = rooms[roomId] || { players: [], mode: mode }
-
-  rooms[roomId].players.push(user_id)
-  console.log(`Room ${roomId} created with mode ${mode}`)
-  socket.emit('getroomId', roomId)
+  const { doc_id } = value
+  const doc_idExist = await documentService.isDocumentExist(doc_id)
+  if (!doc_idExist) {
+    return socket.emit('error', MESSAGE.DOCUMENT.NOT_FOUND)
+  }
+  const allQuestion = await practiceService.selectAllQuestions(doc_id)
+  socket.allQuestionreuploaded = await cloudinaryService.reuploadAttachments(allQuestion)
+  socket.start_time = new Date().toISOString()
+  socket.questionOrder = []
+  callback('ready')
 }
 
-const joinRoom = (socket, roomId, rooms, user_id) => {
-  // Kiểm tra phòng có tồn tại không
-  if (!(roomId in rooms)) {
-    console.log(`Room ${roomId} does not exist`)
-    socket.emit('message', 'Room not found')
-    return
+const getNewQuestion = async (socket, callback) => {
+
+  const filteredQuestions = socket.allQuestionreuploaded
+    .filter((q) => !socket.questionOrder.includes(q.order))
+    .map(({ correct_answer, ...rest }) => rest)
+
+  if (filteredQuestions.length === 0) {
+    return socket.emit('error', MESSAGE.PRACTICE.NO_QUESTION)
   }
 
-  const room = rooms[roomId]
+  const randomIndex = Math.floor(Math.random() * filteredQuestions.length)
+  const question = filteredQuestions[randomIndex]
 
-  // Kiểm tra số lượng người chơi tối đa
-  if (
-    (room.mode === 'practice' && room.players.length == 1) ||
-    (room.mode === 'arena' && room.players.length == 2)
-  ) {
-    socket.emit('message', 'Room is full')
-    return
+  socket.questionOrder.push(question.order)
+  callback(question)
+}
+
+const postUserAnswer = async (socket, data, callback) => {
+  const { error, value } = practiceSchema.answerValidate.validate(data)
+  if (error) {
+    return socket.emit('error', error.details[0].message)
   }
-
-  socket.join(roomId)
-  room.players.push(user_id)
-  console.log(`Player ${user_id} joined room ${roomId}`)
-  socket.emit('getroomId', roomId)
-}
-
-const getNewQuestion = async (io, roomId, doc_id, questionorder) => {
-  const question = await practiceService.sendQuestion(doc_id, questionorder)
-  io.to(roomId).emit('getQuestion', question)
-}
-
-const postAnswer = async (io, socket, roomId, answerStatus, user_id) => {
-  const { error } = practiceSchema.answerStatusValidate.validate(
-    answerStatus.Answer
+  const { userAnswer, order } = value
+  const correct_answer = socket.allQuestionreuploaded.find(
+    (q) => q.order === order
+  )?.correct_answer
+  let questionIndex = socket.allQuestionreuploaded.findIndex(
+    (q) => q.order === order
   )
+  if (questionIndex !== -1) {
+    socket.allQuestionreuploaded[questionIndex].userAnswer = userAnswer
+  }
 
+  if (userAnswer == correct_answer) {
+    return callback('Correct')
+  } else {
+    return callback('Incorrect')
+  }
+}
+
+const finished = async (socket, data, callback) => {
+  const { error, value } = practiceSchema.finishedValidate.validate(data)
   if (error) {
-    return socket.emit('message', 'Invalid answer')
+    return socket.emit('error', error.details[0].message)
   }
-  const userAnswer = answerStatus.Answer
-  const question_id = answerStatus.question_id
-  const question_order = answerStatus.question_order
-  const correct_answer = await practiceService.getCorrectAnswer(question_id)
-
-  if (userAnswer === correct_answer) {
-    io.to(roomId).emit(
-      'message',
-      `Player ${user_id} correct with question ${question_order}`
-    )
-  }
+  const { user_id } = socket.user
+  socket.end_time = new Date().toISOString()
+  const { score } = value
+  const practice_history_id = await practiceService.insertPracticeHistory(
+    user_id,
+    score,
+    socket.allQuestionreuploaded,
+    socket.start_time,
+    socket.end_time
+  )
+  const result = await practiceService.selectPracticeHistorybyID(
+    practice_history_id
+  )
+  return callback(result)
 }
 
-const disconnect = (socket, rooms, user_id) => {
-  for (const roomId in rooms) {
-    rooms[roomId].players = rooms[roomId].players.filter(
-      (player) => player !== user_id
-    )
-    if (rooms[roomId].players.length === 0) delete rooms[roomId]
-  }
-  console.log(`Player ${socket.id} leaved`)
-}
-
-const randomRoomID = (rooms) => {
-  let roomId
-  do {
-    roomId = nanoid(6)
-  } while (roomId in rooms)
-  return roomId
-}
-
-export default { createRoom, disconnect, joinRoom, getNewQuestion, postAnswer }
+export default { getNewQuestion, postUserAnswer, getStarted, finished }

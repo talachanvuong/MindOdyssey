@@ -53,55 +53,8 @@ const countDocumentsByKeyword = async (keyword, limit, course_id) => {
   return { totalPages, totalDocs }
 }
 
-const sendQuestion = async (doc_id, questionorder) => {
-  // Truyền tham số questionorder vào dưới dạng mảng số nguyên
-  const query = `
-    SELECT 
-      q.question_id,
-      q."order",
-      JSON_AGG(
-        JSON_BUILD_OBJECT(
-          'content_id', c.content_id,
-          'text', c.text,
-          'attachment', c.attachment,
-          'attachment_id', c.attachment_id,
-          'type', c.type
-        )
-      ) AS contents
-    FROM 
-      questions q
-    LEFT JOIN 
-      contents c 
-    ON 
-      q.question_id = c.question_id
-    WHERE 
-      q.document_id = $1
-      AND (
-        cardinality($2::int[]) = 0 
-        OR q."order" NOT IN (SELECT unnest($2::int[]))
-      )
-    GROUP BY 
-      q.question_id, q."order", q.correct_answer
-    LIMIT 1;
-  `;
 
-  const result = await client.query(query, [doc_id, questionorder]);
-  return result.rows[0]; // Chỉ trả về một câu hỏi
-};
-
-const getCorrectAnswer = async (question_id)=>{
-  const query=`
-    SELECT correct_answer
-    FROM questions
-    WHERE question_id=$1
-    LIMIT 1
-  `
-  const result = await client.query(query,[question_id])
-  return result.rows[0]
-}
-
-
-const sendAllQuestions = async (doc_id) => {
+const selectAllQuestions = async (doc_id) => {
   const query = `
   SELECT 
     q.question_id,
@@ -131,20 +84,22 @@ const sendAllQuestions = async (doc_id) => {
   return result.rows
 }
 
-const insertPracticeHistory = async (user_id, score, detail) => {
+const insertPracticeHistory = async (user_id, score, detail,start_time,end_time) => {
   const query = `
-  INSERT INTO practice_histories(user_id,score,detail)
-  VALUES($1,$2,$3)
+    INSERT INTO practice_histories (user_id, score, detail,start_time,end_time)
+    VALUES ($1, $2, $3::jsonb,$4,$5)
+    RETURNING practice_history_id
   `
-  await client.query(query, [user_id, score, detail])
+  const result = await client.query(query, [user_id, score, JSON.stringify(detail),start_time,end_time])
+  return result.rows[0].practice_history_id
 }
 
-const selectPracticeHistory = async (user_id, limit,page) => {
+const selectPracticeHistory = async (user_id, limit, page) => {
   const offset = (page - 1) * limit
   const query = `
     SELECT 
       score,
-      detail::jsonb AS detail,
+      detail,
       created_at
     FROM 
       practice_histories
@@ -157,7 +112,7 @@ const selectPracticeHistory = async (user_id, limit,page) => {
   const result = await client.query(query, [user_id, limit, offset])
   return result.rows
 }
-const countPracticeHistory = async (user_id,limit) => {
+const countPracticeHistory = async (user_id, limit) => {
   const countQuery = `
     SELECT COUNT(*) AS total
     FROM practice_histories
@@ -170,13 +125,28 @@ const countPracticeHistory = async (user_id,limit) => {
 }
 
 
+const selectPracticeHistorybyID = async(practice_history_id)=>{
+  const query=`
+    SELECT 
+      score,
+      detail,
+      start_time,
+      end_time
+    FROM 
+      practice_histories
+    WHERE 
+      practice_history_id= $1
+  `
+  const result = await client.query(query,[practice_history_id])
+  return result.rows
+}
+
 export default {
   selectDocumentforPractice,
   countDocumentsByKeyword,
-  sendQuestion,
-  sendAllQuestions,
+  selectAllQuestions,
   insertPracticeHistory,
-  getCorrectAnswer,
   selectPracticeHistory,
-  countPracticeHistory
+  countPracticeHistory,
+  selectPracticeHistorybyID
 }
