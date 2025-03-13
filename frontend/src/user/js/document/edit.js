@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         const optionLetter = ['A', 'B', 'C', 'D'][i]
         return `
         <div class="border rounded-lg p-2 space-y-2">
-          <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-100">
+          <label class="flex items-center space-x-2  space-y-3 cursor-pointer hover:bg-gray-100">
             <input type="radio" name="question${index}" value="${optionLetter}"
                    ${correctAnswer === optionLetter ? 'checked' : ''}
                    onchange="setCorrectAnswer(${index}, '${optionLetter}')" />
@@ -216,6 +216,8 @@ document.addEventListener('DOMContentLoaded', async function () {
           }
         })
         .filter(Boolean) // Remove null questions
+
+        renderQuestions();
     } catch (error) {
       console.error('Error loading document:', error)
       alert(error.message)
@@ -347,12 +349,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   const renderQuestions = () => {
     console.log('Update interface with question list:', questions)
-
-    if (!questionsContainer) {
-      console.error(' Error: `questionsContainer` does not exist in the DOM!')
-      return
-    }
-
+    
     saveUserInput()
 
     questionsContainer.innerHTML = ''
@@ -382,7 +379,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             <input type="radio" name="question${index}" class="mb-2" value="${['A', 'B', 'C', 'D'][i]}"
               ${q.correct === ['A', 'B', 'C', 'D'][i] ? 'checked' : ''}
               onchange="setCorrectAnswer(${index}, '${['A', 'B', 'C', 'D'][i]}')">
-            <textarea class="border p-1 w-full rounded resize-none overflow-hidden"
+            <textarea class="border p-1 w-11/12 rounded resize-none overflow-hidden"
                       placeholder="Enter the answer..."
                       rows="1"
                       oninput="updateAnswer(${index}, ${i + 1}, this); autoResize(this)">${option.text}</textarea>
@@ -396,7 +393,7 @@ document.addEventListener('DOMContentLoaded', async function () {
           .join('')}
       </div>
     `
-
+if(questions.length > 1) {
       questionDiv.className =
         'relative rounded-lg border p-4 my-3 shadow bg-white'
       const deleteButton = document.createElement('button')
@@ -405,7 +402,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         'absolute top-2 right-2 text-red-500 hover:text-red-700'
       deleteButton.onclick = () => deleteQuestion(index)
       questionDiv.appendChild(deleteButton)
-
+}
       questionsContainer.appendChild(questionDiv)
     })
 
@@ -514,8 +511,10 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   saveButton.addEventListener('click', async function (event) {
     console.log("Save button clicked!"); 
+    
     event.preventDefault()
-
+    saveButton.innerText = 'Loading...';
+    saveButton.disabled = true;
     const updatedData = {
       document: Number(documentId) ,
       title: docNameInput.value.trim(),
