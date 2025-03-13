@@ -145,46 +145,47 @@ const renderQuestions = () => {
     const questionDiv = document.createElement('div');
     questionDiv.className = 'rounded-lg border p-4 my-3 shadow bg-white';
     questionDiv.innerHTML = `
-      <label class="block font-semibold text-lg text-gray-800 mb-2">
-        Question ${index + 1}:
-      </label>
-      <textarea class="w-full border p-2 rounded mb-3 resize-none overflow-hidden"
-                placeholder="Enter question..." 
-                rows="1" 
-                oninput="updateQuestion(${index}, this.value, 0); autoResize(this)">${q.contents[0]?.text || ''}</textarea>
-
-      <input type="file" accept="image/*,audio/*" class="mb-2" onchange="handleMediaUpload(event, ${index}, 0)" />
-      <div id="mediaPreview${index}_0" class="mt-2">
-        ${q.contents[0]?.attachment ? `<img src="${q.contents[0].attachment}" class="max-w-full h-auto">` : ''}
-      </div>
-      
-      <div class="space-y-2">
-        ${q.contents.slice(1).map((option, i) => `
-          <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
-            <input type="radio" name="question${index}" 
-                   ${q.correct === ['A', 'B', 'C', 'D'][i] ? 'checked' : ''} 
-                   onchange="setCorrectAnswer(${index}, '${['A', 'B', 'C', 'D'][i]}')" />
-            <textarea class="border p-1 w-full rounded resize-none overflow-hidden"
-                      placeholder="Enter answer..."
-                      rows="1"
-                      oninput="updateAnswer(${index}, ${i + 1}, this); autoResize(this)">${option.text || ''}</textarea>
-            <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, ${index}, ${i + 1})" />
-            <div id="mediaPreview${index}_${i + 1}" class="mt-2">
-              ${option.attachment ? `<img src="${option.attachment}" class="max-w-full h-auto">` : ''}
-            </div>
-          </label>
-        `).join('')}
-      </div>
-    `;
-   if(questions.length > 1){ 
-// Delete question button
-questionDiv.className ='relative rounded-lg border p-4 my-3 shadow bg-white'
-const deleteButton = document.createElement('button')
-deleteButton.textContent = 'x'
-deleteButton.className =
-  'absolute top-2 right-2 text-red-500 hover:text-red-700' 
-deleteButton.onclick = () => deleteQuestion(index)
-questionDiv.appendChild(deleteButton);
+    <label class="block font-semibold text-lg text-gray-800 mb-2">Question ${index + 1}:</label>
+    <textarea class="w-full border p-2 rounded mb-3 resize overflow-hidden"
+              placeholder="Enter question..."
+              rows="1"
+              oninput="updateQuestion(${index}, this.value, 0); autoResize(this)">${q.contents[0].text}</textarea>
+    <input type="file" accept="image/*,audio/*" class="mb-2" onchange="handleMediaUpload(event, ${index}, 0)" /><br>
+    <div id="mediaPreview${index}_0" class="mt-2">
+      ${q.contents[0].attachment ? `<img src="${q.contents[0].attachment}" class="max-w-full h-auto">` : ''}
+    </div>
+    <div class="space-y-2">
+      ${q.contents
+        .slice(1)
+        .map(
+          (option, i) => `
+        <label class="block space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+          <input type="radio" name="question${index}" class="mb-2" value="${['A', 'B', 'C', 'D'][i]}"
+            ${q.correct === ['A', 'B', 'C', 'D'][i] ? 'checked' : ''}
+            onchange="setCorrectAnswer(${index}, '${['A', 'B', 'C', 'D'][i]}')">
+          <textarea class="border p-1 w-11/12 rounded resize-none overflow-hidden"
+                    placeholder="Enter the answer..."
+                    rows="1"
+                    oninput="updateAnswer(${index}, ${i + 1}, this); autoResize(this)">${option.text}</textarea>
+          <input type="file" accept="image/*,audio/*" class="ml-6" onchange="handleMediaUpload(event, ${index}, ${i + 1})" />
+          <div id="mediaPreview${index}_${i + 1}" class="mt-2">
+            ${option.attachment ? `<img src="${option.attachment}" class="max-w-full h-auto">` : ''}
+          </div>
+        </label>
+      `
+        )
+        .join('')}
+    </div>
+  `
+if(questions.length > 1) {
+    questionDiv.className =
+      'relative rounded-lg border p-4 my-3 shadow bg-white'
+    const deleteButton = document.createElement('button')
+    deleteButton.textContent = 'x'
+    deleteButton.className =
+      'absolute top-2 right-2 text-red-500 hover:text-red-700'
+    deleteButton.onclick = () => deleteQuestion(index)
+    questionDiv.appendChild(deleteButton)
    }
     questionsContainer.appendChild(questionDiv);
   });
@@ -371,7 +372,7 @@ console.log("Data sent:", JSON.stringify(requestData, null, 2));
     }
     
     showPopup('Document created successfully!');
-    setTimeout(() => window.location.href = 'manage.html', 2000);
+    setTimeout(() => window.location.href = 'manage.html', 1000);
 
   
   } catch (error) {
