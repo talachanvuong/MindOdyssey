@@ -65,7 +65,7 @@ const createDocument = async (req, res) => {
   )
 }
 
-const getDocumentDetailOwner = async (req, res) => {
+const getDocumentDetail = async (req, res) => {
   const { user_id } = req.user
   const { error, value } = documentSchema.getDocumentDetail.validate(req.body)
   const { document } = value
@@ -94,44 +94,8 @@ const getDocumentDetailOwner = async (req, res) => {
     )
   }
 
-  // Get document detail owner
-  const documentDetail = await documentService.getDocumentDetailOwner(document)
-
-  return sendResponse(
-    res,
-    STATUS_CODE.SUCCESS,
-    MESSAGE.DOCUMENT.GET_DOCUMENT_DETAIL_SUCCESS,
-    documentDetail
-  )
-}
-
-const getDocumentDetailGuest = async (req, res) => {
-  const { error, value } = documentSchema.getDocumentDetail.validate(req.body)
-  const { document } = value
-
-  // Check validation
-  if (error) {
-    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
-  }
-
-  // Check document exist
-  const isDocumentExist = await documentService.isDocumentExist(document)
-  if (!isDocumentExist) {
-    return sendResponse(res, STATUS_CODE.NOT_FOUND, MESSAGE.DOCUMENT.NOT_FOUND)
-  }
-
-  // Check document approve
-  const isDocumentApprove = await documentService.isDocumentApprove(document)
-  if (!isDocumentApprove) {
-    return sendResponse(
-      res,
-      STATUS_CODE.BAD_REQUEST,
-      MESSAGE.DOCUMENT.NOT_APPROVED
-    )
-  }
-
-  // Get document detail guest
-  const documentDetail = await documentService.getDocumentDetailGuest(document)
+  // Get document detail
+  const documentDetail = await documentService.getDocumentDetail(document)
 
   return sendResponse(
     res,
@@ -143,7 +107,7 @@ const getDocumentDetailGuest = async (req, res) => {
 
 const deleteDocument = async (req, res) => {
   const { user_id } = req.user
-  const { error, value } = documentSchema.removeDocument.validate(req.body)
+  const { error, value } = documentSchema.deleteDocument.validate(req.body)
   const { document } = value
 
   // Check validation
@@ -547,7 +511,7 @@ const getDocuments = async (req, res) => {
     return sendResponse(
       res,
       STATUS_CODE.NOT_FOUND,
-      MESSAGE.DOCUMENT.PAGE_NOT_VALID
+      MESSAGE.PAGINATION.PAGE_NOT_VALID
     )
   }
 
@@ -561,8 +525,7 @@ const getDocuments = async (req, res) => {
 
 export default {
   createDocument,
-  getDocumentDetailOwner,
-  getDocumentDetailGuest,
+  getDocumentDetail,
   deleteDocument,
   editDocument,
   getDocuments,

@@ -62,8 +62,8 @@ const logout = async (req, res) => {
   return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.ADMIN.LOGOUT_SUCCESS)
 }
 
-const getUnapprovedDocuments = async (req, res) => {
-  const { error, value } = adminSchema.getUnapprovedDocuments.validate(req.body)
+const getPendingDocuments = async (req, res) => {
+  const { error, value } = adminSchema.getPendingDocuments.validate(req.body)
   const { pagination, keyword, filter } = value
 
   // Check validation
@@ -71,19 +71,19 @@ const getUnapprovedDocuments = async (req, res) => {
     return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
   }
 
-  // Get unapproved documents
-  const unapprovedDocuments = await adminService.getUnapprovedDocuments(
+  // Get pending documents
+  const pendingDocuments = await adminService.getPendingDocuments(
     pagination,
     keyword,
     filter
   )
 
   // Check page valid
-  if (pagination?.page > unapprovedDocuments.total_pages) {
+  if (pagination?.page > pendingDocuments.total_pages) {
     return sendResponse(
       res,
       STATUS_CODE.NOT_FOUND,
-      MESSAGE.DOCUMENT.PAGE_NOT_VALID
+      MESSAGE.PAGINATION.PAGE_NOT_VALID
     )
   }
 
@@ -91,12 +91,14 @@ const getUnapprovedDocuments = async (req, res) => {
     res,
     STATUS_CODE.SUCCESS,
     MESSAGE.ADMIN.GET_UNAPPROVED_DOCUMENTS_SUCCESS,
-    unapprovedDocuments
+    pendingDocuments
   )
 }
 
-const getDocumentDetail = async (req, res) => {
-  const { error, value } = adminSchema.getDocumentDetail.validate(req.body)
+const getPendingDocumentDetail = async (req, res) => {
+  const { error, value } = adminSchema.getPendingDocumentDetail.validate(
+    req.body
+  )
   const { document } = value
 
   // Check validation
@@ -111,19 +113,21 @@ const getDocumentDetail = async (req, res) => {
   }
 
   // Check document review
-  const isDocumentReview = await adminService.isDocumentReview(document)
+  const isDocumentReview = await documentService.isDocumentReview(document)
   if (isDocumentReview) {
     return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.DOCUMENT.REVIEWED)
   }
 
-  // Get document detail
-  const documentDetail = await adminService.getDocumentDetail(document)
+  // Get pending document detail
+  const pendingDocumentDetail = await adminService.getPendingDocumentDetail(
+    document
+  )
 
   return sendResponse(
     res,
     STATUS_CODE.SUCCESS,
-    MESSAGE.ADMIN.GET_DOCUMENT_DETAIL_SUCCESS,
-    documentDetail
+    MESSAGE.ADMIN.GET_PENDING_DOCUMENT_DETAIL_SUCCESS,
+    pendingDocumentDetail
   )
 }
 
@@ -144,7 +148,7 @@ const reviewDocument = async (req, res) => {
   }
 
   // Check document review
-  const isDocumentReview = await adminService.isDocumentReview(document)
+  const isDocumentReview = await documentService.isDocumentReview(document)
   if (isDocumentReview) {
     return sendResponse(res, STATUS_CODE.BAD_REQUEST, MESSAGE.DOCUMENT.REVIEWED)
   }
@@ -162,7 +166,7 @@ const reviewDocument = async (req, res) => {
 export default {
   login,
   logout,
-  getUnapprovedDocuments,
-  getDocumentDetail,
+  getPendingDocuments,
+  getPendingDocumentDetail,
   reviewDocument,
 }

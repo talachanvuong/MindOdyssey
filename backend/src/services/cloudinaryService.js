@@ -28,6 +28,7 @@ const reUploadCloudinary = async (url) => {
     throw error
   }
 }
+
 const reuploadAttachments = async (data) => {
   for (const item of data) {
     const uploadPromises = item.contents.map(async (content) => {

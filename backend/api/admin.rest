@@ -13,8 +13,8 @@ Content-Type: application/json
 POST {{host}}/logout
 Content-Type: application/json
 
-### Get unapproved documents
-POST {{host}}/get-unapproved-documents
+### Get pending documents
+POST {{host}}/get-pending-documents
 Content-Type: application/json
 
 {
@@ -27,8 +27,8 @@ Content-Type: application/json
     "filter": 0 
 }
 
-### Get document detail
-POST {{host}}/get-document-detail
+### Get pending document detail
+POST {{host}}/get-pending-document-detail
 Content-Type: application/json
 
 {
