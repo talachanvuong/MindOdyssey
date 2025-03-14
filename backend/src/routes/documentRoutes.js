@@ -14,19 +14,11 @@ router.post(
   errorHandler
 )
 
-// Get document detail owner
+// Get document detail
 router.post(
-  '/get-document-detail-owner',
+  '/get-document-detail',
   authMiddleware.verifyUser,
-  asyncHandler(documentController.getDocumentDetailOwner),
-  errorHandler
-)
-
-// Get document detail guest
-router.post(
-  '/get-document-detail-guest',
-  authMiddleware.verifyUser,
-  asyncHandler(documentController.getDocumentDetailGuest),
+  asyncHandler(documentController.getDocumentDetail),
   errorHandler
 )
 

@@ -5,7 +5,7 @@ const login = Joi.object({
   password: Joi.string().trim().min(8).max(32).required(),
 })
 
-const getUnapprovedDocuments = Joi.object({
+const getPendingDocuments = Joi.object({
   pagination: Joi.object({
     page: Joi.number().integer().strict().min(1).required(),
     perPage: Joi.number().integer().strict().min(1).required(),
@@ -14,7 +14,7 @@ const getUnapprovedDocuments = Joi.object({
   filter: Joi.date().timestamp(),
 })
 
-const getDocumentDetail = Joi.object({
+const getPendingDocumentDetail = Joi.object({
   document: Joi.number().integer().strict().min(1).required(),
 })
 
@@ -29,7 +29,7 @@ const reviewDocument = Joi.object({
 
 export default {
   login,
-  getUnapprovedDocuments,
-  getDocumentDetail,
+  getPendingDocuments,
+  getPendingDocumentDetail,
   reviewDocument,
 }

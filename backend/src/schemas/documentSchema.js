@@ -41,7 +41,7 @@ const getDocumentDetail = Joi.object({
   document: Joi.number().integer().strict().min(1).required(),
 })
 
-const removeDocument = Joi.object({
+const deleteDocument = Joi.object({
   document: Joi.number().integer().strict().min(1).required(),
 })
 
@@ -112,7 +112,7 @@ const editDocument = Joi.object({
               )
               .min(1)
               .max(5),
-          }).or('order', 'correct', 'content'),
+          }).or('order', 'correct', 'contents'),
         })
     )
     .min(1),
@@ -130,7 +130,7 @@ const getDocuments = Joi.object({
 export default {
   createDocument,
   getDocumentDetail,
-  removeDocument,
+  deleteDocument,
   editDocument,
   getDocuments,
 }
