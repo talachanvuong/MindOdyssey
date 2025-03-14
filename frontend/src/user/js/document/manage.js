@@ -1,5 +1,5 @@
 import '../../../style.css'
-
+import callApi from '../model/callApi.js'
 // ======================== DOM Elements ========================
 const searchInput = document.getElementById('search')
 const filterButton = document.getElementById('filterButton')
@@ -36,14 +36,22 @@ async function loadInfname() {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-    })
-    if (!response.ok) throw new Error(`Error API: ${response.status}`)
-    const responseData = await response.json()
-    if (!responseData.result || typeof responseData.result !== 'object') return
-    displayElement.textContent =
-      responseData.result.display_name || 'No data available'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error API: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+
+    if (!responseData || !responseData.result || typeof responseData.result !== 'object') {
+      throw new Error('Invalid API response structure');
+    }
+
+    displayElement.textContent = responseData.result.display_name || 'No data available';
   } catch (error) {
-    console.error('Error loading user information:', error)
+    console.error('Error loading user information:', error);
+    displayElement.textContent = 'Failed to load user information';
   }
 }
 
@@ -54,28 +62,31 @@ async function loadDocuments() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-    })
+    });
 
-    if (!response.ok) throw new Error(`Lỗi API: ${response.status}`)
-
-    const responseData = await response.json()
-    console.log('API data returned:', responseData)
-
-    // Check if the API data is in the correct format
-    if (!responseData.result || !Array.isArray(responseData.result.documents)) {
-      console.error('Data is not an array:', responseData.result)
-      return
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status}`);
     }
 
-    // Assign documents data to the variable allDocuments
-    allDocuments = responseData.result.documents
+    const responseData = await response.json();
+    console.log('API data returned:', responseData);
 
-    updateDocumentCount()
-    renderDocuments(allDocuments)
+     // Check if the API data is in the correct format
+    if (!responseData || !responseData.result || !Array.isArray(responseData.result.documents)) {
+      throw new Error('Invalid API response structure');
+    }
+
+      // Assign documents data to the variable allDocuments
+    allDocuments = responseData.result.documents;
+
+    updateDocumentCount();
+    renderDocuments(allDocuments);
   } catch (error) {
-    console.error('Error loading document list:', error)
+    console.error('Error loading document list:', error);
+    alert('Failed to load document list. Please try again later.');
   }
 }
+
 
 // ======================== Update Document Count ========================
 function updateDocumentCount() {
