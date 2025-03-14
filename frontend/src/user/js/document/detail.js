@@ -1,12 +1,14 @@
 import '../../../style.css'
+import callApi  from '../model/callApi.js'
 
 document.addEventListener('DOMContentLoaded', async function () {
   const API_DOCUMENTS = 'http://localhost:3000/api/document'
-  const API_INF_USER = 'http://localhost:3000/api/user'
+
   const documentTitle = document.getElementById('titleDoc')
   const documentDate = document.getElementById('dateDoc')
-  const questionsContainer = document.querySelector('section.mt-6')
+  const questionsContainer = document.getElementById('questionsContainer')
   const statusContainer = document.getElementById('statusDoc')
+  const rejectReason = document.getElementById('rejectReason');
   const editButton = document.getElementById('editButton')
   const deleteButton = document.getElementById('deleteButton')
   const documentDescription = document.getElementById('describeDoc')
@@ -17,129 +19,59 @@ document.addEventListener('DOMContentLoaded', async function () {
   const urlParams = new URLSearchParams(window.location.search)
   const documentId = urlParams.get('documentId')
   if (!documentId || isNaN(Number(documentId))) {
+    console.error('Invalid documentId:', documentId)
     alert('No valid document ID found!')
     return
   }
-  async function getCurrentUserId() {
-    try {
-      const response = await fetch(`${API_INF_USER}/getuserid`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      })
-
-      if (!response.ok) throw new Error(`Lỗi API: ${response.status}`)
-
-      const data = await response.json()
-      return data.result ? Number(data.result) : null
-    } catch (error) {
-      console.error('Error when getting user ID:', error)
-      return null
-    }
-  }
-
-  // async function isDocumentAuthor(userId, documentId) {
-  //   try {
-  //     const response = await fetch(`${API_DOCUMENTS}/get-document-detail-owner`, {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       credentials: 'include',
-  //       // body: JSON.stringify({ user_id: Number(userId), document: Number(documentId) }),
-  //       body: JSON.stringify({document: Number(documentId) }),
-
-  //     });
-
-  //     if (!response.ok) {
-  //       console.error(`❌ Lỗi API - HTTP Status: ${response.status}`);
-  //       return false;
-  //     }
-
-  //     const data = await response.json();
-  //     console.log('📌 API Response:', data);
-
-  //     // Kiểm tra nếu API trả về `result` và có dữ liệu hợp lệ
-  //     return data.result && data.result.length > 0;
-  //   } catch (error) {
-  //     console.error('❌ Lỗi khi kiểm tra quyền sở hữu tài liệu:', error);
-  //     return false;
-  //   }
-  // }
 
   async function loadDocument(documentId) {
     try {
-      const userId = await getCurrentUserId()
-      if (!userId) {
-        alert('Unable to identify user.')
-        return
+   
+      const response = await callApi.callApi(`${API_DOCUMENTS}/get-document-detail`, { document: Number(documentId) }, 'POST');
+      
+   
+      if (!response || response.status !== 'success') {
+        console.error('📌 API Error:', response);
+        alert('Error loading document. Please try again later!');
+      
       }
-
-      if (!documentId) {
-        console.error('Invalid documentId:', documentId)
-        alert('Error: No valid documentId.')
-        // return
+      const data = response.data;
+      const doc = data;
+      documentTitle.textContent = doc.title || 'No title';
+      documentDate.textContent = doc.created_at || 'There is no creation date';
+      documentDescription.textContent = `Describe: ${doc.description || 'No description available'}`;
+      documentCourse.textContent = `Course: ${doc.course?.title || 'No courses'}`;
+      totalQuestions.textContent = `${doc.questions?.length || 0} questions`;
+  
+      statusContainer.textContent = `Status: ${doc.status || 'No status'}`;
+      statusContainer.className = 'text-gray-500';
+  
+      if (doc.status === 'Từ chối') {
+        statusContainer.className = 'text-red-500';
+        if (doc.reject_reason) {
+          rejectReason.textContent = `Reason: ${doc.reject_reason}`;
+          rejectReason.style.display = 'block';
+        } else {
+          rejectReason.style.display = 'none';
+        }
+      } else {
+        rejectReason.style.display = 'none';
+        if (doc.status === 'Chưa duyệt') {
+          statusContainer.className = 'text-yellow-500';
+        } else if (doc.status === 'Đã duyệt') {
+          statusContainer.className = 'text-green-500';
+        }
       }
+  
 
-      let response = await fetch(`${API_DOCUMENTS}/get-document-detail-owner`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ document: Number(documentId) }),
-      })
-
-      let data
-      if (response.ok) {
-        data = await response.json()
-        console.log('📌 API Owner Response:', data)
-      }
-       else {
-        // console.warn('⚠ API Owner thất bại, thử API Guest...');
-        // response = await fetch(`${API_DOCUMENTS}/get-document-detail-guest`, {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     credentials: 'include',
-        //     body: JSON.stringify({ document: Number(documentId) }),
-        // });
-
-        // if (!response.ok) {
-        //     const errorData = await response.json();
-        //     console.error(`❌ Lỗi khi tải tài liệu - HTTP Status: ${response.status}`, errorData);
-
-        //     if (errorData.message === 'Document not approved!') {
-        //         alert('Tài liệu chưa được duyệt. Vui lòng quay lại sau.');
-        //         return;
-        //     }
-        //     alert(errorData.message || 'Không thể tải tài liệu.');
-        //     return;
-        // }
-
-        // data = await response.json();
-        alert('You are not the owner of this document!')
-        window.location.href = `datailGuest.html`
-      }
-
-      const doc = data.result
-      documentTitle.textContent = doc.title || 'No title'
-      documentDate.textContent = doc.created_at || 'There is no creation date'
-      documentDescription.textContent = `Describe: ${doc.description || 'No description available'}`
-      documentCourse.textContent = `Course: ${doc.course?.title || 'No courses'}`
-      documentTitle.insertAdjacentElement('afterend', documentDescription)
-      documentDescription.insertAdjacentElement('afterend', documentCourse)
-      totalQuestions.textContent = `${doc.questions?.length || 0} question`
-
-      statusContainer.textContent = doc.approved
-        ? '✅ Approved'
-        : '❌ Not approved '
-      statusContainer.className = doc.approved
-        ? 'text-green-600'
-        : 'text-red-600'
-      documentTitle.insertAdjacentElement('afterend', statusContainer)
-
-      renderQuestions(doc.questions || [])
+      renderQuestions(doc.questions || []);
+      return data;
     } catch (error) {
-      console.error('Error loading document:', error)
-      alert('Error loading document. Please try again later!')
+      console.error('Error loading document:', error);
+      alert('Error loading document. Please try again later!');
     }
   }
+  
 
 
   function renderQuestions(questions) {
@@ -157,7 +89,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
       questionDiv.innerHTML = `
         <label class="block font-semibold text-lg text-gray-800 mb-2">Question ${index + 1}:</label>
-        <p class="font-medium">${q.contents[0]?.text || 'No content'}</p>
+        <p class="font-medium">${q.contents[0]?.text || ''}</p>
         <div id="mediaPreview${index}_0" class="mt-4 flex justify-center">
   ${q.contents[0]?.attachment ? `<img src="${q.contents[0].attachment}" class="max-w-xs h-auto rounded-lg shadow-md">` : ''}
 </div>
@@ -172,11 +104,11 @@ document.addEventListener('DOMContentLoaded', async function () {
         <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-100">
           <input type="radio" name="question${index}" class="form-radio" value="${optionLetter}"
           ${q.correct_answer === optionLetter ? 'checked' : ''} disabled />
-          <span>${option.text || 'No content'}</span>
-          ${q.correct_answer === optionLetter ? '<span class="text-green-500 font-bold">(Correct answer)</span>' : ''}
+          <span>${option.text || ''}</span>
+          ${q.correct_answer === optionLetter ? '<span class="text-green-500 font-bold">✅</span>' : ''}
         </label>
 
-        <!-- Đưa ảnh xuống dưới -->
+        
         <div id="mediaPreview${index}_${i + 1}" class="mt-4 flex justify-center">
           ${option.attachment ? `<img src="${option.attachment}" class="max-w-xs h-auto rounded-lg shadow-md">` : ''}
         </div>
@@ -242,22 +174,25 @@ document.addEventListener('DOMContentLoaded', async function () {
   deleteButton.addEventListener('click', async () => {
     if (confirm('Are you sure you want to delete this document?')) {
       try {
-        const response = await fetch(`${API_DOCUMENTS}/delete-document`, {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ document: Number(documentId) }),
-        })
-        if (!response.ok) throw new Error('Error deleting document!')
-        alert('Document deleted successfully!')
-        window.location.href = 'manage.html'
+        const response = await callApi.callApi(`${API_DOCUMENTS}/delete-document`, 
+          { document: Number(documentId) }, 
+          'DELETE'
+        );
+  
+        if (!response || response.status !== 'success') {
+          throw new Error(response?.message || 'Error deleting document!');
+        }
+  
+        alert('Document deleted successfully!');
+        window.location.href = 'manage.html';
       } catch (error) {
-        console.error('Error deleting document:', error)
+        console.error('Error deleting document:', error);
+        alert('Unable to delete the document. Please try again later!');
       }
     }
-  })
+  });
+  
   await loadDocument(documentId)
-  await getCurrentUserId()
 
   if (backButton)
     backButton.addEventListener(
