@@ -3,10 +3,10 @@ import callApi from '../model/callApi.js'
 
 // ======================== DOM Elements ========================
 const courseSelect = document.getElementById('course');
-const createCourseBtn = document.querySelector('span.cursor-pointer'); // "Create new course" button
+const createCourseBtn = document.getElementById('createcourse'); 
 const fileInput = document.getElementById('fileInput');
-const addQuestionBtn = document.querySelector('button[type="button"]'); // "Add question" button
-const createDocumentBtn = document.querySelector('button[type="submit"]'); // "Create" button
+const addQuestionBtn = document.getElementById('addquesbtn'); 
+const createDocumentBtn = document.getElementById('createbtn'); 
 const questionsContainer = document.getElementById('questionsContainer');
 
 // ======================== API URLs ========================
@@ -78,6 +78,7 @@ const createCourse = async () => {
   }
 
   try {
+    const response = await callApi.callApi(`${API_COURSE}/get-courses`, null, 'POST');
     const createResponse = await fetch(`${API_COURSE}/create-course`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
