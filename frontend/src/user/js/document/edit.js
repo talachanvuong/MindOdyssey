@@ -1,4 +1,5 @@
 import '../../../style.css'
+import callApi  from '../model/callApi.js'
 
 document.addEventListener('DOMContentLoaded', async function () {
   const API_DOCUMENTS = 'http://localhost:3000/api/document'
@@ -8,10 +9,10 @@ document.addEventListener('DOMContentLoaded', async function () {
   const descriptionInput = document.getElementById('description')
   const courseSelect = document.getElementById('course')
   const fileInput = document.getElementById('fileInput')
-  const createCourseBtn = document.querySelector('span.cursor-pointer')
+  const createCourseBtn = document.getElementById('createcourse')
   const questionsContainer = document.getElementById('questionsContainer')
   const saveButton = document.getElementById('btn_save')
-
+  const addQuestionBtn = document.getElementById('addQuestionBtn')
 
   const urlParams = new URLSearchParams(window.location.search);
   const documentId = urlParams.get("documentId");
@@ -38,32 +39,45 @@ document.addEventListener('DOMContentLoaded', async function () {
   window.closePopup = closePopup
 
   // load document _id from url
-  async function loadCourses(selectedCourseId) {
+  const loadCourses = async (selectedCourseId) => {
     try {
-      const response = await fetch(`${API_COURSE}/get-courses`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      })
-      if (!response.ok) throw new Error('API error when loading course')
-
-      const responseData = await response.json()
-      if (!responseData.result || !Array.isArray(responseData.result)) return
-
-      courseSelect.innerHTML = '<option value="">Select course</option>'
-      responseData.result.forEach((course) => {
-        const option = document.createElement('option')
-        option.value = course.course_id
-        option.textContent = course.title
+      const response = await callApi.callApi(`${API_COURSE}/get-courses`, null, 'POST');
+  
+      if (!response || response.status !== 'success') {
+        throw new Error(`API Error: ${response?.status || 'Unknown error'}`);
+      }
+  
+      const responseData = response.data; 
+  
+      if (!Array.isArray(responseData)) {
+        console.warn("Invalid course data format:", responseData);
+        return;
+      }
+  
+      const courses = responseData;
+      console.log("Courses:", courses);
+  
+      if (!courseSelect) {
+        console.error("courseSelect element not found!");
+        return;
+      }
+  
+      courseSelect.innerHTML = '<option value="">Select course</option>';
+  
+      courses.forEach((course) => {
+        const option = document.createElement('option');
+        option.value = course.course_id;
+        option.textContent = course.title;
         if (selectedCourseId && course.course_id === selectedCourseId) {
-          option.selected = true
+          option.selected = true;
         }
-        courseSelect.appendChild(option)
-      })
+        courseSelect.appendChild(option);
+      });
     } catch (error) {
-      console.error('Error loading course:', error)
+      console.error('Error loading course:', error);
     }
-  }
+  };
+  
 
   // Call loadCourses() when the page opens
   document.addEventListener('DOMContentLoaded', loadCourses)
@@ -106,7 +120,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   async function loadDocument() {
     try {
-      const response = await fetch(`${API_DOCUMENTS}/get-document-detail-owner`,
+      const response = await fetch(`${API_DOCUMENTS}/get-document-detail`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -264,7 +278,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   //Add new question with image and audio support
-  const addQuestionBtn = document.getElementById('addQuestionBtn')
+
 
   addQuestionBtn.addEventListener('click', () => {
     questions.push({
