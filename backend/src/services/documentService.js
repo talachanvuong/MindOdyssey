@@ -30,7 +30,7 @@ const createDocument = async (
   return result.rows[0].document_id
 }
 
-const getDocumentDetailOwner = async (document_id) => {
+const getDocumentDetail = async (document_id) => {
   const result = await client.query(
     `SELECT
       d.title,
@@ -83,59 +83,6 @@ const getDocumentDetailOwner = async (document_id) => {
       d.status,
       a.display_name,
       d.reject_reason,
-      d.total_questions;`,
-    [document_id]
-  )
-
-  return result.rows.map((row) => ({
-    ...row,
-    created_at: timeConvert(row.created_at),
-    last_updated: timeConvert(row.last_updated),
-  }))[0]
-}
-
-const getDocumentDetailGuest = async (document_id) => {
-  const result = await client.query(
-    `SELECT
-      d.title,
-      d.description,
-      u.display_name AS author,
-      d.created_at,
-      d.last_updated,
-      c.title AS course,
-      d.total_questions,
-      json_agg(
-        json_build_object(
-          'correct_answer', q.correct_answer,
-          'contents', (
-            SELECT json_agg(
-              json_build_object(
-                'text', con.text,
-                'attachment', con.attachment,
-                'type', con."type"
-              )
-            )
-            FROM contents AS con
-            WHERE q.question_id = con.question_id
-          )
-        )
-        ORDER BY q."order"
-      ) AS questions
-     FROM documents AS d
-     INNER JOIN users AS u
-     ON d.user_id = u.user_id
-     INNER JOIN courses AS c
-     ON d.course_id = c.course_id
-     INNER JOIN questions AS q
-     ON d.document_id = q.document_id
-     WHERE d.document_id = $1
-     GROUP BY
-      d.title,
-      d.description,
-      u.display_name,
-      d.created_at,
-      d.last_updated,
-      c.title,
       d.total_questions;`,
     [document_id]
   )
@@ -315,11 +262,23 @@ const isDocumentApprove = async (document_id) => {
   return result.rowCount > 0
 }
 
+const isDocumentReview = async (document_id) => {
+  const result = await client.query(
+    `SELECT 1
+     FROM documents
+     WHERE status <> 'Chưa duyệt'
+     AND document_id = $1
+     LIMIT 1;`,
+    [document_id]
+  )
+
+  return result.rowCount > 0
+}
+
 export default {
   isDocumentExist,
   createDocument,
-  getDocumentDetailOwner,
-  getDocumentDetailGuest,
+  getDocumentDetail,
   deleteDocument,
   isDocumentAuthor,
   editDocument,
@@ -328,4 +287,5 @@ export default {
   getDocuments,
   updateTotalQuestions,
   isDocumentApprove,
+  isDocumentReview,
 }

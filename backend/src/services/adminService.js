@@ -13,7 +13,7 @@ const getAdminByDisplayName = async (display_name) => {
   return result.rows[0]
 }
 
-const getUnapprovedDocuments = async (pagination, keyword, filter) => {
+const getPendingDocuments = async (pagination, keyword, filter) => {
   const conditions = []
   const refs = ['Chưa duyệt']
   let index = 2
@@ -77,20 +77,7 @@ const getUnapprovedDocuments = async (pagination, keyword, filter) => {
   }
 }
 
-const isDocumentReview = async (document_id) => {
-  const result = await client.query(
-    `SELECT 1
-     FROM documents
-     WHERE status <> 'Chưa duyệt'
-     AND document_id = $1
-     LIMIT 1;`,
-    [document_id]
-  )
-
-  return result.rowCount > 0
-}
-
-const getDocumentDetail = async (document_id) => {
+const getPendingDocumentDetail = async (document_id) => {
   const result = await client.query(
     `SELECT
       d.title,
@@ -167,8 +154,7 @@ const reviewDocument = async (
 
 export default {
   getAdminByDisplayName,
-  getUnapprovedDocuments,
-  isDocumentReview,
-  getDocumentDetail,
+  getPendingDocuments,
+  getPendingDocumentDetail,
   reviewDocument,
 }

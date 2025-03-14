@@ -42,16 +42,8 @@ Content-Type: application/json
     ]
 }
 
-### Get document detail owner
-POST {{host}}/get-document-detail-owner
-Content-Type: application/json
-
-{
-    "document": 0
-}
-
-### Get document detail guest
-POST {{host}}/get-document-detail-guest
+### Get document detail
+POST {{host}}/get-document-detail
 Content-Type: application/json
 
 {
