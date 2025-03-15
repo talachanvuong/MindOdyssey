@@ -11,49 +11,20 @@ const docList = document.getElementById('document-list')
 const addButton = document.getElementById('addDocument')
 const backButton = document.getElementById('btn_back')
 const pagination = document.getElementById('pagination')
-const displayElement = document.getElementById('display_name')
 const docSumElement = document.getElementById('doc_sum')
 
 // ======================== API URLs ========================
 const API_DOCUMENTS = 'http://localhost:3000/api/document'
-const API_INF_USER = 'http://localhost:3000/api/user'
 
 // ======================== Pagination Variables ========================
 let curPage = 1
-const itemsPerPage = 5
+const itemsPerPage = 9
 let allDocuments = []
 
 // ======================== Load Initial Data ========================
 document.addEventListener('DOMContentLoaded', async function () {
-  await loadInfname()
   await loadDocuments()
 })
-
-// ======================== Load User Information ========================
-async function loadInfname() {
-  try {
-    const response = await fetch(`${API_INF_USER}/showinfo`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error API: ${response.status}`);
-    }
-
-    const responseData = await response.json();
-
-    if (!responseData || !responseData.result || typeof responseData.result !== 'object') {
-      throw new Error('Invalid API response structure');
-    }
-
-    displayElement.textContent = responseData.result.display_name || 'No data available';
-  } catch (error) {
-    console.error('Error loading user information:', error);
-    displayElement.textContent = 'Failed to load user information';
-  }
-}
 
 // ======================== Load and Render Documents ========================
 async function loadDocuments() {
