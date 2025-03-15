@@ -1,7 +1,10 @@
 @host = http://localhost:{{$dotenv SERVER_PORT}}/api/practice
 
-### Get document forr practice
-GET {{host}}/getdocsforprac/?keyword=00&page=2&limit=4&course_id=1
+### Get document for practice
+GET {{host}}/getdocsforprac/?keyword=s&page=1&limit=4&course_id=1
 
-### Get document forr practice
+### Get document for practice
 GET {{host}}/getpracticehistory/?page=3&limit=7
+
+### Get document by user_id
+GET {{host}}/getdocsbyuserid/?user_id=58&page=1&limit=7
