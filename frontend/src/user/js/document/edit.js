@@ -1,5 +1,5 @@
 import '../../../style.css'
-import callApi  from '../model/callApi.js'
+import callApi from '../model/callApi.js'
 
 document.addEventListener('DOMContentLoaded', async function () {
   const API_DOCUMENTS = 'http://localhost:3000/api/document'
@@ -14,16 +14,14 @@ document.addEventListener('DOMContentLoaded', async function () {
   const saveButton = document.getElementById('btn_save')
   const addQuestionBtn = document.getElementById('addQuestionBtn')
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const documentId = urlParams.get("documentId");
-  
-  console.log("Document ID from URL:", documentId);
-  
+  const urlParams = new URLSearchParams(window.location.search)
+  const documentId = urlParams.get('documentId')
+
+  console.log('Document ID from URL:', documentId)
+
   if (!documentId || isNaN(Number(documentId))) {
-    alert("No valid document ID found!");
-  
+    showPopup('No valid document ID found!')
   }
-  
 
   // Open popup
   const showPopup = (message) => {
@@ -41,43 +39,46 @@ document.addEventListener('DOMContentLoaded', async function () {
   // load document _id from url
   const loadCourses = async (selectedCourseId) => {
     try {
-      const response = await callApi.callApi(`${API_COURSE}/get-courses`, null, 'POST');
-  
+      const response = await callApi.callApi(
+        `${API_COURSE}/get-courses`,
+        null,
+        'POST'
+      )
+
       if (!response || response.status !== 'success') {
-        throw new Error(`API Error: ${response?.status || 'Unknown error'}`);
+        throw new Error(`API Error: ${response?.status || 'Unknown error'}`)
       }
-  
-      const responseData = response.data; 
-  
+
+      const responseData = response.data
+
       if (!Array.isArray(responseData)) {
-        console.warn("Invalid course data format:", responseData);
-        return;
+        console.warn('Invalid course data format:', responseData)
+        return
       }
-  
-      const courses = responseData;
-      console.log("Courses:", courses);
-  
+
+      const courses = responseData
+      console.log('Courses:', courses)
+
       if (!courseSelect) {
-        console.error("courseSelect element not found!");
-        return;
+        console.error('courseSelect element not found!')
+        return
       }
-  
-      courseSelect.innerHTML = '<option value="">Select course</option>';
-  
+
+      courseSelect.innerHTML = '<option value="">Select course</option>'
+
       courses.forEach((course) => {
-        const option = document.createElement('option');
-        option.value = course.course_id;
-        option.textContent = course.title;
+        const option = document.createElement('option')
+        option.value = course.course_id
+        option.textContent = course.title
         if (selectedCourseId && course.course_id === selectedCourseId) {
-          option.selected = true;
+          option.selected = true
         }
-        courseSelect.appendChild(option);
-      });
+        courseSelect.appendChild(option)
+      })
     } catch (error) {
-      console.error('Error loading course:', error);
+      console.error('Error loading course:', error)
     }
-  };
-  
+  }
 
   // Call loadCourses() when the page opens
   document.addEventListener('DOMContentLoaded', loadCourses)
@@ -120,19 +121,17 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   async function loadDocument() {
     try {
-      const response = await fetch(`${API_DOCUMENTS}/get-document-detail`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ document: Number(documentId) }),
-        }
-      )
+      const response = await fetch(`${API_DOCUMENTS}/get-document-detail`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ document: Number(documentId) }),
+      })
 
       if (!response.ok) throw new Error('Error loading document!')
       const data = await response.json()
       if (!data || !data.result) {
-        alert('Document not found!')
+        showPopup('Document not found!')
         return
       }
 
@@ -154,72 +153,89 @@ document.addEventListener('DOMContentLoaded', async function () {
           const questionDiv = document.createElement('div')
           questionDiv.className = 'rounded-lg border p-4 my-3 shadow bg-white'
 
-          questionDiv.innerHTML = `
-  <label class="block font-semibold text-lg text-gray-800 mb-2">
-    Question ${index + 1}:
-  </label>
-  <textarea class="w-full border p-2 rounded m-3 overflow-hidden"
-            placeholder="Enter question..."
-            rows="1"
-            oninput="updateQuestion(${index}, this.value, 0); autoResize(this)">${q.contents[0]?.text || ''}</textarea>
-  <input type="file" accept="image/*,audio/*" class="m-2" onchange="handleMediaUpload(event, ${index}, 0)" />
+          questionDiv.className =
+            'rounded-lg border p-4 my-3 shadow bg-white flex flex-col'
 
-  <div id="mediaPreview${index}_0" class="mt-4 flex justify-center">
-    ${
-      q.contents[0]?.attachment
-        ? q.contents[0].attachment.match(/\.(mp3|wav|ogg)$/)
-          ? `<audio controls class="mt-2"><source src="${q.contents[0].attachment}" type="audio/mpeg">Your browser does not support the audio tag.</audio>`
-          : `<img src="${q.contents[0].attachment}" class="max-w-xs h-auto rounded-lg shadow-md object-contain">`
-        : ''
-    }
-  </div>
+          // Wrapper để giữ nội dung câu hỏi và nút xoá tách biệt
+          const questionContent = document.createElement('div')
+          questionContent.className = 'flex justify-between items-start'
 
-  <div class="space-y-2">
-    ${q.contents
-      .slice(1)
-      .map((option, i) => {
-        const optionLetter = ['A', 'B', 'C', 'D'][i]
-        return `
-        <div class="border rounded-lg p-2 space-y-2">
-          <label class="flex items-center space-x-2  space-y-3 cursor-pointer hover:bg-gray-100">
-            <input type="radio" name="question${index}" value="${optionLetter}"
-                   ${correctAnswer === optionLetter ? 'checked' : ''}
-                   onchange="setCorrectAnswer(${index}, '${optionLetter}')" />
-            <textarea class="border p-1 w-full rounded resize-none overflow-hidden"
-                      placeholder="Enter the answer..."
+          // Nội dung câu hỏi
+          const questionInnerDiv = document.createElement('div')
+          questionInnerDiv.className = 'w-full'
+
+          questionInnerDiv.innerHTML = `
+            <label class="block font-semibold text-lg text-gray-800 mb-2">
+              Question ${index + 1}:
+            </label>
+            <textarea class="w-full border p-2 rounded m-3 overflow-hidden"
+                      placeholder="Enter question..."
                       rows="1"
-                      oninput="updateAnswer(${index}, ${i + 1}, this); autoResize(this)">${option.text || ''}</textarea>
-          </label>
+                      oninput="updateQuestion(${index}, this.value, 0); autoResize(this)">${q.contents[0]?.text || ''}</textarea>
+            <input type="file" accept="image/*,audio/*" class="m-2" onchange="handleMediaUpload(event, ${index}, 0)" />
+          
+            <div id="mediaPreview${index}_0" class="mt-4 flex justify-center">
+              ${
+                q.contents[0]?.attachment
+                  ? q.contents[0].attachment.match(/\.(mp3|wav|ogg)$/)
+                    ? `<audio controls class="mt-2"><source src="${q.contents[0].attachment}" type="audio/mpeg">Your browser does not support the audio tag.</audio>`
+                    : `<img src="${q.contents[0].attachment}" class="max-w-xs h-auto rounded-lg shadow-md object-contain">`
+                  : ''
+              }
+            </div>
+          
+            <div class="space-y-2">
+              ${q.contents
+                .slice(1)
+                .map((option, i) => {
+                  const optionLetter = ['A', 'B', 'C', 'D'][i]
+                  return `
+                  <div class="border rounded-lg p-2 space-y-2">
+                    <label class="flex items-center space-x-2 space-y-3 cursor-pointer hover:bg-gray-100">
+                      <input type="radio" name="question${index}" value="${optionLetter}"
+                             ${correctAnswer === optionLetter ? 'checked' : ''}
+                             onchange="setCorrectAnswer(${index}, '${optionLetter}')" />
+                      <textarea class="border p-1 w-full rounded resize-none overflow-hidden"
+                                placeholder="Enter the answer..."
+                                rows="1"
+                                oninput="updateAnswer(${index}, ${i + 1}, this); autoResize(this)">${option.text || ''}</textarea>
+                    </label>
+          
+                    <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, ${index}, ${i + 1})" />
+          
+                    <div id="mediaPreview${index}_${i + 1}" class="mt-4 flex justify-center">
+                      ${
+                        option.attachment
+                          ? option.attachment.match(/\.(mp3|wav|ogg)$/)
+                            ? `<audio controls class="mt-2"><source src="${option.attachment}" type="audio/mpeg">Your browser does not support the audio tag.</audio>`
+                            : `<img src="${option.attachment}" class="max-w-xs h-auto rounded-lg shadow-md object-contain">`
+                          : ''
+                      }
+                    </div>
+                  </div>
+                `
+                })
+                .join('')}
+            </div>
+          `
 
-          <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, ${index}, ${i + 1})" />
-
-          <div id="mediaPreview${index}_${i + 1}" class="mt-4 flex justify-center">
-            ${
-              option.attachment
-                ? option.attachment.match(/\.(mp3|wav|ogg)$/)
-                  ? `<audio controls class="mt-2"><source src="${option.attachment}" type="audio/mpeg">Your browser does not support the audio tag.</audio>`
-                  : `<img src="${option.attachment}" class="max-w-xs h-auto rounded-lg shadow-md object-contain">`
-                : ''
-            }
-          </div>
-        </div>
-      `
-      })
-      .join('')}
-  </div>
-`
-
+          // delete question if more than 1 question
           if (questions.length > 1) {
-            // Add delete button to `questionDiv`
-            questionDiv.className =
-              'relative rounded-lg border p-4 my-3 shadow bg-white'
             const deleteButton = document.createElement('button')
             deleteButton.textContent = 'x'
             deleteButton.className =
-              'absolute top-2 right-2 text-red-500 hover:text-red-700'
+              'text-red-500 hover:text-red-700 ml-3 self-start'
             deleteButton.onclick = () => deleteQuestion(index)
-            questionDiv.appendChild(deleteButton)
+
+            questionContent.appendChild(questionInnerDiv)
+            questionContent.appendChild(deleteButton)
+
+            questionDiv.appendChild(questionContent)
+            renderQuestions()
+          } else {
+            questionDiv.appendChild(questionInnerDiv)
           }
+
           questionsContainer.appendChild(questionDiv)
 
           return {
@@ -231,10 +247,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         })
         .filter(Boolean) // Remove null questions
 
-        renderQuestions();
+      renderQuestions()
     } catch (error) {
       console.error('Error loading document:', error)
-      alert(error.message)
+      showPopup(error.message)
     }
     document.querySelectorAll('textarea').forEach(autoResize)
   }
@@ -278,7 +294,6 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   //Add new question with image and audio support
-
 
   addQuestionBtn.addEventListener('click', () => {
     questions.push({
@@ -343,83 +358,117 @@ document.addEventListener('DOMContentLoaded', async function () {
       })
   }
 
-  window.deleteQuestion = async (index) => {
-    if (!questions[index]) {
-      console.error(`Question not found in index ${index}`)
+  window.deleteQuestion = async (id) => {
+    const index = questions.findIndex(q => q.id === id) 
+    if (index === -1) {
+      console.error(`Question ID ${id} not found`)
       return
     }
-
-    const confirmDelete = confirm(
-      `Are you sure you want to delete question ${index + 1}?`
-    )
-    if (!confirmDelete) return
-
-    console.log(` Mark question ${index + 1} for deletion`)
-
-    questions[index].action = 'delete'
-
-    renderQuestions()
+  
+    const confirmDelete = confirm(`Are you sure you want to delete question ${index + 1}?`)
+    if (!confirmDelete) {
+      console.log(`Cancel delete question ${index + 1}`)
+      return
+    }
+  
+    console.log(`Mark question ${index + 1} for deletion`)
+  
+    if (questions[index].action !== "delete") {
+      questions[index].action = "delete"
+    }
+  
+    renderQuestions() // Cập nhật giao diện
   }
 
   const renderQuestions = () => {
     console.log('Update interface with question list:', questions)
-    
+  
     saveUserInput()
+  
+    questionsContainer.innerHTML = ""
+  
+    questions.forEach((q, newIndex) => {
+      const questionDiv = document.createElement("div")
+      questionDiv.className = `rounded-lg border p-4 my-3 shadow bg-white flex flex-col transition-opacity ${
+        q.action === 'delete' ? 'opacity-50 line-through' : ''
+      }`
+  
+      const questionContent = document.createElement("div")
+      questionContent.className = "flex justify-between items-start"
+  
+      const questionInnerDiv = document.createElement("div")
+      questionInnerDiv.className = "w-full"
+  
+      questionInnerDiv.innerHTML = `
+        <label class="block font-semibold text-lg text-gray-800 mb-2">Question ${newIndex + 1}:</label>
+        <textarea class="w-full border p-2 rounded mb-3 overflow-hidden"
+                  placeholder="Enter question..."
+                  rows="1"
+                  ${q.action === 'delete' ? 'disabled' : ''}
+                  oninput="updateQuestion(${q.id}, this.value, 0); autoResize(this)">${q.contents[0].text}</textarea>
+  
+        <input type="file" accept="image/*,audio/*" class="mb-2 mt-2" 
+               ${q.action === 'delete' ? 'disabled' : ''}
+               onchange="handleMediaUpload(event, ${q.id}, 0)" />
+        
+        <div id="mediaPreview${q.id}_0" class="mt-2">
+          ${q.contents[0].attachment ? `<img src="${q.contents[0].attachment}" class="max-w-full h-auto">` : ""}
+        </div>
+  
+        <div class="space-y-2">
+          ${q.contents
+            .slice(1)
+            .map((option, i) => `
+              <label class="space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100 flex flex-col">
+                <div class="flex items-center space-x-2">
+                  <input type="radio" name="question${q.id}" class="mb-2" value="${["A", "B", "C", "D"][i]}"
+                    ${q.correct === ["A", "B", "C", "D"][i] ? "checked" : ""}
+                    ${q.action === 'delete' ? 'disabled' : ''}
+                    onchange="setCorrectAnswer(${q.id}, '${["A", "B", "C", "D"][i]}')" />
+                  <textarea class="border p-1 w-11/12 rounded resize-none overflow-hidden"
+                            placeholder="Enter the answer..."
+                            rows="1"
+                            ${q.action === 'delete' ? 'disabled' : ''}
+                            oninput="updateAnswer(${q.id}, ${i + 1}, this); autoResize(this)">${option.text}</textarea>
+                </div>
+  
+                <input type="file" accept="image/*,audio/*" class="ml-2 mt-2" 
+                       ${q.action === 'delete' ? 'disabled' : ''}
+                       onchange="handleMediaUpload(event, ${q.id}, ${i + 1})" />
+                
+                <div id="mediaPreview${q.id}_${i + 1}" class="mt-2">
+                  ${option.attachment ? `<img src="${option.attachment}" class="max-w-full h-auto">` : ""}
+                </div>
+              </label>
+            `).join("")}
+        </div>
+      `
+  
+    // Delete button
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = q.action === "delete" ? "Undo" : "X";
+    deleteButton.className = "text-red-500 hover:text-red-700 ml-3 self-start";
+    deleteButton.onclick = () => { 
+      if (q.action === "delete") {
+        q.action = ""; // Undo
+      } else if (q.action === "add") {
+        const indexToRemove = questions.findIndex((item) => item.id === q.id);
+        if (indexToRemove !== -1) {
+          questions.splice(indexToRemove, 1); // delete if new questionquestion
+        }
+      } else {
+        q.action = "delete"; //Mark as deleted
+      }
 
-    questionsContainer.innerHTML = ''
-
-    questions.forEach((q, index) => {
-      if (q.action === 'delete') return //  Hide deleted questions from the interface
-
-      const questionDiv = document.createElement('div')
-      questionDiv.className = 'rounded-lg border p-4 my-3 shadow bg-white'
-
-      questionDiv.innerHTML = `
-      <label class="block font-semibold text-lg text-gray-800 mb-2">Question ${index + 1}:</label>
-      <textarea class="w-full border p-2 rounded mb-3 overflow-hidden"
-                placeholder="Enter question..."
-                rows="1"
-                oninput="updateQuestion(${index}, this.value, 0); autoResize(this)">${q.contents[0].text}</textarea>
-      <input type="file" accept="image/*,audio/*" class="mb-2" onchange="handleMediaUpload(event, ${index}, 0)" /><br>
-      <div id="mediaPreview${index}_0" class="mt-2">
-        ${q.contents[0].attachment ? `<img src="${q.contents[0].attachment}" class="max-w-full h-auto">` : ''}
-      </div>
-      <div class="space-y-2">
-        ${q.contents
-          .slice(1)
-          .map(
-            (option, i) => `
-          <label class="block space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
-            <input type="radio" name="question${index}" class="mb-2" value="${['A', 'B', 'C', 'D'][i]}"
-              ${q.correct === ['A', 'B', 'C', 'D'][i] ? 'checked' : ''}
-              onchange="setCorrectAnswer(${index}, '${['A', 'B', 'C', 'D'][i]}')">
-            <textarea class="border p-1 w-11/12 rounded resize-none overflow-hidden"
-                      placeholder="Enter the answer..."
-                      rows="1"
-                      oninput="updateAnswer(${index}, ${i + 1}, this); autoResize(this)">${option.text}</textarea>
-            <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, ${index}, ${i + 1})" />
-            <div id="mediaPreview${index}_${i + 1}" class="mt-2">
-              ${option.attachment ? `<img src="${option.attachment}" class="max-w-full h-auto">` : ''}
-            </div>
-          </label>
-        `
-          )
-          .join('')}
-      </div>
-    `
-if(questions.length > 1) {
-      questionDiv.className =
-        'relative rounded-lg border p-4 my-3 shadow bg-white'
-      const deleteButton = document.createElement('button')
-      deleteButton.textContent = 'x'
-      deleteButton.className =
-        'absolute top-2 right-2 text-red-500 hover:text-red-700'
-      deleteButton.onclick = () => deleteQuestion(index)
-      questionDiv.appendChild(deleteButton)
-}
+      renderQuestions(); 
+    };
+  
+      questionContent.appendChild(questionInnerDiv)
+      questionContent.appendChild(deleteButton)
+      questionDiv.appendChild(questionContent)
       questionsContainer.appendChild(questionDiv)
     })
-
+  
     document.querySelectorAll('textarea').forEach(autoResize)
   }
 
@@ -492,8 +541,11 @@ if(questions.length > 1) {
         return
       }
 
-      questions[index].contents[position].attachment = base64String;
-      console.log(`Ảnh cập nhật vào questions[${index}][${position}]:`, base64String);
+      questions[index].contents[position].attachment = base64String
+      console.log(
+        `Ảnh cập nhật vào questions[${index}][${position}]:`,
+        base64String
+      )
 
       document.getElementById(`mediaPreview${index}_${position}`).innerHTML =
         file.type.startsWith('audio')
@@ -508,29 +560,44 @@ if(questions.length > 1) {
 
   async function urlToBase64(url) {
     try {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(blob);
-            reader.onloadend = () => resolve(reader.result);  
-            reader.onerror = (error) => reject(error);
-        });
+      const response = await fetch(url)
+      const blob = await response.blob()
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(blob)
+        reader.onloadend = () => resolve(reader.result)
+        reader.onerror = (error) => reject(error)
+      })
     } catch (error) {
-        console.error(`Error convert from URL to Base64: ${error}`);
-        return undefined;
+      console.error(`Error convert from URL to Base64: ${error}`)
+      return undefined
     }
-}
-
+  }
 
   saveButton.addEventListener('click', async function (event) {
-    console.log("Save button clicked!"); 
-    
     event.preventDefault()
-    saveButton.innerText = 'Loading...';
-    saveButton.disabled = true;
+    saveButton.innerText = 'Loading...'
+    saveButton.disabled = true
+
+    // Check each question
+    for (let i = 0; i < questions.length; i++) {
+      for (let j = 0; j < questions[i].contents.length; j++) {
+        const { text, attachment } = questions[i].contents[j]
+
+        // If both text and image are empty, return an error
+        if (
+          String(text || '').trim() === '' &&
+          (!attachment || String(attachment).trim() === '')
+        ) {
+          showPopup(`Question ${i + 1} no content or attachment!`)
+
+          return
+        }
+      }
+    }
+
     const updatedData = {
-      document: Number(documentId) ,
+      document: Number(documentId),
       title: docNameInput.value.trim(),
       description: descriptionInput.value.trim(),
       course: Number(courseSelect.value) || 0,
@@ -538,45 +605,46 @@ if(questions.length > 1) {
         questions.map(async (q, index) => {
           let questionData = {
             id: q.id || undefined,
-            action: q.action === "delete" ? "delete" : q.id ? "edit" : "add",
-          };
-    
-          if (q.action !== "delete") {
-            questionData.order = index + 1;
-            questionData.correct = ["A", "B", "C", "D"].includes(q.correct)
+            action: q.action === 'delete' ? 'delete' : q.id ? 'edit' : 'add',
+          }
+
+          if (q.action !== 'delete') {
+            questionData.order = index + 1
+            questionData.correct = ['A', 'B', 'C', 'D'].includes(q.correct)
               ? q.correct
-              : undefined;
-    
+              : undefined
+
             questionData.contents = await Promise.all(
               (q.contents || []).map(async (c) => {
-                let attachmentBase64 = c.attachment;
-    
+                let attachmentBase64 = c.attachment
+
                 if (c.attachment) {
-                  if (c.attachment.startsWith("http")) {
+                  if (c.attachment.startsWith('http')) {
                     // If link Cloudinary convert to Base64
-                    attachmentBase64 = await urlToBase64(c.attachment);
-                  
-                  } 
+                    attachmentBase64 = await urlToBase64(c.attachment)
+                  }
                 }
-    
+
                 return {
                   id: c.id || undefined,
                   text: c.text?.trim() || undefined,
-                  attachment: attachmentBase64 && attachmentBase64.trim() !== "" ? attachmentBase64 : undefined,
-                  type: q.action === "add" ? c.type || "Q" : undefined,
-                };
+                  attachment:
+                    attachmentBase64 && attachmentBase64.trim() !== ''
+                      ? attachmentBase64
+                      : undefined,
+                  type: q.action === 'add' ? c.type || 'Q' : undefined,
+                }
               })
-            );
+            )
           }
-    
-          return questionData;
+
+          return questionData
         })
       ),
-    };
-    
+    }
 
     console.log(' API sent data:', JSON.stringify(updatedData, null, 2))
-    console.log("Document ID:", documentId);
+    console.log('Document ID:', documentId)
 
     try {
       const responsess = await fetch(`${API_DOCUMENTS}/edit-document`, {
@@ -589,16 +657,16 @@ if(questions.length > 1) {
       if (!responsess.ok) {
         throw new Error('Error while updating document!')
       }
-      alert('Update successful!')
-      window.location.href = `detail.html?documentId=${documentId}`; 
+      showPopup('Update successful!')
+      setTimeout(() => window.location.href = `detail.html?documentId=${documentId}`, 1000);
+     
       // await loadDocument()
     } catch (error) {
       console.error('Update error:', error)
-      alert('An error occurred while saving data!')
+      showPopup('An error occurred while saving data!')
     }
-  });
-  (async () => {
+  })
+  ;(async () => {
     await loadDocument()
   })()
-
 })
