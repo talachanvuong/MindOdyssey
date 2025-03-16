@@ -381,96 +381,100 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   const renderQuestions = () => {
-    console.log('Update interface with question list:', questions)
+    console.log("Update interface with question list:", questions);
+    saveUserInput();
+    questionsContainer.innerHTML = "";
   
-    saveUserInput()
+    questions.forEach((q, index) => {
+      const newIndex = index; // Giữ thứ tự hiển thị
   
-    questionsContainer.innerHTML = ""
-  
-    questions.forEach((q, newIndex) => {
-      const questionDiv = document.createElement("div")
+      const questionDiv = document.createElement("div");
       questionDiv.className = `rounded-lg border p-4 my-3 shadow bg-white flex flex-col transition-opacity ${
-        q.action === 'delete' ? 'opacity-50 line-through' : ''
-      }`
+        q.action === "delete" ? "opacity-50 line-through" : ""
+      }`;
   
-      const questionContent = document.createElement("div")
-      questionContent.className = "flex justify-between items-start"
+      const questionContent = document.createElement("div");
+      questionContent.className = "flex justify-between items-start";
   
-      const questionInnerDiv = document.createElement("div")
-      questionInnerDiv.className = "w-full"
+      const questionInnerDiv = document.createElement("div");
+      questionInnerDiv.className = "w-full";
   
       questionInnerDiv.innerHTML = `
         <label class="block font-semibold text-lg text-gray-800 mb-2">Question ${newIndex + 1}:</label>
         <textarea class="w-full border p-2 rounded mb-3 overflow-hidden"
                   placeholder="Enter question..."
                   rows="1"
-                  ${q.action === 'delete' ? 'disabled' : ''}
-                  oninput="updateQuestion(${q.id}, this.value, 0); autoResize(this)">${q.contents[0].text}</textarea>
+                  ${q.action === "delete" ? "disabled" : ""}
+                  oninput="updateQuestion(${q.id ?? index}, this.value, 0); autoResize(this)">${q.contents?.[0]?.text || ""}</textarea>
   
         <input type="file" accept="image/*,audio/*" class="mb-2 mt-2" 
-               ${q.action === 'delete' ? 'disabled' : ''}
-               onchange="handleMediaUpload(event, ${q.id}, 0)" />
+                ${q.action === "delete" ? "disabled" : ""}
+onchange="handleMediaUpload(event, '${q.id !== undefined ? q.id : index}', 0)"
+
+ />
         
-        <div id="mediaPreview${q.id}_0" class="mt-2">
-          ${q.contents[0].attachment ? `<img src="${q.contents[0].attachment}" class="max-w-full h-auto">` : ""}
+        <div id="mediaPreview${q.id ?? index}_0" class="mt-2">
+          ${q.contents?.[0]?.attachment ? `<img src="${q.contents[0].attachment}" class="max-w-full h-auto">` : ""}
         </div>
   
         <div class="space-y-2">
-          ${q.contents
-            .slice(1)
-            .map((option, i) => `
-              <label class="space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100 flex flex-col">
-                <div class="flex items-center space-x-2">
-                  <input type="radio" name="question${q.id}" class="mb-2" value="${["A", "B", "C", "D"][i]}"
-                    ${q.correct === ["A", "B", "C", "D"][i] ? "checked" : ""}
-                    ${q.action === 'delete' ? 'disabled' : ''}
-                    onchange="setCorrectAnswer(${q.id}, '${["A", "B", "C", "D"][i]}')" />
-                  <textarea class="border p-1 w-11/12 rounded resize-none overflow-hidden"
-                            placeholder="Enter the answer..."
-                            rows="1"
-                            ${q.action === 'delete' ? 'disabled' : ''}
-                            oninput="updateAnswer(${q.id}, ${i + 1}, this); autoResize(this)">${option.text}</textarea>
-                </div>
+          ${Array.isArray(q.contents) ? q.contents.slice(1).map((option, i) => `
+            <label class="space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100 flex flex-col">
+              <div class="flex items-center space-x-2">
+                <input type="radio" name="question${q.id ?? index}" class="mb-2"
+                  value="${["A", "B", "C", "D"][i]}"
+                  ${q.correct === ["A", "B", "C", "D"][i] ? "checked" : ""}
+                  ${q.action === "delete" ? "disabled" : ""}
+                  onchange="setCorrectAnswer(${q.id ?? index}, '${["A", "B", "C", "D"][i]}')" />
+                <textarea class="border p-1 w-11/12 rounded resize-none overflow-hidden"
+                          placeholder="Enter the answer..."
+                          rows="1"
+                          ${q.action === "delete" ? "disabled" : ""}
+                          oninput="updateAnswer(${q.id ?? index}, ${i + 1}, this); autoResize(this)">${option.text || ""}</textarea>
+              </div>
   
-                <input type="file" accept="image/*,audio/*" class="ml-2 mt-2" 
-                       ${q.action === 'delete' ? 'disabled' : ''}
-                       onchange="handleMediaUpload(event, ${q.id}, ${i + 1})" />
-                
-                <div id="mediaPreview${q.id}_${i + 1}" class="mt-2">
-                  ${option.attachment ? `<img src="${option.attachment}" class="max-w-full h-auto">` : ""}
-                </div>
-              </label>
-            `).join("")}
+              <input type="file" accept="image/*,audio/*" class="ml-2 mt-2" 
+                      ${q.action === "delete" ? "disabled" : ""}
+onchange="handleMediaUpload(event, '${q.id !== undefined ? q.id : index}', ${i + 1})"
+ />
+              
+              <div id="mediaPreview${q.id ?? index}_${i + 1}" class="mt-2">
+                ${option.attachment ? `<img src="${option.attachment}" class="max-w-full h-auto">` : ""}
+              </div>
+            </label>
+          `).join("") : ""}
         </div>
-      `
+      `;
   
-    // Delete button
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = q.action === "delete" ? "Undo" : "X";
-    deleteButton.className = "text-red-500 hover:text-red-700 ml-3 self-start";
-    deleteButton.onclick = () => { 
-      if (q.action === "delete") {
-        q.action = ""; // Undo
-      } else if (q.action === "add") {
-        const indexToRemove = questions.findIndex((item) => item.id === q.id);
-        if (indexToRemove !== -1) {
-          questions.splice(indexToRemove, 1); // delete if new questionquestion
+      // Delete button
+      const deleteButton = document.createElement("button");
+      deleteButton.textContent = q.action === "delete" ? "Undo" : "X";
+      deleteButton.className = "text-red-500 hover:text-red-700 ml-3 self-start";
+      deleteButton.onclick = () => { 
+        if (q.action === "delete") {
+          q.action = ""; // Undo
+        } else if (q.action === "add") {
+          const indexToRemove = questions.findIndex((item) => item === q);
+          if (indexToRemove !== -1) {
+            questions.splice(indexToRemove, 1);
+          }
+        } else {
+          q.action = "delete"; // Mark as deleted
         }
-      } else {
-        q.action = "delete"; //Mark as deleted
-      }
-
-      renderQuestions(); 
-    };
   
-      questionContent.appendChild(questionInnerDiv)
-      questionContent.appendChild(deleteButton)
-      questionDiv.appendChild(questionContent)
-      questionsContainer.appendChild(questionDiv)
-    })
+        renderQuestions(); 
+      };
   
-    document.querySelectorAll('textarea').forEach(autoResize)
-  }
+      questionContent.appendChild(questionInnerDiv);
+      questionContent.appendChild(deleteButton);
+      questionDiv.appendChild(questionContent);
+      questionsContainer.appendChild(questionDiv);
+    });
+  
+    document.querySelectorAll("textarea").forEach(autoResize);
+  };
+  
+  
 
   let questions = []
   window.handleFileUpload = (event) => {
@@ -528,35 +532,64 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
   }
 
-  window.handleMediaUpload = async (event, index, position) => {
-    const file = event.target.files[0]
-    if (!file) return
+  window.handleMediaUpload = async (event, idOrIndex, position) => {
+    console.log(`📌 Debug: Nhận idOrIndex = ${idOrIndex}, position = ${position}, questions.length = ${questions.length}`);
+    
+    const file = event.target.files[0];
+    if (!file) return;
 
-    const reader = new FileReader()
-    reader.readAsDataURL(file)
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
     reader.onload = async () => {
-      const base64String = reader.result
-      if (!questions[index]) {
-        console.error(`Error: Question not found in index ${index}`)
-        return
-      }
+        const base64String = reader.result;
 
-      questions[index].contents[position].attachment = base64String
-      console.log(
-        `Ảnh cập nhật vào questions[${index}][${position}]:`,
-        base64String
-      )
+        // 🔹 Kiểm tra nếu `idOrIndex` là `temp-0`, `temp-1`, v.v.
+        let index = questions.findIndex(q => String(q.id) === String(idOrIndex));
 
-      document.getElementById(`mediaPreview${index}_${position}`).innerHTML =
-        file.type.startsWith('audio')
-          ? `<audio controls src="${base64String}"></audio>`
-          : `<img src="${base64String}" class="max-w-full h-auto">`
-    }
+        // Nếu ID không tìm thấy, kiểm tra nếu `idOrIndex` có phải index không
+        if (index === -1 && typeof idOrIndex === "number" && idOrIndex < questions.length) {
+            index = idOrIndex; // Dùng index nếu ID không tồn tại
+        }
+
+        console.log(`🛠️ Debug: Tìm thấy index = ${index} trong questions`);
+
+        if (index === -1 || !questions[index]) {
+            console.error(`❌ Lỗi: Không tìm thấy câu hỏi (ID/Index: ${idOrIndex}), questions.length = ${questions.length}`);
+            console.table(questions); // In toàn bộ danh sách câu hỏi để debug
+            return;
+        }
+
+        // 🔹 Kiểm tra vị trí câu trả lời
+        if (!questions[index].contents[position]) {
+            console.error(`❌ Lỗi: Vị trí ${position} không hợp lệ cho câu hỏi ${idOrIndex}`);
+            return;
+        }
+
+        // 🔹 Cập nhật ảnh vào dữ liệu câu hỏi
+        questions[index].contents[position].attachment = base64String;
+        console.log(`✅ Ảnh cập nhật vào questions[${index}][${position}]`, base64String);
+
+        // 🔹 Cập nhật trực tiếp UI nếu phần tử hiển thị đã tồn tại
+        const mediaPreview = document.getElementById(`mediaPreview${idOrIndex}_${position}`);
+        if (mediaPreview) {
+            mediaPreview.innerHTML = file.type.startsWith("audio")
+                ? `<audio controls src="${base64String}"></audio>`
+                : `<img src="${base64String}" class="max-w-full h-auto">`;
+        } else {
+            console.warn(`⚠️ mediaPreview${idOrIndex}_${position} không tồn tại. Gọi renderQuestions() để cập nhật UI.`);
+            renderQuestions(); // Cập nhật toàn bộ UI nếu không tìm thấy phần tử
+        }
+    };
+
     reader.onerror = (error) => {
-      console.error('Error converting file to base64:', error)
-    }
-  }
-  fileInput.addEventListener('change', handleFileUpload)
+        console.error("❌ Lỗi khi chuyển file sang base64:", error);
+    };
+};
+
+
+
+
+fileInput.addEventListener('change', handleFileUpload);
 
   async function urlToBase64(url) {
     try {
@@ -590,8 +623,10 @@ document.addEventListener('DOMContentLoaded', async function () {
           (!attachment || String(attachment).trim() === '')
         ) {
           showPopup(`Question ${i + 1} no content or attachment!`)
-
-          return
+          saveButton.innerText = 'Save';
+          saveButton.disabled = false;
+          return;
+         
         }
       }
     }
