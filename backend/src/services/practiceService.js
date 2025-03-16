@@ -8,7 +8,8 @@ const selectDocumentforPractice = async (keyword, page, limit, course_id) => {
         d.description,
         d.total_questions,
         c.title AS course_title,
-        u.display_name AS creater
+        u.display_name AS creater,
+        u.user_id 
     FROM documents d
     JOIN courses c ON d.course_id = c.course_id
     JOIN users u ON d.user_id = u.user_id
@@ -53,7 +54,6 @@ const countDocumentsByKeyword = async (keyword, limit, course_id) => {
   return { totalPages, totalDocs }
 }
 
-
 const selectAllQuestions = async (doc_id) => {
   const query = `
   SELECT 
@@ -84,13 +84,25 @@ const selectAllQuestions = async (doc_id) => {
   return result.rows
 }
 
-const insertPracticeHistory = async (user_id, score, detail,start_time,end_time) => {
+const insertPracticeHistory = async (
+  user_id,
+  score,
+  detail,
+  start_time,
+  end_time
+) => {
   const query = `
     INSERT INTO practice_histories (user_id, score, detail,start_time,end_time)
     VALUES ($1, $2, $3::jsonb,$4,$5)
     RETURNING practice_history_id
   `
-  const result = await client.query(query, [user_id, score, JSON.stringify(detail),start_time,end_time])
+  const result = await client.query(query, [
+    user_id,
+    score,
+    JSON.stringify(detail),
+    start_time,
+    end_time,
+  ])
   return result.rows[0].practice_history_id
 }
 
@@ -100,13 +112,14 @@ const selectPracticeHistory = async (user_id, limit, page) => {
     SELECT 
       score,
       detail,
-      created_at
+      start_time,
+      end_time
     FROM 
       practice_histories
     WHERE 
       user_id = $1
     ORDER BY 
-      created_at DESC
+      start_time DESC
     LIMIT $2 OFFSET $3
   `
   const result = await client.query(query, [user_id, limit, offset])
@@ -124,9 +137,8 @@ const countPracticeHistory = async (user_id, limit) => {
   return { totalPages, totalPracticeHistory }
 }
 
-
-const selectPracticeHistorybyID = async(practice_history_id)=>{
-  const query=`
+const selectPracticeHistorybyID = async (practice_history_id) => {
+  const query = `
     SELECT 
       score,
       detail,
@@ -137,10 +149,57 @@ const selectPracticeHistorybyID = async(practice_history_id)=>{
     WHERE 
       practice_history_id= $1
   `
-  const result = await client.query(query,[practice_history_id])
+  const result = await client.query(query, [practice_history_id])
   return result.rows
 }
 
+const selectDocumentbyUserId = async (user_id, limit,page) => {
+  const offset = (page - 1) * limit
+
+  const query = `
+    SELECT 
+      d.document_id,
+      d.title AS document_title,
+      d.description,
+      d.total_questions,
+      c.title AS course_title,
+      u.display_name AS creater,
+      u.user_id 
+    FROM 
+      documents d
+    JOIN courses c ON d.course_id = c.course_id
+    JOIN users u ON d.user_id = u.user_id
+    WHERE 
+      d.status = 'Đã duyệt' AND d.user_id = $1
+    ORDER BY 
+      d.created_at DESC
+    LIMIT $2 OFFSET $3
+  `
+
+  const result = await client.query(query, [user_id, limit, offset])
+  return result.rows
+}
+
+const countDocumentsByUserId = async (user_id,limit) => {
+  const countQuery = `
+    SELECT COUNT(*) AS total FROM documents 
+    WHERE status = 'Đã duyệt' AND user_id = $1
+  `
+  const countResult = await client.query(countQuery, [user_id])
+  const totalDocs = parseInt(countResult.rows[0].total)
+  const totalPages = Math.ceil(totalDocs / limit)
+  return { totalPages, totalDocs }
+}
+const isUserIDExist = async (user_id) => {
+  const query = `
+        SELECT 1
+        FROM users
+        WHERE user_id = $1
+        LIMIT 1;
+    `
+  const result = await client.query(query, [user_id])
+  return result.rowCount > 0
+}
 export default {
   selectDocumentforPractice,
   countDocumentsByKeyword,
@@ -148,5 +207,8 @@ export default {
   insertPracticeHistory,
   selectPracticeHistory,
   countPracticeHistory,
-  selectPracticeHistorybyID
+  selectPracticeHistorybyID,
+  selectDocumentbyUserId,
+  countDocumentsByUserId,
+  isUserIDExist
 }
