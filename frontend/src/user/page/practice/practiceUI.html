@@ -8,7 +8,7 @@
   <body class="bg-stone-200">
     <header class="flex h-12 flex-row justify-between bg-cyan-300 pr-5">
       <div class="ml-2 mt-1 flex cursor-pointer flex-row gap-2">
-        <a href="../document/library/doc_lib.html">
+        <a id="back" href="">
           <img class="h-10" src="../img/back.png" />
         </a>
         <a href="../account/lobby.html">
@@ -28,124 +28,67 @@
       </div>
     </header>
 
-    <main class="m-3 h-fit rounded-xl bg-white p-3 shadow-md shadow-gray-400 sm:w-4/6 sm:mx-auto">
+    <main
+      class="m-3 h-fit rounded-xl bg-white p-3 shadow-md shadow-gray-400 sm:mx-auto sm:w-4/6"
+    >
       <!-- information -->
       <div
         class="flex flex-row justify-between rounded-md bg-cyan-400 p-2 shadow-md shadow-gray-500"
       >
-        <div id="timer" class="ml-4 flex flex-row items-center gap-2">
+        <div class="ml-4 flex flex-row items-center gap-2">
           <img src="../img/timer.png" class="h-10" />
-          <p class="text-2xl">30m</p>
+          <p id="timer" class="text-2xl">00:00:00</p>
         </div>
-        <div id="quantity" class="gap--2 mr-10 flex flex-row items-center">
-          <img src="../img/quantity.png" class="h-10" />
-          <p class="text-2xl">2/30</p>
+        <div class="gap--2 mr-10 flex flex-row items-center">
+          <p class="text-2xl font-bold underline">Question:</p>
+          <p id="quantity" class="text-2xl"></p>
         </div>
       </div>
 
       <!-- content -->
       <div class="mt-3 rounded-xl bg-cyan-400 p-3 shadow-md shadow-gray-400">
-        <ul class="mb-10 flex flex-col gap-2">
-          <!-- The question -->
-          <li
-            class="h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3"
+        <form id="form" class="flex flex-col items-center">
+          <div
+            class="min-h-1/2 mx-auto mb-3 mt-3 w-11/12 rounded-md bg-white shadow-lg"
           >
-            <p id="question">Question 1:The content of the question</p>
-            <form>
-              <ul>
-                <li class="ml-1 flex flex-row gap-2">
-                  <input
-                    name="question1"
-                    type="radio"
-                    id="ans1"
-                    class="scale-150 cursor-pointer"
-                  />
-                  <label for="ans1">The content of ans</label>
-                </li>
-                <li class="ml-1 flex flex-row gap-2">
-                  <input
-                    name="question1"
-                    type="radio"
-                    id="ans2"
-                    class="scale-150 cursor-pointer"
-                  />
-                  <label for="ans2">The content of ans</label>
-                </li>
-                <li class="ml-1 flex flex-row gap-2">
-                  <input
-                    name="question1"
-                    type="radio"
-                    id="ans3"
-                    class="scale-150 cursor-pointer"
-                  />
-                  <label for="ans3">The content of ans</label>
-                </li>
-                <li class="ml-1 flex flex-row gap-2">
-                  <input
-                    name="question1"
-                    type="radio"
-                    id="ans4"
-                    class="scale-150 cursor-pointer"
-                  />
-                  <label for="ans4">The content of ans</label>
-                </li>
-              </ul>
-            </form>
-          </li>
-
-          <li
-            class="h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3"
+            <ul id="list" class="border-red-300 p-3">
+              <li
+                id="loading"
+                class="flex items-center justify-center space-x-2"
+              >
+                <svg
+                  class="text-blue-500 h-6 w-6 animate-spin"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="4"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+                <span class="text-lg font-medium text-gray-500"
+                  >Loading Question...Please Chill...</span
+                >
+              </li>
+            </ul>
+          </div>
+          <!-- next question -->
+          <button
+            id="nextBtn"
+            class="mx-auto w-fit cursor-pointer rounded-md bg-cyan-100 p-2 shadow-md hover:bg-cyan-200"
           >
-            <p id="question">Question 2:The content of the question</p>
-            <form>
-              <ul>
-                <li class="ml-1 flex flex-row gap-2">
-                  <input
-                    name="question2"
-                    type="radio"
-                    id="ans1"
-                    class="scale-150 cursor-pointer"
-                  />
-                  <label for="ans1">The content of ans</label>
-                </li>
-                <li class="ml-1 flex flex-row gap-2">
-                  <input
-                    name="question2"
-                    type="radio"
-                    id="ans2"
-                    class="scale-150 cursor-pointer"
-                  />
-                  <label for="ans2">The content of ans</label>
-                </li>
-                <li class="ml-1 flex flex-row gap-2">
-                  <input
-                    type="radio"
-                    name="question2"
-                    id="ans3"
-                    class="scale-150 cursor-pointer"
-                  />
-                  <label for="ans3">The content of ans</label>
-                </li>
-                <li class="ml-1 flex flex-row gap-2">
-                  <input
-                    name="question2"
-                    type="radio"
-                    id="ans4"
-                    class="scale-150 cursor-pointer"
-                  />
-                  <label for="ans4">The content of ans</label>
-                </li>
-              </ul>
-            </form>
-          </li>
-        </ul>
-
-        <div
-          id="submitBtn"
-          class="mx-auto flex h-12 w-1/2 cursor-pointer flex-row items-center justify-center rounded-lg bg-orange-300 text-2xl shadow-md shadow-gray-700"
-        >
-          Submit
-        </div>
+            <p class="text-center">Next Question</p>
+          </button>
+        </form>
       </div>
     </main>
 
@@ -176,9 +119,6 @@
       </div>
     </div>
 
-    <script
-      type="module"
-      src="../../js/practice/practiceUI.js"
-    ></script>
+    <script type="module" src="../../js/practice/practiceUI.js"></script>
   </body>
 </html>

@@ -53,7 +53,6 @@ const countDocumentsByKeyword = async (keyword, limit, course_id) => {
   return { totalPages, totalDocs }
 }
 
-
 const selectAllQuestions = async (doc_id) => {
   const query = `
   SELECT 
@@ -84,13 +83,25 @@ const selectAllQuestions = async (doc_id) => {
   return result.rows
 }
 
-const insertPracticeHistory = async (user_id, score, detail,start_time,end_time) => {
+const insertPracticeHistory = async (
+  user_id,
+  score,
+  detail,
+  start_time,
+  end_time
+) => {
   const query = `
     INSERT INTO practice_histories (user_id, score, detail,start_time,end_time)
     VALUES ($1, $2, $3::jsonb,$4,$5)
     RETURNING practice_history_id
   `
-  const result = await client.query(query, [user_id, score, JSON.stringify(detail),start_time,end_time])
+  const result = await client.query(query, [
+    user_id,
+    score,
+    JSON.stringify(detail),
+    start_time,
+    end_time,
+  ])
   return result.rows[0].practice_history_id
 }
 
@@ -100,13 +111,14 @@ const selectPracticeHistory = async (user_id, limit, page) => {
     SELECT 
       score,
       detail,
-      created_at
+      start_time,
+      end_time
     FROM 
       practice_histories
     WHERE 
       user_id = $1
-    ORDER BY 
-      created_at DESC
+      ORDER BY 
+      start_time DESC
     LIMIT $2 OFFSET $3
   `
   const result = await client.query(query, [user_id, limit, offset])
@@ -124,9 +136,8 @@ const countPracticeHistory = async (user_id, limit) => {
   return { totalPages, totalPracticeHistory }
 }
 
-
-const selectPracticeHistorybyID = async(practice_history_id)=>{
-  const query=`
+const selectPracticeHistorybyID = async (practice_history_id) => {
+  const query = `
     SELECT 
       score,
       detail,
@@ -137,7 +148,7 @@ const selectPracticeHistorybyID = async(practice_history_id)=>{
     WHERE 
       practice_history_id= $1
   `
-  const result = await client.query(query,[practice_history_id])
+  const result = await client.query(query, [practice_history_id])
   return result.rows
 }
 
@@ -148,5 +159,5 @@ export default {
   insertPracticeHistory,
   selectPracticeHistory,
   countPracticeHistory,
-  selectPracticeHistorybyID
+  selectPracticeHistorybyID,
 }

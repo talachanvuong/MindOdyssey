@@ -16,4 +16,7 @@ export default {
 
     //get document
     apiGetDocument: import.meta.env.VITE_API_GET_DOCUMENT,
+
+    //practice history
+    apiPracticeHistory:import.meta.env.VITE_API_PRACTICE_HISTORY
 }

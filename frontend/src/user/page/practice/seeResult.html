@@ -30,138 +30,50 @@
     >
       <!-- result info -->
       <div
-        class="shadow-gay-500 mx-auto flex w-full flex-row justify-between rounded-lg bg-cyan-400 p-2 shadow-md"
+        class="shadow-gay-500 mx-auto flex w-full flex-row justify-between rounded-lg bg-cyan-400 p-2 shadow-md items-center"
       >
         <!-- score -->
         <div class="flex flex-row items-center">
           <img src="../img/score.png" class="h-10" />
           <div class="flex flex-row gap-2">
             <p class="text-2xl">Score:</p>
-            <p id="score" class="text-2xl">30</p>
+            <p id="score" class="text-2xl"></p>
           </div>
         </div>
 
         <!-- correct answer -->
-        <div class="flex flex-row">
+        <div class="flex flex-row gap-1">
           <img src="../img/done.png" class="h-10" />
           <div class="flex flex-row items-center gap-2">
             <p class="text-2xl">correct:</p>
-            <p id="score" class="text-2xl">25/30</p>
+            <div class="flex flex-row items-center text-2xl">
+              <p id="numberOfCorrect" class="text-2xl"></p>
+              <p>/</p>
+              <p id="total"></p>
+            </div>
           </div>
         </div>
+
+       
+         <div class="flex flex-row items-center gap-1">
+          <img src="../img/timer.png" class="h-10">
+           <p id="time" class="text-xl"></p>
+         </div>
+        
       </div>
 
       <!-- content -->
       <div
         class="mt-4 flex h-fit w-full flex-col rounded-xl bg-cyan-200 p-2 shadow-md shadow-gray-500"
       >
-        <ul class="mb-10 flex flex-col gap-2">
-          <!-- The question -->
-          <li
-            class="h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3"
-          >
-            <p id="question">Question 1:The content of the question</p>
-            <form>
-              <ul>
-                <li class="ml-1 flex flex-row gap-2">
-                  <input
-                    disabled
-                    name="question1"
-                    type="radio"
-                    id="ans1"
-                    class="scale-150 cursor-pointer"
-                  />
-                  <label for="ans1">The content of ans</label>
-                </li>
-                <li class="ml-1 flex flex-row gap-2">
-                  <input
-                    disabled
-                    name="question1"
-                    type="radio"
-                    id="ans2"
-                    class="scale-150 cursor-pointer"
-                  />
-                  <label for="ans2">The content of ans</label>
-                </li>
-                <li class="ml-1 flex flex-row gap-2">
-                  <input
-                    disabled
-                    name="question1"
-                    type="radio"
-                    id="ans3"
-                    class="scale-150 cursor-pointer"
-                  />
-                  <label for="ans3">The content of ans</label>
-                </li>
-                <li class="ml-1 flex flex-row gap-2">
-                  <input
-                    name="question1"
-                    type="radio"
-                    id="ans4"
-                    disabled
-                    class="scale-150 cursor-pointer"
-                  />
-                  <label for="ans4">The content of ans</label>
-                </li>
-              </ul>
-            </form>
-          </li>
-
-          <li
-            class="h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3"
-          >
-            <p id="question">Question 2:The content of the question</p>
-            <form>
-              <ul>
-                <li class="ml-1 flex flex-row gap-2">
-                  <input
-                    disabled
-                    name="question2"
-                    type="radio"
-                    id="ans1"
-                    class="scale-150 cursor-pointer"
-                  />
-                  <label for="ans1">The content of ans</label>
-                </li>
-                <li class="ml-1 flex flex-row gap-2">
-                  <input
-                    disabled
-                    name="question2"
-                    type="radio"
-                    id="ans2"
-                    class="scale-150 cursor-pointer"
-                  />
-                  <label for="ans2">The content of ans</label>
-                </li>
-                <li class="ml-1 flex flex-row gap-2">
-                  <input
-                    disabled
-                    type="radio"
-                    name="question2"
-                    id="ans3"
-                    class="scale-150 cursor-pointer"
-                  />
-                  <label for="ans3">The content of ans</label>
-                </li>
-                <li class="ml-1 flex flex-row gap-2">
-                  <input
-                    name="question2"
-                    type="radio"
-                    id="ans4"
-                    disabled
-                    class="scale-150 cursor-pointer"
-                  />
-                  <label for="ans4">The content of ans</label>
-                </li>
-              </ul>
-            </form>
-          </li>
+        <ul id="list" class="mb-10 flex flex-col gap-2">
+         
         </ul>
       </div>
 
       <!-- button -->
       <div class="flex flex-row justify-around gap-3 mt-2">
-        <a href="practiceScreen.html" class="bg-orange-300 rounded p-3 w-full  shadow-md shadow-gray-500 text-center font-bold text-2xl">trở về</a>
+        <a id="backToPracticeScreen" href="" class="bg-orange-300 rounded p-3 w-full  shadow-md shadow-gray-500 text-center font-bold text-2xl">trở về</a>
         <a href="searchDoc.html" class= "bg-orange-300 rounded p-3 w-full  shadow-md shadow-gray-500 text-center font-bold text-2xl">tìm tài liệu</a>
       </div>
     </main>

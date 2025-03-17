@@ -34,15 +34,21 @@ function showDocList(id, array) {
 function showAnswerList(id, array) {
   const list = document.getElementById(id)
   list.innerHTML = ``
+  console.log(array)
   array.forEach((ques, index) => {
     const li = document.createElement('li')
     li.className =
       'h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3'
-
+ 
     //question
     const question = document.createElement('p')
     question.className = ''
     question.textContent = `Question ${index + 1}: ` + ques.contents[0].text
+    if( ques.contents[0].attachment){
+      const attachment = document.createElement('img')
+      attachment.src = ques.contents[0].attachment
+      question.appendChild(attachment)
+    }
 
     const form = document.createElement('form')
     const ul = document.createElement('ul')
@@ -50,11 +56,19 @@ function showAnswerList(id, array) {
     //answer
     ques.contents.slice(1).forEach((ans, i) => {
       const a = document.createElement('li')
-      a.className = 'ml-1 flex flex-row gap-2'
+      const inputAndTextDiv = document.createElement('div')
+      inputAndTextDiv.classList = "flex flex-row gap-2"
+    
+     
+      a.className = 'ml-1 flex flex-col gap-2 my-2'
+    
 
       const input = document.createElement('input')
       input.type = 'radio'
       input.className = 'scale-150 cursor-pointer border border-black'
+
+      const ansContent = document.createElement('p')
+      ansContent.textContent = ans.text
 
       switch (ques.correct_answer) {
         case `A`: {
@@ -79,12 +93,16 @@ function showAnswerList(id, array) {
       }
       input.disabled = true
 
-      const ansContent = document.createElement('p')
-      ansContent.textContent = ans.text
-
-      a.appendChild(input)
-      a.appendChild(ansContent)
+      a.appendChild(inputAndTextDiv)
+      inputAndTextDiv.appendChild(input)
+      inputAndTextDiv.appendChild(ansContent)
+     
       ul.appendChild(a)
+      if(ans.attachment){
+        const img = document.createElement('img')
+        img.src = ans.attachment
+        a.appendChild(img)
+      }
     })
 
     li.appendChild(question)
@@ -93,6 +111,7 @@ function showAnswerList(id, array) {
     form.appendChild(ul)
 
     list.appendChild(li)
+  
   })
 }
 

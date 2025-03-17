@@ -6,6 +6,10 @@ let res = null
 const detail = {
 }
 document.addEventListener('DOMContentLoaded', () => {
+
+  const urlParams = new URLSearchParams(window.location.search)
+    detail.id = Number(urlParams.get('id')) 
+
   async function userInfo() {
     const userName = document.getElementById('userName')
 
@@ -19,14 +23,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function getDocInfo() {
-    const urlParams = new URLSearchParams(window.location.search)
-    detail.id = Number(urlParams.get('id')) 
-
+    
     res = await callApi.callApi(
       api.apiGetDocument,           
       {document: detail.id},
       'POST'
     )
+    console.log(res)
     Object.assign(detail, res.data)                           
 
     const docName = document.getElementById('docName')
@@ -42,7 +45,16 @@ document.addEventListener('DOMContentLoaded', () => {
     quantity.textContent = detail.total_questions 
 
     show_doc.showAnswerList('list', detail.questions)
+
+    //get start if user click 
+    getStart()
   }  
+
+  function getStart(){
+    const startBtn = document.getElementById('startBtn')
+    startBtn.href = `practiceUI.html?id=${detail.id}&total=${detail.total_questions}`
+  }
+  
  getDocInfo()
   userInfo()
 })
