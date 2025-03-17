@@ -4,7 +4,6 @@ import callApi from '../model/callApi.js'
 document.addEventListener('DOMContentLoaded', async function () {
   const API_DOCUMENTS = 'http://localhost:3000/api/document'
   const API_COURSE = 'http://localhost:3000/api/course'
-
   const docNameInput = document.getElementById('documentName')
   const descriptionInput = document.getElementById('description')
   const courseSelect = document.getElementById('course')
@@ -359,122 +358,134 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   window.deleteQuestion = async (id) => {
-    const index = questions.findIndex(q => q.id === id) 
+    const index = questions.findIndex((q) => q.id === id)
     if (index === -1) {
       console.error(`Question ID ${id} not found`)
       return
     }
-  
-    const confirmDelete = confirm(`Are you sure you want to delete question ${index + 1}?`)
+
+    const confirmDelete = confirm(
+      `Are you sure you want to delete question ${index + 1}?`
+    )
     if (!confirmDelete) {
       console.log(`Cancel delete question ${index + 1}`)
       return
     }
-  
+
     console.log(`Mark question ${index + 1} for deletion`)
-  
-    if (questions[index].action !== "delete") {
-      questions[index].action = "delete"
+
+    if (questions[index].action !== 'delete') {
+      questions[index].action = 'delete'
     }
-  
+
     renderQuestions() // Cập nhật giao diện
   }
 
   const renderQuestions = () => {
-    console.log("Update interface with question list:", questions);
-    saveUserInput();
-    questionsContainer.innerHTML = "";
-  
+    console.log('Update interface with question list:', questions)
+    saveUserInput()
+    questionsContainer.innerHTML = ''
+
     questions.forEach((q, index) => {
-      const newIndex = index; // Giữ thứ tự hiển thị
-  
-      const questionDiv = document.createElement("div");
+      const newIndex = index // Giữ thứ tự hiển thị
+
+      const questionDiv = document.createElement('div')
       questionDiv.className = `rounded-lg border p-4 my-3 shadow bg-white flex flex-col transition-opacity ${
-        q.action === "delete" ? "opacity-50 line-through" : ""
-      }`;
-  
-      const questionContent = document.createElement("div");
-      questionContent.className = "flex justify-between items-start";
-  
-      const questionInnerDiv = document.createElement("div");
-      questionInnerDiv.className = "w-full";
-  
+        q.action === 'delete' ? 'bg-black/10 line-through' : ''
+      }`
+
+      const questionContent = document.createElement('div')
+      questionContent.className = 'flex justify-between items-start'
+
+      const questionInnerDiv = document.createElement('div')
+      questionInnerDiv.className = 'w-full'
+
       questionInnerDiv.innerHTML = `
         <label class="block font-semibold text-lg text-gray-800 mb-2">Question ${newIndex + 1}:</label>
         <textarea class="w-full border p-2 rounded mb-3 overflow-hidden"
                   placeholder="Enter question..."
                   rows="1"
-                  ${q.action === "delete" ? "disabled" : ""}
-                  oninput="updateQuestion(${q.id ?? index}, this.value, 0); autoResize(this)">${q.contents?.[0]?.text || ""}</textarea>
+                  ${q.action === 'delete' ? 'disabled' : ''}
+                  oninput="updateQuestion(${q.id ?? index}, this.value, 0); autoResize(this)">${q.contents?.[0]?.text || ''}</textarea>
   
         <input type="file" accept="image/*,audio/*" class="mb-2 mt-2" 
-                ${q.action === "delete" ? "disabled" : ""}
+                ${q.action === 'delete' ? 'disabled' : ''}
 onchange="handleMediaUpload(event, '${q.id !== undefined ? q.id : index}', 0)"
 
  />
         
         <div id="mediaPreview${q.id ?? index}_0" class="mt-2">
-          ${q.contents?.[0]?.attachment ? `<img src="${q.contents[0].attachment}" class="max-w-full h-auto">` : ""}
+          ${q.contents?.[0]?.attachment ? `<img src="${q.contents[0].attachment}" class="max-w-full h-auto">` : ''}
         </div>
   
         <div class="space-y-2">
-          ${Array.isArray(q.contents) ? q.contents.slice(1).map((option, i) => `
+          ${
+            Array.isArray(q.contents)
+              ? q.contents
+                  .slice(1)
+                  .map(
+                    (option, i) => `
             <label class="space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100 flex flex-col">
               <div class="flex items-center space-x-2">
                 <input type="radio" name="question${q.id ?? index}" class="mb-2"
-                  value="${["A", "B", "C", "D"][i]}"
-                  ${q.correct === ["A", "B", "C", "D"][i] ? "checked" : ""}
-                  ${q.action === "delete" ? "disabled" : ""}
-                  onchange="setCorrectAnswer(${q.id ?? index}, '${["A", "B", "C", "D"][i]}')" />
+                  value="${['A', 'B', 'C', 'D'][i]}"
+                  ${q.correct === ['A', 'B', 'C', 'D'][i] ? 'checked' : ''}
+                  ${q.action === 'delete' ? 'disabled' : ''}
+                  onchange="setCorrectAnswer(${q.id ?? index}, '${['A', 'B', 'C', 'D'][i]}')" />
                 <textarea class="border p-1 w-11/12 rounded resize-none overflow-hidden"
                           placeholder="Enter the answer..."
                           rows="1"
-                          ${q.action === "delete" ? "disabled" : ""}
-                          oninput="updateAnswer(${q.id ?? index}, ${i + 1}, this); autoResize(this)">${option.text || ""}</textarea>
+                          ${q.action === 'delete' ? 'disabled' : ''}
+                          oninput="updateAnswer(${q.id ?? index}, ${i + 1}, this); autoResize(this)">${option.text || ''}</textarea>
               </div>
   
               <input type="file" accept="image/*,audio/*" class="ml-2 mt-2" 
-                      ${q.action === "delete" ? "disabled" : ""}
+                      ${q.action === 'delete' ? 'disabled' : ''}
 onchange="handleMediaUpload(event, '${q.id !== undefined ? q.id : index}', ${i + 1})"
  />
               
               <div id="mediaPreview${q.id ?? index}_${i + 1}" class="mt-2">
-                ${option.attachment ? `<img src="${option.attachment}" class="max-w-full h-auto">` : ""}
+                ${option.attachment ? `<img src="${option.attachment}" class="max-w-full h-auto">` : ''}
               </div>
             </label>
-          `).join("") : ""}
-        </div>
-      `;
-  
-      // Delete button
-      const deleteButton = document.createElement("button");
-      deleteButton.textContent = q.action === "delete" ? "Undo" : "X";
-      deleteButton.className = "text-red-500 hover:text-red-700 ml-3 self-start";
-      deleteButton.onclick = () => { 
-        if (q.action === "delete") {
-          q.action = ""; // Undo
-        } else if (q.action === "add") {
-          const indexToRemove = questions.findIndex((item) => item === q);
-          if (indexToRemove !== -1) {
-            questions.splice(indexToRemove, 1);
+          `
+                  )
+                  .join('')
+              : ''
           }
-        } else {
-          q.action = "delete"; // Mark as deleted
+        </div>
+      `
+
+      // Delete button
+
+      const deleteButton = document.createElement('button')
+      if (questions.length > 1) {
+        deleteButton.textContent = q.action === 'delete' ? 'Undo' : 'X'
+        deleteButton.className =
+          'text-red-500 hover:text-red-700 ml-3 self-start'
+        deleteButton.onclick = () => {
+          if (q.action === 'delete') {
+            q.action = '' // Undo
+          } else if (q.action === 'add') {
+            const indexToRemove = questions.findIndex((item) => item === q)
+            if (indexToRemove !== -1) {
+              questions.splice(indexToRemove, 1)
+            }
+          } else {
+            q.action = 'delete' // Mark as deleted
+          }
+
+          renderQuestions()
         }
-  
-        renderQuestions(); 
-      };
-  
-      questionContent.appendChild(questionInnerDiv);
-      questionContent.appendChild(deleteButton);
-      questionDiv.appendChild(questionContent);
-      questionsContainer.appendChild(questionDiv);
-    });
-  
-    document.querySelectorAll("textarea").forEach(autoResize);
-  };
-  
-  
+      }
+      questionContent.appendChild(questionInnerDiv)
+      questionContent.appendChild(deleteButton)
+      questionDiv.appendChild(questionContent)
+      questionsContainer.appendChild(questionDiv)
+    })
+
+    document.querySelectorAll('textarea').forEach(autoResize)
+  }
 
   let questions = []
   window.handleFileUpload = (event) => {
@@ -533,63 +544,73 @@ onchange="handleMediaUpload(event, '${q.id !== undefined ? q.id : index}', ${i +
   }
 
   window.handleMediaUpload = async (event, idOrIndex, position) => {
-    console.log(`📌 Debug: Nhận idOrIndex = ${idOrIndex}, position = ${position}, questions.length = ${questions.length}`);
-    
-    const file = event.target.files[0];
-    if (!file) return;
+    console.log(
+      ` Debug: Nhận idOrIndex = ${idOrIndex}, position = ${position}, questions.length = ${questions.length}`
+    )
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
+    const file = event.target.files[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
     reader.onload = async () => {
-        const base64String = reader.result;
+      const base64String = reader.result
 
-        // 🔹 Kiểm tra nếu `idOrIndex` là `temp-0`, `temp-1`, v.v.
-        let index = questions.findIndex(q => String(q.id) === String(idOrIndex));
+      let index = questions.findIndex((q) => String(q.id) === String(idOrIndex))
 
-        // Nếu ID không tìm thấy, kiểm tra nếu `idOrIndex` có phải index không
-        if (index === -1 && typeof idOrIndex === "number" && idOrIndex < questions.length) {
-            index = idOrIndex; // Dùng index nếu ID không tồn tại
-        }
+      if (
+        index === -1 &&
+        typeof idOrIndex === 'number' &&
+        idOrIndex < questions.length
+      ) {
+        index = idOrIndex 
+      }
 
-        console.log(`🛠️ Debug: Tìm thấy index = ${index} trong questions`);
+      console.log(` Debug: Find index = ${index} in questions`)
 
-        if (index === -1 || !questions[index]) {
-            console.error(`❌ Lỗi: Không tìm thấy câu hỏi (ID/Index: ${idOrIndex}), questions.length = ${questions.length}`);
-            console.table(questions); // In toàn bộ danh sách câu hỏi để debug
-            return;
-        }
+      if (index === -1 || !questions[index]) {
+        console.error(
+          ` Error: No find question (ID/Index: ${idOrIndex}), questions.length = ${questions.length}`
+        )
+        console.table(questions) 
+        return
+      }
 
-        // 🔹 Kiểm tra vị trí câu trả lời
-        if (!questions[index].contents[position]) {
-            console.error(`❌ Lỗi: Vị trí ${position} không hợp lệ cho câu hỏi ${idOrIndex}`);
-            return;
-        }
+    
+      if (!questions[index].contents[position]) {
+        console.error(
+          `Error: Index ${position} Invalid for question ${idOrIndex}`
+        )
+        return
+      }
 
-        // 🔹 Cập nhật ảnh vào dữ liệu câu hỏi
-        questions[index].contents[position].attachment = base64String;
-        console.log(`✅ Ảnh cập nhật vào questions[${index}][${position}]`, base64String);
+      questions[index].contents[position].attachment = base64String
+      console.log(
+        ` Upload new attachment in questions[${index}][${position}]`,
+        base64String
+      )
 
-        // 🔹 Cập nhật trực tiếp UI nếu phần tử hiển thị đã tồn tại
-        const mediaPreview = document.getElementById(`mediaPreview${idOrIndex}_${position}`);
-        if (mediaPreview) {
-            mediaPreview.innerHTML = file.type.startsWith("audio")
-                ? `<audio controls src="${base64String}"></audio>`
-                : `<img src="${base64String}" class="max-w-full h-auto">`;
-        } else {
-            console.warn(`⚠️ mediaPreview${idOrIndex}_${position} không tồn tại. Gọi renderQuestions() để cập nhật UI.`);
-            renderQuestions(); // Cập nhật toàn bộ UI nếu không tìm thấy phần tử
-        }
-    };
+      const mediaPreview = document.getElementById(
+        `mediaPreview${idOrIndex}_${position}`
+      )
+      if (mediaPreview) {
+        mediaPreview.innerHTML = file.type.startsWith('audio')
+          ? `<audio controls src="${base64String}"></audio>`
+          : `<img src="${base64String}" class="max-w-full h-auto">`
+      } else {
+        console.warn(
+          ` mediaPreview${idOrIndex}_${position} does not exist. Call renderQuestions() to update the UI.`
+        )
+        renderQuestions() 
+      }
+    }
 
     reader.onerror = (error) => {
-        console.error("❌ Lỗi khi chuyển file sang base64:", error);
-    };
-};
+      console.error(' Error convert from file to base64:', error)
+    }
+  }
 
-
-
-
-fileInput.addEventListener('change', handleFileUpload);
+  fileInput.addEventListener('change', handleFileUpload)
 
   async function urlToBase64(url) {
     try {
@@ -612,6 +633,13 @@ fileInput.addEventListener('change', handleFileUpload);
     saveButton.innerText = 'Loading...'
     saveButton.disabled = true
 
+    if (questions.length < 1 || questions.every((q) => q.action === 'delete')) {
+      showPopup(`Document must have at least 1 question!`)
+      saveButton.innerText = 'Save'
+      saveButton.disabled = false
+      return
+    }
+
     // Check each question
     for (let i = 0; i < questions.length; i++) {
       for (let j = 0; j < questions[i].contents.length; j++) {
@@ -623,10 +651,9 @@ fileInput.addEventListener('change', handleFileUpload);
           (!attachment || String(attachment).trim() === '')
         ) {
           showPopup(`Question ${i + 1} no content or attachment!`)
-          saveButton.innerText = 'Save';
-          saveButton.disabled = false;
-          return;
-         
+          saveButton.innerText = 'Save'
+          saveButton.disabled = false
+          return
         }
       }
     }
@@ -693,8 +720,11 @@ fileInput.addEventListener('change', handleFileUpload);
         throw new Error('Error while updating document!')
       }
       showPopup('Update successful!')
-      setTimeout(() => window.location.href = `detail.html?documentId=${documentId}`, 1000);
-     
+      setTimeout(
+        () => (window.location.href = `detail.html?documentId=${documentId}`),
+        1000
+      )
+
       // await loadDocument()
     } catch (error) {
       console.error('Update error:', error)
