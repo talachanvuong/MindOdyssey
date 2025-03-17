@@ -201,7 +201,9 @@ const editDocument = async (req, res) => {
       switch (question.action) {
         case 'add': {
           // Check order valid
-          const totalQuestions = documentService.getTotalQuestions(document)
+          const totalQuestions = await documentService.getTotalQuestions(
+            document
+          )
           if (question.order > totalQuestions + 1) {
             return sendResponse(
               res,
@@ -241,7 +243,9 @@ const editDocument = async (req, res) => {
 
         case 'delete': {
           // Check total questions remain
-          const totalQuestions = documentService.getTotalQuestions(document)
+          const totalQuestions = await documentService.getTotalQuestions(
+            document
+          )
           if (totalQuestions === 1) {
             return sendResponse(
               res,
@@ -310,7 +314,9 @@ const editDocument = async (req, res) => {
         case 'edit': {
           // Check order valid
           if (question.order) {
-            const totalQuestions = documentService.getTotalQuestions(document)
+            const totalQuestions = await documentService.getTotalQuestions(
+              document
+            )
             if (question.order > totalQuestions) {
               return sendResponse(
                 res,
