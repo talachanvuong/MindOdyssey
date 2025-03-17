@@ -7,13 +7,19 @@ const router = Router()
 router.get(
   '/getdocsforprac',
   asyncHandler(authMiddleware.verifyUser),
-  practiceController.getDocumentforPratice,
+  asyncHandler(practiceController.getDocumentforPratice),
   errorHandler
 )
 router.get(
   '/getpracticehistory',
   asyncHandler(authMiddleware.verifyUser),
-  practiceController.getPracticeHistory,
+  asyncHandler(practiceController.getPracticeHistory),
+  errorHandler
+)
+router.get(
+  '/getdocsbyuserid',
+  asyncHandler(authMiddleware.verifyUser),
+  asyncHandler(practiceController.getDocumentbyUserID),
   errorHandler
 )
 export default router

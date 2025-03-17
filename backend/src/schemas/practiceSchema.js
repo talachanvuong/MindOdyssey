@@ -46,16 +46,19 @@ const answerSchema = joi
     'any.required': 'userAnswer is required.',
   })
 
-  const scoreSchema = joi.number()
-  .min(0)
-  .max(100)
-  .required()
-  .messages({
-    "number.base": "Score must be a number.",
-    "number.min": "Score cannot be less than 0.",
-    "number.max": "Score cannot be more than 100.",
-    "any.required": "Score is required."
-  });
+const scoreSchema = joi.number().min(0).max(100).required().messages({
+  'number.base': 'Score must be a number.',
+  'number.min': 'Score cannot be less than 0.',
+  'number.max': 'Score cannot be more than 100.',
+  'any.required': 'Score is required.',
+})
+
+const user_idSchema = joi.number().integer().positive().required().messages({
+  'number.base': 'user_id must be a number.',
+  'number.integer': 'user_id must be an integer.',
+  'number.positive': 'user_id must be a positive integer.',
+  'any.required': 'user_id is required.',
+})
 const getDocumentforPraticeValidate = joi.object({
   keyword: keywordSchema,
   page: pageSchema,
@@ -66,20 +69,26 @@ const getPracticeHistoryValidate = joi.object({
   page: pageSchema,
   limit: limitSchema,
 })
+const getDocumentbyUserIDValidate = joi.object({
+  user_id: user_idSchema,
+  page: pageSchema,
+  limit: limitSchema,
+})
 const doc_idValidate = joi.object({
   doc_id: doc_idSchema,
 })
 const answerValidate = joi.object({
   userAnswer: answerSchema,
-  order: orderSchema
+  order: orderSchema,
 })
 const finishedValidate = joi.object({
-  score: scoreSchema
+  score: scoreSchema,
 })
 export default {
   getDocumentforPraticeValidate,
   getPracticeHistoryValidate,
   doc_idValidate,
   answerValidate,
-  finishedValidate
+  finishedValidate,
+  getDocumentbyUserIDValidate
 }
