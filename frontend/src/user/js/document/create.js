@@ -309,7 +309,9 @@ const createDocument = async (event) => {
   createDocumentBtn.disabled = true;
 
   const title = document.getElementById('documentName').value.trim();
-  const description = document.getElementById('description').value.trim();
+  const inputElement = document.getElementById('description');
+  const description = inputElement && inputElement.value.trim() ? inputElement.value.trim() : undefined;
+  
   const courseId = courseSelect.value;
 
   if (!title || title.length < 8 || !courseId) {
