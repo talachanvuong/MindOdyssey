@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       
    
       if (!response || response.status !== 'success') {
-        console.error('📌 API Error:', response);
+        console.error(' API Error:', response);
         alert('Error loading document. Please try again later!');
       
       }
@@ -73,56 +73,97 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
   
 
+  async function checkAttachmentType(url) {
+    try {
+      const response = await fetch(url, { method: 'HEAD' }) // Chỉ lấy header để kiểm tra
+      const contentType = response.headers.get('Content-Type') // Lấy MIME type
+  
+      if (contentType.startsWith('audio/')) {
+        return 'audio'
+      } else if (contentType.startsWith('image/')) {
+        return 'image'
+      } else {
+        return 'unknown'
+      }
+    } catch (error) {
+      console.error('Error checking file type:', error)
+      return 'unknown'
+    }
+  }
+  
 
-  function renderQuestions(questions) {
+  async function renderQuestions(questions) {
     questionsContainer.innerHTML = ''
-
+  
     if (questions.length === 0) {
       questionsContainer.innerHTML =
-        '<p class="text-gray-500">No questions .</p>'
+        '<p class="text-gray-500">No questions.</p>'
       return
     }
-
-    questions.forEach((q, index) => {
+  
+    for (const [index, q] of questions.entries()) {
+      let mediaHTML = ''
+  
+      // Kiểm tra file đính kèm của câu hỏi chính
+      if (q.contents[0]?.attachment) {
+        const type = await checkAttachmentType(q.contents[0].attachment)
+        mediaHTML =
+          type === 'audio'
+            ? `<audio controls class="max-w-xs"><source src="${q.contents[0].attachment}" type="audio/mpeg"></audio>`
+            : `<img src="${q.contents[0].attachment}" class="max-w-xs h-auto rounded-lg shadow-md">`
+      }
+  
       const questionDiv = document.createElement('div')
       questionDiv.className = 'rounded-lg border p-4 my-3 shadow bg-white'
-
+  
       questionDiv.innerHTML = `
-        <label class="block font-semibold text-lg text-gray-800 mb-2">Question ${index + 1}:</label>
-        <p class="font-medium">${q.contents[0]?.text || ''}</p>
-        <div id="mediaPreview${index}_0" class="mt-4 flex justify-center">
-  ${q.contents[0]?.attachment ? `<img src="${q.contents[0].attachment}" class="max-w-xs h-auto rounded-lg shadow-md">` : ''}
-</div>
-
-        <div class="mt-2 space-y-2">
-  ${q.contents
-    .slice(1)
-    .map((option, i) => {
-      const optionLetter = ['A', 'B', 'C', 'D'][i]
-      return `
-      <div class="border rounded-lg p-2"> 
-        <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-100">
-          <input type="radio" name="question${index}" class="form-radio" value="${optionLetter}"
-          ${q.correct_answer === optionLetter ? 'checked' : ''} disabled />
-          <span>${option.text || ''}</span>
-          ${q.correct_answer === optionLetter ? '<span class="text-green-500 font-bold">✅</span>' : ''}
+        <label class="block font-semibold text-lg text-gray-800 mb-2">
+          Question ${index + 1}:
         </label>
-
+        <p class="font-medium">${q.contents[0]?.text || ''}</p>
         
-        <div id="mediaPreview${index}_${i + 1}" class="mt-4 flex justify-center">
-          ${option.attachment ? `<img src="${option.attachment}" class="max-w-xs h-auto rounded-lg shadow-md">` : ''}
+        <div id="mediaPreview${index}_0" class="mt-4 flex justify-center">
+          ${mediaHTML}
         </div>
-      </div>
+  
+        <div class="mt-2 space-y-2">
+          ${await Promise.all(
+            q.contents.slice(1).map(async (option, i) => {
+              const optionLetter = ['A', 'B', 'C', 'D'][i]
+              let optionMediaHTML = ''
+  
+              // Kiểm tra và hiển thị file đính kèm của từng lựa chọn
+              if (option.attachment) {
+                const type = await checkAttachmentType(option.attachment)
+                optionMediaHTML =
+                  type === 'audio'
+                    ? `<audio controls class="max-w-xs"><source src="${option.attachment}" type="audio/mpeg"></audio>`
+                    : `<img src="${option.attachment}" class="max-w-xs h-auto rounded-lg shadow-md">`
+              }
+  
+              return `
+                <div class="border rounded-lg p-2"> 
+                  <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="question${index}" class="form-radio" value="${optionLetter}"
+                    ${q.correct_answer === optionLetter ? 'checked' : ''} disabled />
+                    <span>${option.text || ''}</span>
+                    ${q.correct_answer === optionLetter ? '<span class="text-green-500 font-bold">✅</span>' : ''}
+                  </label>
+                  <div id="mediaPreview${index}_${i + 1}" class="mt-4 flex justify-center">
+                    ${optionMediaHTML}
+                  </div>
+                </div>
+              `
+            })
+          ).then(results => results.join(''))}
+        </div>
       `
-    })
-    .join('')}
-</div>
-
-      `
-
+  
       questionsContainer.appendChild(questionDiv)
-    })
+    }
   }
+  
+  
 
   // Function to automatically expand textarea according to content
   window.autoResize = (element) => {
