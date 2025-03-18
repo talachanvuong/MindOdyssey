@@ -395,7 +395,7 @@ console.log("Data sent:", JSON.stringify(requestData, null, 2));
     }
     
     showPopup('Document created successfully!');
-    setTimeout(() => window.location.href = 'manage.html', 1000);
+    setTimeout(() => window.location.href = 'manage.html', 3000);
 
   
   } catch (error) {
