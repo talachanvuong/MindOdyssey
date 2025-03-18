@@ -1,170 +1,260 @@
 import '../../../style.css'
-document.addEventListener('DOMContentLoaded', function () {
-  const docList = document.getElementById('document-list')
-  const pagination = document.getElementById('pagination')
-  const searchInput = document.getElementById('search')
-  const filterButton = document.getElementById('filterButton')
-  const timeFilterModal = document.getElementById('timeFilterModal')
-  const applyFilter = document.getElementById('applyFilter')
-  const closeModal = document.getElementById('closeModal')
-  const startDateInput = document.getElementById('startDate')
+import callApi from '../model/callApi.js'
+// ======================== DOM Elements ========================
+const searchInput = document.getElementById('search')
+const filterButton = document.getElementById('filterButton')
+const timeFilterModal = document.getElementById('timeFilterModal')
+const applyFilter = document.getElementById('applyFilter')
+const closeModal = document.getElementById('closeModal')
+const startDateInput = document.getElementById('startDate')
+const docList = document.getElementById('document-list')
+const addButton = document.getElementById('addDocument')
+const backButton = document.getElementById('btn_back')
+const pagination = document.getElementById('pagination')
+const docSumElement = document.getElementById('doc_sum')
 
-  // Kiểm tra các phần tử DOM
-  if (
-    !docList ||
-    !pagination ||
-    !searchInput ||
-    !filterButton ||
-    !timeFilterModal ||
-    !applyFilter
-  ) {
-    console.error(
-      'Không tìm thấy phần tử DOM cần thiết. Kiểm tra lại HTML của bạn.'
-    )
-    return
-  }
+// ======================== API URLs ========================
+const API_DOCUMENTS = 'http://localhost:3000/api/document'
 
-  // Danh sách tài liệu giả lập
-  const documents = Array.from({ length: 9 }, (_, i) => `Tài liệu ${i + 1}`)
-  let curPage = 1
-  const itemsPerPage = 5
+// ======================== Pagination Variables ========================
+let curPage = 1
+const itemsPerPage = 9
+let allDocuments = []
 
-  function renderList() {
-    docList.innerHTML = ''
-    const searchTerm = searchInput.value.toLowerCase()
-
-    // Lọc theo tìm kiếm
-    const filteredDocs = documents.filter((doc) =>
-      doc.toLowerCase().includes(searchTerm)
-    )
-
-    // Phân trang
-    const totalPages = Math.ceil(filteredDocs.length / itemsPerPage)
-    curPage = Math.min(curPage, totalPages) || 1 // Đảm bảo curPage hợp lệ
-
-    const start = (curPage - 1) * itemsPerPage
-    const end = start + itemsPerPage
-    const paginatedDocs = filteredDocs.slice(start, end)
-
-    if (paginatedDocs.length === 0) {
-      const li = document.createElement('li')
-      li.className = 'py-4 text-center text-gray-500'
-      li.textContent = 'Không có kết quả phù hợp.'
-      docList.appendChild(li)
-      return
-    }
-
-    paginatedDocs.forEach((doc) => {
-      const li = document.createElement('li')
-      li.className =
-        'flex items-center justify-between py-4 pr-5 pl-4 text-sm/6'
-      li.innerHTML = `
-                <div class="flex w-0 flex-1 items-center">
-                    <svg class="size-5 shrink-0 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                        <path d="M64 464c-8.8 0-16-7.2-16-16L48 64c0-8.8 7.2-16 16-16l160 0 0 80c0 17.7 14.3 32 32 32l80 0 0 288c0 8.8-7.2 16-16 16L64 464zM64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-293.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0L64 0zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z"/>
-                    </svg>
-                    <div class="ml-4 flex min-w-0 flex-1 gap-2">
-                        <p class="truncate font-medium">${doc}</p>
-                    </div>
-                </div>
-            `
-      docList.appendChild(li)
-    })
-
-    // Cập nhật phân trang
-    renderPagination(totalPages)
-  }
-
-  function renderPagination(totalPages) {
-    pagination.innerHTML = ''
-    if (totalPages <= 1) return
-
-    const nav = document.createElement('nav')
-    nav.className = 'isolate inline-flex -space-x-px rounded-md shadow-xs'
-    nav.setAttribute('aria-label', 'Pagination')
-
-    const prevBtn = document.createElement('a')
-    prevBtn.href = '#'
-    prevBtn.className = `relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-gray-300 ring-inset ${
-      curPage === 1 ? 'pointer-events-none opacity-50' : 'hover:bg-gray-50'
-    }`
-    prevBtn.innerHTML = `
-            <span class="sr-only">Previous</span>
-            <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
-            </svg>
-        `
-    prevBtn.addEventListener('click', (e) => {
-      e.preventDefault()
-      if (curPage > 1) {
-        curPage--
-        renderList()
-      }
-    })
-    nav.appendChild(prevBtn)
-
-    for (let i = 1; i <= totalPages; i++) {
-      const pageBtn = document.createElement('a')
-      pageBtn.href = '#'
-      pageBtn.className = `relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
-        curPage === i
-          ? 'bg-indigo-600 text-white'
-          : 'text-gray-900 ring-1 ring-gray-300 hover:bg-gray-50'
-      }`
-      pageBtn.textContent = i
-      pageBtn.addEventListener('click', (e) => {
-        e.preventDefault()
-        curPage = i
-        renderList()
-      })
-      nav.appendChild(pageBtn)
-    }
-
-    const nextBtn = document.createElement('a')
-    nextBtn.href = '#'
-    nextBtn.className = `relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-gray-300 ring-inset ${
-      curPage === totalPages
-        ? 'pointer-events-none opacity-50'
-        : 'hover:bg-gray-50'
-    }`
-    nextBtn.innerHTML = `
-            <span class="sr-only">Next</span>
-            <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-            </svg>
-        `
-    nextBtn.addEventListener('click', (e) => {
-      e.preventDefault()
-      if (curPage < totalPages) {
-        curPage++
-        renderList()
-      }
-    })
-    nav.appendChild(nextBtn)
-
-    pagination.appendChild(nav)
-  }
-
-  filterButton.addEventListener('click', () => {
-    timeFilterModal.classList.toggle('invisible')
-  })
-
-  applyFilter.addEventListener('click', () => {
-    const startDate = startDateInput.value
-    console.log(`Áp dụng bộ lọc từ ${startDate}`)
-
-    timeFilterModal.classList.add('invisible')
-  })
-
-  // Đóng modal
-  closeModal.addEventListener('click', () => {
-    timeFilterModal.classList.add('invisible')
-  })
-
-  searchInput.addEventListener('input', () => {
-    curPage = 1
-    renderList()
-  })
-
-  renderList()
+// ======================== Load Initial Data ========================
+document.addEventListener('DOMContentLoaded', async function () {
+  await loadDocuments()
 })
+
+// ======================== Load and Render Documents ========================
+async function loadDocuments() {
+  try {
+    const response = await fetch(`${API_DOCUMENTS}/get-documents`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    console.log('API data returned:', responseData);
+
+     // Check if the API data is in the correct format
+    if (!responseData || !responseData.result || !Array.isArray(responseData.result.documents)) {
+      throw new Error('Invalid API response structure');
+    }
+
+      // Assign documents data to the variable allDocuments
+    allDocuments = responseData.result.documents;
+
+    updateDocumentCount();
+    renderDocuments(allDocuments);
+  } catch (error) {
+    console.error('Error loading document list:', error);
+    alert('Failed to load document list. Please try again later.');
+  }
+}
+
+
+// ======================== Update Document Count ========================
+function updateDocumentCount() {
+  if (docSumElement) {
+    docSumElement.textContent = `Total documents: ${allDocuments.length}`
+  }
+}
+
+// ======================== Render Documents with Pagination ========================
+function renderDocuments(documents) {
+  if (!docList) return
+  docList.innerHTML = ''
+  const totalPages = Math.ceil(documents.length / itemsPerPage)
+  curPage = Math.min(curPage, totalPages) || 1
+
+  const start = (curPage - 1) * itemsPerPage
+  const end = start + itemsPerPage
+  const paginatedDocs = documents.slice(start, end)
+
+  paginatedDocs.forEach((doc) => {
+    if (!doc.document_id) return
+    const listItem = document.createElement('li')
+    listItem.id = `document-item-${doc.document_id}`
+    listItem.dataset.id = doc.document_id
+    listItem.classList.add(
+      'flex',
+      'items-center',
+      'justify-between',
+      'py-4',
+      'pl-4',
+      'pr-5',
+      'text-sm/6'
+    )
+    listItem.innerHTML = `
+      <div class="flex w-0 flex-1 items-center justify-between">
+        <p class="truncate font-medium">${doc.title}</p>
+        <br>
+        <p class="  truncate font-thin">(${doc.created_at})</p>
+      </div>
+
+    `
+    // Assign event immediately after listItem is added to the DOM
+
+    listItem.addEventListener('click', function () {
+      const docId = this.dataset.id
+      if (!docId) {
+        alert('Document ID not found!')
+        return
+      }
+      window.location.href = `detail.html?documentId=${docId}`
+    })
+
+    docList.appendChild(listItem)
+  })
+  renderPagination(totalPages)
+
+  // Assign document deletion event
+  document.querySelectorAll('.delete-btn').forEach((button) => {
+    const docId = button.getAttribute('data-id')
+    if (!docId) return
+    button.addEventListener('click', function () {
+      deleteDocument(docId)
+    })
+  })
+}
+
+// ======================== Render Pagination ========================
+function renderPagination(totalPages) {
+  pagination.innerHTML = ''
+  if (totalPages <= 1) return
+
+  const paginationHTML = `
+    <div class="flex items-center justify-center border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+      <div class="flex flex-1 justify-between sm:hidden">
+        <button id="prevPage" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Previous</button>
+        <button id="nextPage" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Next</button>
+      </div>
+      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <nav class="shadow-xs isolate inline-flex -space-x-px rounded-md" aria-label="Pagination">
+          <button id="prevArrow" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">«</button>
+          ${Array.from({ length: totalPages }, (_, i) => `<button class="page-btn relative inline-flex items-center px-4 py-2 text-sm font-semibold ${curPage === i + 1 ? 'bg-indigo-600 text-white' : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50'}" data-page="${i + 1}">${i + 1}</button>`).join('')}
+          <button id="nextArrow" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">»</button>
+        </nav>
+      </div>
+    </div>
+  `
+
+  pagination.innerHTML = paginationHTML
+
+  document
+    .getElementById('prevPage')
+    .addEventListener('click', () => changePage(curPage - 1))
+  document
+    .getElementById('nextPage')
+    .addEventListener('click', () => changePage(curPage + 1))
+  document
+    .getElementById('prevArrow')
+    .addEventListener('click', () => changePage(curPage - 1))
+  document
+    .getElementById('nextArrow')
+    .addEventListener('click', () => changePage(curPage + 1))
+  document.querySelectorAll('.page-btn').forEach((button) => {
+    button.addEventListener('click', (event) =>
+      changePage(Number(event.target.dataset.page))
+    )
+  })
+}
+
+function changePage(page) {
+  const totalPages = Math.ceil(allDocuments.length / itemsPerPage)
+  if (page < 1 || page > totalPages) return
+  curPage = page
+  renderDocuments(allDocuments)
+  renderPagination(totalPages)
+}
+
+// ======================== Delete Document ========================
+window.deleteDocument = async function (id) {
+  if (!id || isNaN(Number(id))) return
+  if (!confirm('Are you sure you want to delete this document?')) return
+  try {
+    const response = await fetch(`${API_DOCUMENTS}/delete-document`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ document: Number(id) }),
+    })
+
+    const responseText = await response.text() // Lấy phản hồi chi tiết từ API
+    console.log('Phản hồi từ API:', responseText)
+
+    if (!response.ok)
+      throw new Error(`Error API: ${response.status} - ${responseText}`)
+    alert('Document deletion successful!')
+    await loadDocuments()
+  } catch (error) {
+    console.error('Error deleting document:', error)
+    showPopup(`Error deleting document: ${error.message}`)
+  }
+}
+
+// ======================== Search & Filter Documents ========================
+
+function parseDate(dateString) {
+  const parts = dateString.match(
+    /(\d{2}):(\d{2}):(\d{2}) (\w{2}) (\d{2})\/(\d{2})\/(\d{4})/
+  )
+  if (!parts) return null
+
+  const [, hh, mm, ss, , day, month, year] = parts
+  return new Date(`${year}-${month}-${day}T${hh}:${mm}:${ss}`)
+}
+
+
+function searchAndFilterDocuments() {
+  const query = searchInput.value.toLowerCase()
+  const startDate = startDateInput.value ? new Date(startDateInput.value) : null
+
+  const filteredDocs = allDocuments.filter((doc) => {
+    const docDate = parseDate(doc.created_at)
+    if (!docDate) return false 
+
+    const matchesQuery = doc.title.toLowerCase().includes(query)
+    const matchesDate = !startDate || docDate >= startDate
+
+    return matchesQuery && matchesDate
+  })
+
+  renderDocuments(filteredDocs)
+}
+
+// ======================== Event Listeners ========================
+if (searchInput) searchInput.addEventListener('input', searchAndFilterDocuments)
+if (startDateInput)
+  startDateInput.addEventListener('change', searchAndFilterDocuments)
+
+if (filterButton)
+  filterButton.addEventListener('click', () =>
+    timeFilterModal?.classList.toggle('invisible')
+  )
+if (applyFilter)
+  applyFilter.addEventListener('click', () =>
+    timeFilterModal?.classList.add('invisible')
+  )
+if (closeModal)
+  closeModal.addEventListener('click', () =>
+    timeFilterModal?.classList.add('invisible')
+  )
+
+if (addButton)
+  addButton.addEventListener(
+    'click',
+    () => (window.location.href = 'create.html')
+  )
+
+if (backButton)
+  backButton.addEventListener(
+    'click',
+    () => (window.location.href = '../home.html')
+  )

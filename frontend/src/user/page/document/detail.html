@@ -55,9 +55,13 @@
         </div>
       </header>
       <div class="mx-auto mt-10 max-w-3xl rounded-lg bg-white p-6 shadow-md">
-        <h1 class="mb-1 text-center text-3xl font-bold">Document title</h1>
+        <h1 id="titleDoc" class="mb-1 text-center text-3xl font-bold">Document title</h1>
+        <p id="statusDoc">Status</p>
+        <p id="rejectReason" class="text-gray-600 mt-2">Reason</p>
+        <p id="describeDoc" class="text-gray-600 mt-2">Describe</p>
+        <p id="courseDoc" class="text-gray-600 mt-2">Course</p>
         <div class="flex justify-end">
-          <p class="items-center text-gray-700">22/01/2025</p>
+          <p id="dateDoc"  class="items-center text-gray-700">22/01/2025</p>
         </div>
         <section class="mt-4 flex w-full flex-row items-center space-y-0">
           <div class="flex items-center space-x-2 rounded px-4 py-2 shadow">
@@ -70,11 +74,11 @@
                 d="M0 64C0 28.7 28.7 0 64 0L224 0l0 128c0 17.7 14.3 32 32 32l128 0 0 38.6C310.1 219.5 256 287.4 256 368c0 59.1 29.1 111.3 73.7 143.3c-3.2 .5-6.4 .7-9.7 .7L64 512c-35.3 0-64-28.7-64-64L0 64zm384 64l-128 0L256 0 384 128zm48 96a144 144 0 1 1 0 288 144 144 0 1 1 0-288zm0 240a24 24 0 1 0 0-48 24 24 0 1 0 0 48zM368 321.6l0 6.4c0 8.8 7.2 16 16 16s16-7.2 16-16l0-6.4c0-5.3 4.3-9.6 9.6-9.6l40.5 0c7.7 0 13.9 6.2 13.9 13.9c0 5.2-2.9 9.9-7.4 12.3l-32 16.8c-5.3 2.8-8.6 8.2-8.6 14.2l0 14.8c0 8.8 7.2 16 16 16s16-7.2 16-16l0-5.1 23.5-12.3c15.1-7.9 24.5-23.6 24.5-40.6c0-25.4-20.6-45.9-45.9-45.9l-40.5 0c-23 0-41.6 18.6-41.6 41.6z"
               />
             </svg>
-            <p class="px-4">20 câu</p>
+            <p id="totalquestion" class="px-4">20 câu</p>
           </div>
 
           <div class="ml-auto flex space-x-2">
-            <div
+            <div id="editButton"
               class="flex items-center space-x-2 rounded bg-sky-300 px-4 py-2 text-white shadow"
             >
               <svg
@@ -88,7 +92,7 @@
               </svg>
               <span>Edit</span>
             </div>
-            <div
+            <div id="deleteButton"
               class="flex items-center space-x-2 rounded bg-red-500 px-4 py-2 text-white shadow"
             >
               <svg
@@ -105,63 +109,52 @@
           </div>
         </section>
 
-        <section class="mt-6 w-full space-y-4">
-          <div class="w-full rounded-md border p-4">
-            <h2 class="font-bold">Question 1: The content of question</h2>
-            <div class="mt-2 space-y-2">
-              <label class="flex items-center space-x-2">
-                <input type="radio" name="question1" class="form-radio" />
-                <span>content_1</span>
+        <section id="questionsContainer"  class="mt-6 w-full space-y-4">
+          <div  class="rounded border border-black p-4 mt-1">
+            <div class="rounded-lg border p-4 my-3 shadow bg-white">
+              <label class="block font-semibold text-lg text-gray-800 mb-2">
+                Câu hỏi 1:
               </label>
-              <label class="flex items-center space-x-2">
-                <input type="radio" name="question1" class="form-radio" />
-                <span>content_2</span>
-              </label>
-              <label class="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="question1"
-                  class="form-radio"
-                  checked
-                />
-                <span>content_3</span>
-              </label>
-              <label class="flex items-center space-x-2">
-                <input type="radio" name="question1" class="form-radio" />
-                <span>content_4</span>
-              </label>
+              <textarea class="w-full border p-2 rounded mb-3 resize-none overflow-hidden" placeholder="Enter question..." rows="1" oninput="updateQuestion(0, this.value, 0); autoResize(this)" style="height: 40px;"></textarea>
+              
+              <input type="file" accept="image/*,audio/*" class="mb-2" onchange="handleMediaUpload(event, 0, 0)">
+              <div id="mediaPreview0_0" class="mt-2"></div>
+              
+              <div class="space-y-2">
+                
+                  <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="question0" onchange="setCorrectAnswer(0, 'A')">
+                    <textarea class="border p-1 w-full rounded resize-none overflow-hidden" placeholder="Enter answer..." rows="1" oninput="updateAnswer(0, 1, this); autoResize(this)" style="height: 32px;"></textarea>
+                    <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, 0, 1)">
+                    <div id="mediaPreview0_1" class="mt-2"></div>
+                  </label>
+                
+                  <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="question0" onchange="setCorrectAnswer(0, 'B')">
+                    <textarea class="border p-1 w-full rounded resize-none overflow-hidden" placeholder="Enter answer..." rows="1" oninput="updateAnswer(0, 2, this); autoResize(this)" style="height: 32px;"></textarea>
+                    <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, 0, 2)">
+                    <div id="mediaPreview0_2" class="mt-2"></div>
+                  </label>
+                
+                  <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="question0" onchange="setCorrectAnswer(0, 'C')">
+                    <textarea class="border p-1 w-full rounded resize-none overflow-hidden" placeholder="Enter answer..." rows="1" oninput="updateAnswer(0, 3, this); autoResize(this)" style="height: 32px;"></textarea>
+                    <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, 0, 3)">
+                    <div id="mediaPreview0_3" class="mt-2"></div>
+                  </label>
+                
+                  <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="question0" onchange="setCorrectAnswer(0, 'D')">
+                    <textarea class="border p-1 w-full rounded resize-none overflow-hidden" placeholder="Enter answer..." rows="1" oninput="updateAnswer(0, 4, this); autoResize(this)" style="height: 32px;"></textarea>
+                    <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, 0, 4)">
+                    <div id="mediaPreview0_4" class="mt-2"></div>
+                  </label>
+                
+              </div>
             </div>
-          </div>
-
-          <div class="rounded-md border p-4">
-            <h2 class="font-bold">Question 2: The content of question</h2>
-            <div class="mt-2 space-y-2">
-              <label class="flex items-center space-x-2">
-                <input type="radio" name="question2" class="form-radio" />
-                <span>content_1</span>
-              </label>
-              <label class="flex items-center space-x-2">
-                <input type="radio" name="question2" class="form-radio" />
-                <span>content_2</span>
-              </label>
-              <label class="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="question2"
-                  class="form-radio"
-                  checked
-                />
-                <span>content_3</span>
-              </label>
-              <label class="flex items-center space-x-2">
-                <input type="radio" name="question2" class="form-radio" />
-                <span>content_4</span>
-              </label>
-            </div>
-          </div>
         </section>
         <div class="flex justify-center">
-          <button
+          <button id="btn_back"
             type="submit"
             class="mt-4 w-1/2 rounded-3xl bg-orange-500 py-2 text-black"
           >
