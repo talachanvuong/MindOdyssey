@@ -59,7 +59,7 @@
         <h1 class="mb-1 text-center text-xl font-bold">Document Create</h1>
 
 <!-- Popup thông báo -->
-<div id="popupMessage" class="hidden fixed inset-0 items-center justify-center bg-black bg-opacity-50 ">
+<div id="popupMessage" class="hidden fixed inset-0 items-center justify-center bg-black bg-opacity-50 z-50 ">
   <div class="bg-white rounded-lg p-6 shadow-lg w-96 mx-auto mt-32">
     <p id="popupText" class="text-center text-lg font-semibold"></p>
     <button onclick="closePopup()" class="mt-4 w-full bg-blue-500 text-black py-2 rounded-lg bg-red-500" >OK</button>
@@ -134,7 +134,7 @@
               <textarea class="w-full border p-2 rounded mb-3 resize-none overflow-hidden" placeholder="Enter question..." rows="1" oninput="updateQuestion(0, this.value, 0); autoResize(this)" style="height: 40px;"></textarea>
               
               <input type="file" accept="image/*,audio/*" class="mb-2" onchange="handleMediaUpload(event, 0, 0)">
-              <div id="mediaPreview0_0" class="mt-2"></div>
+              <div id="mediaPreview0_0" class="mt-2 "></div>
               
               <div class="space-y-2">
                 
