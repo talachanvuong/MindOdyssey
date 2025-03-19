@@ -46,4 +46,12 @@ router.post(
   errorHandler
 )
 
+// Get document info
+router.post(
+  '/get-document-info',
+  authMiddleware.verifyUser,
+  asyncHandler(documentController.getDocumentInfo),
+  errorHandler
+)
+
 export default router

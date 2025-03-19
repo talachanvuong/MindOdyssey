@@ -275,6 +275,35 @@ const isDocumentReview = async (document_id) => {
   return result.rowCount > 0
 }
 
+const getDocumentInfo = async (document_id) => {
+  const result = await client.query(
+    `SELECT
+      d.title,
+      d.description,
+      json_build_object(
+          'id', d.user_id,
+          'display_name', u.display_name
+      ) AS author,
+      d.created_at,
+      d.last_updated,
+      c.title AS course,
+      d.total_questions
+     FROM documents AS d
+     INNER JOIN users AS u
+     ON d.user_id = u.user_id
+     INNER JOIN courses AS c
+     ON d.course_id = c.course_id
+     WHERE d.document_id = $1;`,
+    [document_id]
+  )
+
+  return result.rows.map((row) => ({
+    ...row,
+    created_at: timeConvert(row.created_at),
+    last_updated: timeConvert(row.last_updated),
+  }))[0]
+}
+
 export default {
   isDocumentExist,
   createDocument,
@@ -288,4 +317,5 @@ export default {
   updateTotalQuestions,
   isDocumentApprove,
   isDocumentReview,
+  getDocumentInfo
 }

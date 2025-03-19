@@ -127,10 +127,15 @@ const getDocuments = Joi.object({
   filter: Joi.date().timestamp(),
 })
 
+const getDocumentInfo = Joi.object({
+  document: Joi.number().integer().strict().min(1).required(),
+})
+
 export default {
   createDocument,
   getDocumentDetail,
   deleteDocument,
   editDocument,
   getDocuments,
+  getDocumentInfo,
 }

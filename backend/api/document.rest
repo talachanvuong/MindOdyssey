@@ -133,3 +133,11 @@ Content-Type: application/json
     // Timestamp in milliseconds
     "filter": 0 
 }
+
+### Get document info
+POST {{host}}/get-document-info
+Content-Type: application/json
+
+{
+    "document": 0
+}
