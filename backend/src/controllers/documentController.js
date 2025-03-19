@@ -529,10 +529,47 @@ const getDocuments = async (req, res) => {
   )
 }
 
+const getDocumentInfo = async (req, res) => {
+  const { error, value } = documentSchema.getDocumentInfo.validate(req.body)
+  const { document } = value
+
+  // Check validation
+  if (error) {
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+  }
+
+  // Check document exist
+  const isDocumentExist = await documentService.isDocumentExist(document)
+  if (!isDocumentExist) {
+    return sendResponse(res, STATUS_CODE.NOT_FOUND, MESSAGE.DOCUMENT.NOT_FOUND)
+  }
+
+  // Check document approve
+  const isDocumentApprove = await documentService.isDocumentApprove(document)
+  if (!isDocumentApprove) {
+    return sendResponse(
+      res,
+      STATUS_CODE.BAD_REQUEST,
+      MESSAGE.DOCUMENT.NOT_APPROVED
+    )
+  }
+
+  // Get document info
+  const documentInfo = await documentService.getDocumentInfo(document)
+
+  return sendResponse(
+    res,
+    STATUS_CODE.SUCCESS,
+    MESSAGE.DOCUMENT.GET_DOCUMENT_INFO_SUCCESS,
+    documentInfo
+  )
+}
+
 export default {
   createDocument,
   getDocumentDetail,
   deleteDocument,
   editDocument,
   getDocuments,
+  getDocumentInfo,
 }
