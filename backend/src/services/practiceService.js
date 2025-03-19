@@ -118,11 +118,7 @@ const selectPracticeHistory = async (user_id, limit, page) => {
       practice_histories
     WHERE 
       user_id = $1
-<<<<<<< HEAD
       ORDER BY 
-=======
-    ORDER BY 
->>>>>>> origin
       start_time DESC
     LIMIT $2 OFFSET $3
   `
@@ -212,10 +208,7 @@ export default {
   selectPracticeHistory,
   countPracticeHistory,
   selectPracticeHistorybyID,
-<<<<<<< HEAD
-=======
   selectDocumentbyUserId,
   countDocumentsByUserId,
   isUserIDExist
->>>>>>> origin
 }
