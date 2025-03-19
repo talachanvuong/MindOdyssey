@@ -1,4 +1,10 @@
-function showDocList(id, array) {
+import callApi from "./callApi"
+
+async function typeChecker(url) {
+  return await callApi.checkAttachmentType(url)
+}
+
+ function showDocList(id, array) {
   const list = document.getElementById(id)
   list.innerHTML = ''
   array.forEach((doc) => {
@@ -30,30 +36,45 @@ function showDocList(id, array) {
     list.appendChild(li)
   })
 }
-function showAnswerList(id, array) {
+ function showAnswerList(id, array) {
   const list = document.getElementById(id)
   list.innerHTML = ``
   console.log(array)
-  array.forEach((ques, index) => {
+  array.forEach( async (ques, index) => {
+    console.log('hello')
     const li = document.createElement('li')
     li.className =
-      'h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3'
+      'h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3x`'
 
     //question
     const question = document.createElement('p')
-    question.className = ''
+    question.className = ' border-b border-black pb-2 font-bold'
     question.textContent = `Question ${index + 1}: ` + ques.contents[0].text
+   
     if (ques.contents[0].attachment) {
-      const attachment = document.createElement('img')
-      attachment.src = ques.contents[0].attachment
-      question.appendChild(attachment)
+    console.log('hello')
+      const type = await typeChecker(ques.contents[0].attachment) 
+    
+      if(type==="audio"){
+        let audio = document.createElement('audio')
+        audio.src = ques.contents[0].attachment
+        audio.controls= true
+        console.log(question)
+        question.appendChild(audio)
+      }
+      if(type==="image"){
+        const attachment = document.createElement('img')
+        attachment.src = ques.contents[0].attachment
+        question.appendChild(attachment)
+      }
+    
     }
 
     const form = document.createElement('form')
     const ul = document.createElement('ul')
 
     //answer
-    ques.contents.slice(1).forEach((ans) => {
+    ques.contents.slice(1).forEach(async (ans)=> {
       const a = document.createElement('li')
       const inputAndTextDiv = document.createElement('div')
       inputAndTextDiv.classList = 'flex flex-row gap-2'
@@ -75,9 +96,18 @@ function showAnswerList(id, array) {
 
       ul.appendChild(a)
       if (ans.attachment) {
-        const img = document.createElement('img')
-        img.src = ans.attachment
-        a.appendChild(img)
+        const type = await typeChecker(ans.attachment)
+        if(type==="image"){
+          const img = document.createElement('img')
+          img.src = ans.attachment
+          a.appendChild(img)
+        }
+        if(type === "audio"){
+          let audio = document.createElement('audio')
+          audio.src = ans.attachment
+          audio.controls = true 
+          a.appendChild(audio)
+        }
       }
     })
 
@@ -94,7 +124,7 @@ function showHistoryPractice(id, array) {
   const list = document.getElementById(id)
   list.className = 'flex flex-col gap-3'
   list.innerHTML = ``
-  array.forEach((ques, index) => {
+  array.forEach(async (ques, index) => {
     let correctAnswer
     let userAnswer
     console.log(ques.userAnswer)
@@ -116,9 +146,20 @@ function showHistoryPractice(id, array) {
     }
 
     if (ques.contents[0].attachment) {
-      const attachment = document.createElement('img')
-      attachment.src = ques.contents[0].attachment
-      questionDiv.appendChild(attachment)
+      let type = await typeChecker(ques.contents[0].attachment)
+      console.log(type)
+      if(type === "image"){
+        const attachment = document.createElement('img')
+        attachment.src = ques.contents[0].attachment
+        questionDiv.appendChild(attachment)
+      }
+      if(type === "audio"){
+        let audio = document.createElement('audio')
+        audio.src =ques.contents[0].attachment
+        audio.controls = true 
+        questionDiv.appendChild(audio)
+      }
+     
     }
 
     const ul = document.createElement('ul')
@@ -167,7 +208,7 @@ function showHistoryPractice(id, array) {
     }
 
     //answer
-    ques.contents.slice(1).forEach((ans, i) => {
+    ques.contents.slice(1).forEach(async (ans, i) => {
       console.log(ans)
       const answer = document.createElement('li')
       answer.className = ''
@@ -206,17 +247,25 @@ function showHistoryPractice(id, array) {
         div.appendChild(answerText)
       }
       if (ans.attachment) {
-        const answerAttachment = document.createElement('img')
-        answerAttachment.src = ans.attachment
-        answer.appendChild(answerAttachment)
+        let type = await typeChecker(ans.attachment)
+        if(type === "image"){
+          const answerImage = document.createElement('img')
+          answerImage.src = ans.attachment
+          answer.appendChild(answerImage)
+        }
+        if(type === "audio"){
+          const answerAudio = document.createElement('audio')
+          answerAudio.src = ans.attachment
+          answerAudio.controls = true
+          answer.appendChild(answerAudio)
+        }
       }
-
       div.appendChild(imgChecker)
     })
     list.appendChild(li)
   })
 }
-function showPracticeSocket(id, data) {
+async function showPracticeSocket(id, data) {
   const list = document.getElementById(id)
   list.replaceChildren()
 
@@ -233,22 +282,34 @@ function showPracticeSocket(id, data) {
     question.appendChild(questionText)
   }
   if (data.attachmentQues) {
-    const questionImage = document.createElement('img')
-    questionImage.src = data.attachmentQues
-    question.appendChild(questionImage)
+    let type = await typeChecker(data.attachmentQues)
+    if(type === "image"){
+      const questionImage = document.createElement('img')
+      questionImage.src = data.attachmentQues
+      question.appendChild(questionImage)
+    }
+    if(type === "audio"){
+      const questionAudio = document.createElement('audio')
+      questionAudio.src = data.attachmentQues
+      questionAudio.controls = true
+      question.appendChild(questionAudio)
+    }
+  
   }
 
-  data.answers.forEach((answer, index) => {
+  data.answers.forEach(async (answer, index) => {
     const li = document.createElement('li')
+    li.className = "my-1"
     list.appendChild(li)
 
     const div = document.createElement('div')
-    div.className = 'flex flex-row gap-3 items-center'
+    div.className = 'flex flex-row gap-3 items-center mb-2'
     li.appendChild(div)
 
     const input = document.createElement('input')
     input.type = 'radio'
     input.name = 'answer'
+    input.required = true
     input.id = `ans${index + 1}`
     div.appendChild(input)
 
@@ -266,9 +327,21 @@ function showPracticeSocket(id, data) {
     div.appendChild(checkImage)
 
     if (answer.attachment) {
-      const answerImage = document.createElement('img')
-      answerImage.src = answer.attachment
-      li.appendChild(answerImage)
+      console.log('hello')
+      let type = await typeChecker(answer.attachment)
+      if(type === "image"){
+        const answerImage = document.createElement('img')
+        answerImage.src = answer.attachment
+        li.appendChild(answerImage)
+      }
+      if(type === "audio"){
+        const answerAudio = document.createElement('audio')
+        answerAudio.src = answer.attachment
+        answerAudio.controls = true
+        li.appendChild(answerAudio)
+      }
+        
+    
     }
   })
 }
@@ -314,9 +387,10 @@ function showListOfHistoryPractice(id, data) {
     let time_end = new Date(ele.end_time)
 
     const timer = time_end - time_start
-    const second = String(Math.floor(timer / 1000)).padStart(2, '0')
-    const minute = String(Math.floor(second / 60)).padStart(2, '0')
-    const hours = String(Math.floor(minute / 60)).padStart(2, '0')
+    const totalSeconds = Math.floor(timer/1000)
+    const hours = String(Math.floor(totalSeconds/3600)).padStart(2,'0')
+    const minute = String(Math.floor((totalSeconds%3600)/60)).padStart(2,'0')
+    const second = String(totalSeconds%60).padStart(2,'0')
     timerValue.textContent = `${hours}:` + `${minute}:` + `${second}s`
 
     const score = document.createElement('p')

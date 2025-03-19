@@ -83,4 +83,27 @@ const callApi = async (linkApi, body = null, method) => {
   }
 }
 
-export default { callApi, refreshToken }
+const checkAttachmentType = async (url) => {
+  try {
+    const response = await fetch(url, { method: 'HEAD' })
+    const contentType = response.headers.get('Content-Type')
+
+    console.log('Attachment Type:', contentType)
+
+    // Kiểm tra xem là âm thanh hay hình ảnh
+    if (contentType.startsWith('audio/')) {
+      console.log("It's audio.")
+      return "audio"
+    } else if (contentType.startsWith('image/')) {
+      console.log("It's image.")
+      return "image"
+    } else {
+      console.log("It's UnIdentify")
+      return "error"
+    }
+  } catch (error) {
+    console.error('Error during checking:', error)
+  }
+}
+
+export default { callApi, refreshToken, checkAttachmentType }

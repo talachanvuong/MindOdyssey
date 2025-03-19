@@ -8,28 +8,29 @@ export const MESSAGE = {
   DOCUMENT: {
     NOT_FOUND: 'Document not found!',
     NOT_OWNED: 'Document not owned!',
-    NOT_APPROVED: 'Document not approved!',
-    PAGE_NOT_VALID: 'Page not valid!',
+    NOT_REVIEWED: 'Document not reviewed!',
+    REVIEWED: 'Document already reviews!',
     CREATE_DOCUMENT_SUCCESS: 'Create document successfully!',
     GET_DOCUMENT_DETAIL_SUCCESS: 'Get document detail successfully!',
     GET_DOCUMENTS_SUCCESS: 'Get documents successfully!',
     DELETE_DOCMENT_SUCCESS: 'Delete document successfully!',
     EDIT_DOCUMENT_SUCCESS: 'Edit document successfully!',
-    NOT_REVIEWED: 'This document was not reviewed!',
-    REVIEWED: 'This document was reviewed!',
+  },
+  PAGINATION: {
+    PAGE_NOT_VALID: 'Page not valid!',
   },
   QUESTION: {
     NOT_FOUND: 'Question not found!',
     NOT_OWNED: 'Question not owned!',
+    NOT_BELONGED: 'Question not belonged!',
     INVALID_ORDER: 'Invalid order!',
     LAST_REMAIN: 'Cannot delete the last question!',
-    NOT_BELONGED: 'Question not belonged!',
   },
   CONTENT: {
     NOT_FOUND: 'Content not found!',
     NOT_OWNED: 'Content not owned!',
-    EMPTY: 'Neither text nor attachment can be empty!',
     NOT_BELONGED: 'Content not belonged!',
+    EMPTY: 'Neither text nor attachment can be empty!',
   },
   USER: {
     EXISTED: 'User already exists!',
@@ -49,8 +50,9 @@ export const MESSAGE = {
     WRONG_PASSWORD: 'Wrong password!',
     LOGIN_SUCCESS: 'Admin login successfully!',
     LOGOUT_SUCCESS: 'Admin logout successfully!',
-    GET_UNAPPROVED_DOCUMENTS_SUCCESS: 'Get unapproved documents successfully!',
-    GET_DOCUMENT_DETAIL_SUCCESS: 'Get document detail successfully!',
+    GET_PENDING_DOCUMENTS_SUCCESS: 'Get pending documents successfully!',
+    GET_PENDING_DOCUMENT_DETAIL_SUCCESS:
+      'Get pending document detail successfully!',
     REVIEW_DOCUMENT_SUCCESS: 'Review document successfully!',
   },
   AUTH: {
@@ -70,15 +72,13 @@ export const MESSAGE = {
     GET_PRACTICE_HISTORY_SUCCESS: 'Get practice histories successfully!',
     GET_DOCS_SUCCESS: 'Get documents successfully!',
     NOT_FOUND_DOCS: 'No results found for this keyword!',
+    NOT_FOUND_DOCS_BY_CREATER: 'No documents found by this creater!',
     NOT_FOUND_HISTORY: 'No practice history found!',
     PAGE_EXCEEDS_TOTAL: 'The requested page exceeds the total number of pages!',
     NO_QUESTION: 'No more question available',
   },
   SERVER: {
     ERROR: 'Internal server error!',
-    PROCCESSING: 'Request is already being processed!',
-    NO_PAYLOAD: 'Cannot send payload!',
-    PRIVACY: 'You cannot access this!',
   },
 }
 
@@ -87,12 +87,6 @@ export const STATUS_CODE = {
   CREATED: 201,
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
-  FORBIDDEN: 403,
   NOT_FOUND: 404,
   INTERNAL_SERVER_ERROR: 500,
 }
-
-export const EVENT = {
-  STATISTIC: 'statistic',
-}
-

@@ -57,6 +57,16 @@
 
       <div class="mx-auto mt-10 max-w-xl rounded-lg bg-white p-6 shadow-md">
         <h1 class="mb-1 text-center text-xl font-bold">Document Create</h1>
+
+<!-- Popup thông báo -->
+<div id="popupMessage" class="hidden fixed inset-0 items-center justify-center bg-black bg-opacity-50 ">
+  <div class="bg-white rounded-lg p-6 shadow-lg w-96 mx-auto mt-32">
+    <p id="popupText" class="text-center text-lg font-semibold"></p>
+    <button onclick="closePopup()" class="mt-4 w-full bg-blue-500 text-black py-2 rounded-lg bg-red-500" >OK</button>
+  </div>
+</div>
+
+
         <form id="projectForm" class="space-y-4">
           <div>
             <label for="documentName" class="block pl-2 font-semibold"
@@ -83,27 +93,17 @@
           </div>
 
           <div>
-            <label for="author" class="block pl-2 font-semibold">Author</label>
-            <input
-              type="text"
-              id="author"
-              placeholder="Enter author"
-              class="w-full rounded-2xl border border-gray-300 p-2"
-            />
-          </div>
-
-          <div>
             <div class="flex items-center justify-between">
               <label for="course" class="text-sm font-semibold">Course</label>
               <div class="flex items-center space-x-2">
-                <span class="cursor-pointer text-sm font-semibold text-gray-700"
+                <span id="createcourse"  class="cursor-pointer text-sm font-semibold text-gray-700"
                   >Create new course</span
                 >
-                <button
+                <!-- <button
                   class="flex h-6 w-6 items-center justify-center rounded-md bg-gray-200 text-gray-400"
                 >
                   +
-                </button>
+                </button> -->
               </div>
             </div>
             <div class="flex items-center space-x-2">
@@ -111,80 +111,82 @@
                 id="course"
                 class="w-full rounded-2xl border border-gray-300 p-2"
               >
-                <option value="course1">Đồ án cơ sở ngành</option>
-                <option value="course2">Other course</option>
+              <option value="">Chọn khóa học</option>
               </select>
             </div>
           </div>
 
           <div>
             <div class="flex items-center justify-between">
-              <label class="text-sm font-semibold">Question:</label>
-              <div class="flex items-center space-x-2">
-                <span
-                  class="cursor-pointer text-xs text-sky-500 hover:underline"
-                  >Upload file</span
-                >
-                <div
-                  class="flex h-6 w-6 items-center justify-center rounded-full bg-gray-200"
-                >
-                  <svg
-                    class="h-4 w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 384 512"
-                  >
-                    <path
-                      d="M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-288-128 0c-17.7 0-32-14.3-32-32L224 0 64 0zM256 0l0 128 128 0L256 0zM216 408c0 13.3-10.7 24-24 24s-24-10.7-24-24l0-102.1-31 31c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l72-72c9.4-9.4 24.6-9.4 33.9 0l72 72c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-31-31L216 408z"
-                    />
-                  </svg>
-                </div>
+              <label class="text-lg font-semibold">Question:</label>
+              <div>
+              <input type="file" id="fileInput" class="text-sm hover:underline ml-60">
+              <button onclick="uploadFile()" class="flex items-center space-x-2">
               </div>
-            </div>
-            <div class="rounded border border-black p-4">
-              <label class="block p-1 font-semibold"
-                >Question 1: The content of question</label
-              >
+            
+    
+          </div>
+          <div id="questionsContainer" class="rounded border border-black p-4 mt-1">
+            <div class="rounded-lg border p-4 my-3 shadow bg-white">
+              <label class="block font-semibold text-lg text-gray-800 mb-2">
+                Câu hỏi 1:
+              </label>
+              <textarea class="w-full border p-2 rounded mb-3 resize-none overflow-hidden" placeholder="Enter question..." rows="1" oninput="updateQuestion(0, this.value, 0); autoResize(this)" style="height: 40px;"></textarea>
+              
+              <input type="file" accept="image/*,audio/*" class="mb-2" onchange="handleMediaUpload(event, 0, 0)">
+              <div id="mediaPreview0_0" class="mt-2"></div>
+              
               <div class="space-y-2">
-                <label class="flex items-center space-x-2">
-                  <input type="radio" name="question1" class="text-blue-600" />
-                  <span>content_1</span>
-                </label>
-                <label class="flex items-center space-x-2">
-                  <input type="radio" name="question1" class="text-blue-600" />
-                  <span>content_2</span>
-                </label>
-                <label class="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    name="question1"
-                    class="text-blue-600"
-                    checked
-                  />
-                  <span>content_3</span>
-                </label>
-                <label class="flex items-center space-x-2">
-                  <input type="radio" name="question1" class="text-blue-600" />
-                  <span>content_4</span>
-                </label>
+                
+                  <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="question0" onchange="setCorrectAnswer(0, 'A')">
+                    <textarea class="border p-1 w-full rounded resize-none overflow-hidden" placeholder="Enter answer..." rows="1" oninput="updateAnswer(0, 1, this); autoResize(this)" style="height: 32px;"></textarea>
+                    <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, 0, 1)">
+                    <div id="mediaPreview0_1" class="mt-2"></div>
+                  </label>
+                
+                  <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="question0" onchange="setCorrectAnswer(0, 'B')">
+                    <textarea class="border p-1 w-full rounded resize-none overflow-hidden" placeholder="Enter answer..." rows="1" oninput="updateAnswer(0, 2, this); autoResize(this)" style="height: 32px;"></textarea>
+                    <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, 0, 2)">
+                    <div id="mediaPreview0_2" class="mt-2"></div>
+                  </label>
+                
+                  <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="question0" onchange="setCorrectAnswer(0, 'C')">
+                    <textarea class="border p-1 w-full rounded resize-none overflow-hidden" placeholder="Enter answer..." rows="1" oninput="updateAnswer(0, 3, this); autoResize(this)" style="height: 32px;"></textarea>
+                    <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, 0, 3)">
+                    <div id="mediaPreview0_3" class="mt-2"></div>
+                  </label>
+                
+                  <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-gray-100">
+                    <input type="radio" name="question0" onchange="setCorrectAnswer(0, 'D')">
+                    <textarea class="border p-1 w-full rounded resize-none overflow-hidden" placeholder="Enter answer..." rows="1" oninput="updateAnswer(0, 4, this); autoResize(this)" style="height: 32px;"></textarea>
+                    <input type="file" accept="image/*,audio/*" class="ml-2" onchange="handleMediaUpload(event, 0, 4)">
+                    <div id="mediaPreview0_4" class="mt-2"></div>
+                  </label>
+                
               </div>
-            </div>
-            <button
+            </div></div>
+            <button id="addquesbtn"
               type="button"
-              class="hover:border-blue-500 hover:text-blue-500 group mt-2 flex w-full items-center justify-center rounded-md border-2 border-dashed border-slate-300 py-2 text-sm font-thin leading-4 text-gray-700 hover:border-solid hover:bg-white"
+              class="group mt-2 flex w-full items-center justify-center rounded-md border-2 border-dashed border-slate-300 py-2 text-sm font-thin leading-4 text-gray-700 hover:border-solid hover:bg-white"
             >
               + Add question
             </button>
           </div>
-          <button
+          <button id="createbtn"
             type="submit"
             class="mt-4 w-full rounded bg-blue py-2 text-black"
           >
             Create
           </button>
+        </div>  
         </form>
       </div>
     </div>
 
     <script type="module" src="../../js/document/create.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   </body>
 </html>

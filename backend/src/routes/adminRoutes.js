@@ -17,19 +17,19 @@ router.post(
   errorHandler
 )
 
-// Get unapproved documents
+// Get pending documents
 router.post(
-  '/get-unapproved-documents',
+  '/get-pending-documents',
   authMiddleware.verifyAdmin,
-  asyncHandler(adminController.getUnapprovedDocuments),
+  asyncHandler(adminController.getPendingDocuments),
   errorHandler
 )
 
-// Get document detail
+// Get pending document detail
 router.post(
-  '/get-document-detail',
+  '/get-pending-document-detail',
   authMiddleware.verifyAdmin,
-  asyncHandler(adminController.getDocumentDetail),
+  asyncHandler(adminController.getPendingDocumentDetail),
   errorHandler
 )
 

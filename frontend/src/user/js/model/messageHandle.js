@@ -64,7 +64,16 @@ function classify(message) {
   if (alertMessage.includes(message)) {
     return 'alert'
   }
-  console.error('this message is need to updated!')
+  console.warn(`⚠️ Chưa có quy tắc xử lý cho message: "${message}"`)
+  return 'redText' // Mặc định hiển thị lỗi chữ đỏ nếu chưa được định nghĩa
+
+}
+
+const showMessage = (id, message) => {
+  const type = classify(message)
+  if (type === 'redText') redText(id, message)
+  else if (type === 'popup') popup(id, message)
+  else if (type === 'alert') alert(message)
 }
 
 export default { classify, redText, popup, notification }

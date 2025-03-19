@@ -5,7 +5,7 @@ const upload = async (source) => {
     return
   }
 
-  return await cloudinary.uploader.upload(source)
+  return await cloudinary.uploader.upload(source, { resource_type: 'auto' })
 }
 
 const destroy = async (public_id) => {
@@ -21,13 +21,14 @@ const reUploadCloudinary = async (url) => {
     return
   }
   try {
-    const result = await cloudinary.uploader.upload(url)
+    const result = await cloudinary.uploader.upload(url,  { resource_type: 'auto' })
     return { url: result.secure_url, public_id: result.public_id }
   } catch (error) {
     console.error('Error during upload cloundinary:', error)
     throw error
   }
 }
+
 const reuploadAttachments = async (data) => {
   for (const item of data) {
     const uploadPromises = item.contents.map(async (content) => {

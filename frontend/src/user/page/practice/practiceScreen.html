@@ -87,6 +87,33 @@
         <!-- list of question of the test -->
         <ul id="list" class="mb-10 flex flex-col gap-2">
           <!-- The question -->
+          <li
+          id="loading"
+          class="flex items-center justify-center space-x-2"
+        >
+          <svg
+            class="text-blue-500 h-6 w-6 animate-spin"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="4"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+            ></circle>
+            <path
+              class="opacity-75"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            ></path>
+          </svg>
+          <span class="text-lg font-medium text-gray-500"
+            >Loading Question...Please Chill...</span
+          >
+        </li>
         </ul>
       </div>
     </main>

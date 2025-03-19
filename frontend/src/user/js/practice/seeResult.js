@@ -44,12 +44,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const start = new Date(res.data.PracticeHistory[0].start_time)
 
       const time = end - start
-      const second = String(Math.floor(time / 1000)).padStart(2, '0')
-      const minute = String(Math.floor(second / 60)).padStart(2, '0')
-      const hours = String(Math.floor(minute / 60)).padStart(2, '0')
+
+      const totalSeconds = Math.floor(time / 1000)
+      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0')
+      const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(
+        2,
+        '0'
+      )
+      const seconds = String(totalSeconds % 60).padStart(2, '0')
 
       document.getElementById('time').textContent =
-        `${hours}:` + `${minute}:` + `${second}s`
+        `${hours}:${minutes}:${seconds}s`
 
       backToPracticeScreen.href = `practiceScreen.html?id=${id}`
     } else {
@@ -77,4 +82,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   gainHistory()
   userInfo()
+
+  callApi.checkAttachmentType(
+    'https://res.cloudinary.com/dpcvmuxz8/video/upload/v1742264305/fgrd2tltqafgkddm3nke.mp3'
+  )
 })

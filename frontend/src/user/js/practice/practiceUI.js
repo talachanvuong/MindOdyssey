@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const nextBtn = document.getElementById('nextBtn')
   const currentQues = document.getElementById('quantity')
   const form = document.getElementById('form')
+  
 
   const urlParams = new URLSearchParams(window.location.search)
   const id = Number(urlParams.get('id'))
@@ -71,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
       })
     },
     async getNewQuestion() {
-      socket.emit('getNewQuestion', (question) => {
+      socket.emit('getNewQuestion',async  (question) => {
         quesData.question = question.contents[0].text
         quesData.attachmentQues = question.contents[0].attachment
         // else attachmentQuestion.remove()
@@ -79,11 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
         text:ele.text,
         attachment:ele.attachment
        }))
-      
-      
         quesData.checked = false
         quesData.order = question.order
-        show_doc.showPracticeSocket('list',quesData)
+        await show_doc.showPracticeSocket('list',quesData)
         inputController()
       })
      
@@ -122,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
               else  img.src = '../../page/img/incorrect.png'
               
             }
-            console.log(result)
+            console.log('hello')
           }
         )
       }
@@ -135,6 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
           const end_time = new Date(ele.end_time)
           practiceResult.time = Math.floor((end_time - start_time) / 1000)
           practiceResult.score = ele.score
+          console.log(response)
+          socket.response = response
+         
         })
       })
     },
@@ -151,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     nextBtn.addEventListener('click', async (e) => {
       e.preventDefault()
       if (form.checkValidity()) {
+        console.log('check')
         current++
         currentQues.textContent = current
         if (current >= total) {
@@ -227,4 +230,10 @@ document.addEventListener('DOMContentLoaded', () => {
   socketFunc()
   popupAlert()
   userInfo()
+  console.log(socket)
 })
+
+export default socket
+
+
+
