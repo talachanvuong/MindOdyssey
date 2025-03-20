@@ -8,13 +8,14 @@ export const MESSAGE = {
   DOCUMENT: {
     NOT_FOUND: 'Document not found!',
     NOT_OWNED: 'Document not owned!',
-    NOT_REVIEWED: 'Document not reviewed!',
+    NOT_APPROVED: 'Document not approved!',
     REVIEWED: 'Document already reviews!',
     CREATE_DOCUMENT_SUCCESS: 'Create document successfully!',
     GET_DOCUMENT_DETAIL_SUCCESS: 'Get document detail successfully!',
     GET_DOCUMENTS_SUCCESS: 'Get documents successfully!',
     DELETE_DOCMENT_SUCCESS: 'Delete document successfully!',
     EDIT_DOCUMENT_SUCCESS: 'Edit document successfully!',
+    GET_DOCUMENT_INFO_SUCCESS: 'Get document info successfully!',
   },
   PAGINATION: {
     PAGE_NOT_VALID: 'Page not valid!',
