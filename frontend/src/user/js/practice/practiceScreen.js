@@ -29,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
       {document: detail.id},
       'POST'
     )
-    console.log(res)
     Object.assign(detail, res.data)                           
 
     const docName = document.getElementById('docName')
@@ -40,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     docName.textContent = detail.title
     authorName.textContent = detail.author
-    courseName.textContent = detail.course
+    courseName.textContent = detail.course.title
     createAte.textContent = detail.created_at
     quantity.textContent = detail.total_questions 
 

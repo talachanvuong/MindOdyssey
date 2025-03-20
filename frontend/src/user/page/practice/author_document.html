@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body >
+    <header class="flex h-14 flex-row items-center bg-cyan-300">
+      <a href="practiceScreen.html">
+        <img src="../img/back.png" class="h-10" />
+      </a>
+    </header>
+
+    <main class="flex flex-col gap-2 items-center min-h-screen">
+      <p
+        class="mx-auto my-2 w-fit border-b border-black text-center text-3xl font-bold"
+      >
+        Author Information
+      </p>
+      <!-- user Information -->
+      <div
+        class="mx-auto mt-4 grid h-fit w-8/12 grid-cols-3 gap-3 rounded-lg border p-3 shadow-lg"
+      >
+        <div
+          class="flex flex-col items-center gap-2 rounded-md bg-cyan-300 p-2 shadow-md"
+        >
+          <img src="../img/user.png" class="h-10 w-fit" />
+          <p id="nameOfAuthor" class="truncate border-t border-black">
+            Nguyen Van A
+          </p>
+        </div>
+
+        <div class="col-span-2 flex flex-col">
+          <div>
+            <p class="font-bold">email</p>
+            <p
+              id="emailAuthor"
+              class="rounded-md border bg-gray-100 px-2 py-1 shadow-md"
+            >
+              askjdfnkjd@gmail.com
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- document list -->
+      <div class="h-fit w-8/12 rounded-md border-gray-100 bg-cyan-200 shadow-lg p-5 flex flex-col items-center">
+
+        <!-- pagination -->
+        <div class="flex flex-row items-center mb-3 gap-5 ">
+            <div id="theFirst" class="cursor-pointer hover:border p-2 rounded-md">
+                <img src="../img/thefirst.png" class="h-5" />
+              </div>
+              <div id="thePrev" class="cursor-pointer hover:border p-2 rounded-md"><img src="../img/back.png" class="h-5" /></div>
+              <div id="curPage" class="text-2xl font-bold"></div>
+              <div id="theNext" class="cursor-pointer hover:border p-2 rounded-md"><img src="../img/next.png" class="h-5" /></div>
+              <div id="theLast" class="cursor-pointer hover:border p-2 rounded-md"><img src="../img/thelast.png" class="h-5" /></div>
+        </div>
+        <ul id="list" class="flex flex-col gap-2 w-full"></ul>
+      </div>
+
+
+    </main>
+    <footer class="bg-cyan-300 h-10 mt-5"></footer>
+    <script type="module" src="../../js/practice/author_document.js"></script>
+  </body>
+</html>

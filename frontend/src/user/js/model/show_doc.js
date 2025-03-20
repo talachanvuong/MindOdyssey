@@ -39,9 +39,8 @@ async function typeChecker(url) {
  function showAnswerList(id, array) {
   const list = document.getElementById(id)
   list.innerHTML = ``
-  console.log(array)
   array.forEach( async (ques, index) => {
-    console.log('hello')
+
     const li = document.createElement('li')
     li.className =
       'h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3x`'
@@ -52,14 +51,12 @@ async function typeChecker(url) {
     question.textContent = `Question ${index + 1}: ` + ques.contents[0].text
    
     if (ques.contents[0].attachment) {
-    console.log('hello')
       const type = await typeChecker(ques.contents[0].attachment) 
     
       if(type==="audio"){
         let audio = document.createElement('audio')
         audio.src = ques.contents[0].attachment
         audio.controls= true
-        console.log(question)
         question.appendChild(audio)
       }
       if(type==="image"){
@@ -127,8 +124,6 @@ function showHistoryPractice(id, array) {
   array.forEach(async (ques, index) => {
     let correctAnswer
     let userAnswer
-    console.log(ques.userAnswer)
-    console.log(ques.correct_answer)
     const li = document.createElement('li')
     li.className =
       'h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3'
@@ -140,14 +135,13 @@ function showHistoryPractice(id, array) {
     //question
     if (ques.contents[0].text) {
       const question = document.createElement('p')
-      question.className = 'mb-2'
+      question.className = 'mb-2 font-bold'
       question.textContent = `Question ${index + 1}: ` + ques.contents[0].text
       questionDiv.appendChild(question)
     }
 
     if (ques.contents[0].attachment) {
       let type = await typeChecker(ques.contents[0].attachment)
-      console.log(type)
       if(type === "image"){
         const attachment = document.createElement('img')
         attachment.src = ques.contents[0].attachment
@@ -211,7 +205,7 @@ function showHistoryPractice(id, array) {
     ques.contents.slice(1).forEach(async (ans, i) => {
       console.log(ans)
       const answer = document.createElement('li')
-      answer.className = ''
+      answer.className = 'shadow-lg rounded-md p-2 border border-gray-100 bg-white'
       ul.appendChild(answer)
 
       const div = document.createElement('div')
@@ -272,7 +266,7 @@ async function showPracticeSocket(id, data) {
   //question
   const question = document.createElement('div')
   question.className =
-    'flex flex-col items-start border-b border-black mb-4 p-2'
+    'flex flex-col items-start border-b border-black mb-4 p-2 gap-2'
   list.appendChild(question)
 
   if (data.question) {
@@ -299,15 +293,16 @@ async function showPracticeSocket(id, data) {
 
   data.answers.forEach(async (answer, index) => {
     const li = document.createElement('li')
-    li.className = "my-1"
+    li.className = "my-3 shadow-lg rounded-md p-2 border-gray-200 border"
     list.appendChild(li)
 
     const div = document.createElement('div')
-    div.className = 'flex flex-row gap-3 items-center mb-2'
+    div.className = 'flex flex-row gap-3 items-center mb-2 cursor-pointer'
     li.appendChild(div)
 
     const input = document.createElement('input')
     input.type = 'radio'
+    input.className = "cursor-pointer"
     input.name = 'answer'
     input.required = true
     input.id = `ans${index + 1}`

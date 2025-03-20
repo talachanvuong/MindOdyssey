@@ -28,12 +28,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
   firstPage.addEventListener('click', () => {
-    state.curPage = 1
-    apiCalling()
+    if(state.curPage > 1){
+      state.curPage = 1
+      apiCalling()
+    }
   })
   lastPage.addEventListener('click', () => {
-    state.curPage = res.data.totalPages
-    apiCalling()
+    if(state.curPage <res.data.totalPages){
+      state.curPage = res.data.totalPages
+      apiCalling()
+    }    
   })
 
   async function apiCalling() {
