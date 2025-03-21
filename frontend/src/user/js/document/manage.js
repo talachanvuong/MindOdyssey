@@ -92,9 +92,9 @@ async function loadDocuments() {
 
 
 // ======================== Update Document Count ========================
-function updateDocumentCount() {
+function updateDocumentCount(filteredCount = allDocuments.length) {
   if (docSumElement) {
-    docSumElement.textContent = `Total documents: ${allDocuments.length}`
+    docSumElement.textContent = `Total documents: ${filteredCount}`;
   }
 }
 
@@ -258,8 +258,10 @@ function searchAndFilterDocuments() {
     return matchesQuery && matchesDate
   })
 
-  renderDocuments(filteredDocs)
+  updateDocumentCount(filteredDocs.length); // Cập nhật tổng số
+  renderDocuments(filteredDocs); // Render danh sách đã lọc
 }
+
 
 // ======================== Event Listeners ========================
 if (searchInput) searchInput.addEventListener('input', searchAndFilterDocuments)
