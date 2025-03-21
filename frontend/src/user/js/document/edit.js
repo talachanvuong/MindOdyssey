@@ -1,5 +1,6 @@
 import '../../../style.css'
 import callApi from '../model/callApi.js'
+import api from '../config/envConfig.js'
 
 document.addEventListener('DOMContentLoaded', async function () {
   const API_DOCUMENTS = 'http://localhost:3000/api/document'
@@ -21,7 +22,25 @@ document.addEventListener('DOMContentLoaded', async function () {
   if (!documentId || isNaN(Number(documentId))) {
     showPopup('No valid document ID found!')
   }
+ //   popup menu
+ function popupMenu() {
+  const button = document.getElementById('popupMenuBtn')
+  const modal = document.getElementById('popupMenu')
 
+  //open
+  button.addEventListener('click', () => {
+    modal.classList.remove('invisible')
+    document.body.classList.add('overflow-hidden')
+  })
+
+  //close
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.add('invisible')
+      document.body.classList.remove('overflow-hidden')
+    }
+  })
+}
   // Open popup
   const showPopup = (message) => {
     document.getElementById('popupText').innerText = message
@@ -34,6 +53,19 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   window.closePopup = closePopup
+
+  //get user info
+  async function userInfo() {
+    const userName = document.getElementById('userName')
+
+    const apiResult = await callApi.callApi(api.apiShowInfo, null, 'GET')
+    if (apiResult.status === 'success') {
+      userName.textContent = apiResult.data.display_name
+    } else {
+      console.log(apiResult)
+      userName.textContent = 'display_error'
+    }
+  }
 
   // load document _id from url
   const loadCourses = async (selectedCourseId) => {
@@ -700,4 +732,6 @@ document.addEventListener('DOMContentLoaded', async function () {
   ;(async () => {
     await loadDocument()
   })()
+  popupMenu()
+  userInfo() 
 })

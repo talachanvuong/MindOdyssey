@@ -1,6 +1,6 @@
 import '../../../style.css'
 import callApi from '../model/callApi.js'
-
+import api from '../config/envConfig.js'
 // ======================== DOM Elements ========================
 const courseSelect = document.getElementById('course');
 const createCourseBtn = document.getElementById('createcourse'); 
@@ -13,6 +13,18 @@ const questionsContainer = document.getElementById('questionsContainer');
 const API_COURSE = 'http://localhost:3000/api/course'
 const API_DOCUMENT = 'http://localhost:3000/api/document'
 
+// ========================get user info ========================
+  async function userInfo() {
+    const userName = document.getElementById('userName')
+
+    const apiResult = await callApi.callApi(api.apiShowInfo, null, 'GET')
+    if (apiResult.status === 'success') {
+      userName.textContent = apiResult.data.display_name
+    } else {
+      console.log(apiResult)
+      userName.textContent = 'display_error'
+    }
+  }
 // ======================== Popup Functions ========================
 const showPopup = (message) => {
   document.getElementById('popupText').innerText = message;
@@ -24,6 +36,25 @@ const closePopup = () => {
 };
 window.closePopup = closePopup;
 
+ //   popup menu
+ function popupMenu() {
+  const button = document.getElementById('popupMenuBtn')
+  const modal = document.getElementById('popupMenu')
+
+  //open
+  button.addEventListener('click', () => {
+    modal.classList.remove('invisible')
+    document.body.classList.add('overflow-hidden')
+  })
+
+  //close
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.add('invisible')
+      document.body.classList.remove('overflow-hidden')
+    }
+  })
+}
 // ======================== Load Course List ========================
 
 const loadCourses = async () => {
@@ -408,8 +439,8 @@ console.log("Data sent:", JSON.stringify(requestData, null, 2));
     createDocumentBtn.disabled = false;
   }
 };
-
-
+popupMenu()
+userInfo()
 // Load course when page opens
 createCourseBtn.addEventListener('click', createCourse)
 fileInput.addEventListener('change', handleFileUpload)
