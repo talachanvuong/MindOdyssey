@@ -22,25 +22,25 @@ document.addEventListener('DOMContentLoaded', async function () {
   if (!documentId || isNaN(Number(documentId))) {
     showPopup('No valid document ID found!')
   }
- //   popup menu
- function popupMenu() {
-  const button = document.getElementById('popupMenuBtn')
-  const modal = document.getElementById('popupMenu')
+  //   popup menu
+  function popupMenu() {
+    const button = document.getElementById('popupMenuBtn')
+    const modal = document.getElementById('popupMenu')
 
-  //open
-  button.addEventListener('click', () => {
-    modal.classList.remove('invisible')
-    document.body.classList.add('overflow-hidden')
-  })
+    //open
+    button.addEventListener('click', () => {
+      modal.classList.remove('invisible')
+      document.body.classList.add('overflow-hidden')
+    })
 
-  //close
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      modal.classList.add('invisible')
-      document.body.classList.remove('overflow-hidden')
-    }
-  })
-}
+    //close
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.add('invisible')
+        document.body.classList.remove('overflow-hidden')
+      }
+    })
+  }
   // Open popup
   const showPopup = (message) => {
     document.getElementById('popupText').innerText = message
@@ -204,12 +204,45 @@ document.addEventListener('DOMContentLoaded', async function () {
                 )
               }
             }
-
+            // Sắp xếp lại contents theo type: Q, A, B, C, D
+            const sortedContents = [
+              q.contents.find((c) => c.type === 'Q') || {
+                text: '',
+                attachment: null,
+                type: 'Q',
+              },
+              q.contents.find((c) => c.type === 'A') || {
+                text: '',
+                attachment: null,
+                type: 'A',
+              },
+              q.contents.find((c) => c.type === 'B') || {
+                text: '',
+                attachment: null,
+                type: 'B',
+              },
+              q.contents.find((c) => c.type === 'C') || {
+                text: '',
+                attachment: null,
+                type: 'C',
+              },
+              q.contents.find((c) => c.type === 'D') || {
+                text: '',
+                attachment: null,
+                type: 'D',
+              },
+            ].map((c, idx) => ({
+              id: c.id || undefined,
+              text: c.text || '',
+              attachment: c.attachment || null,
+              attachment_id: c.attachment_id || null,
+              type: ['Q', 'A', 'B', 'C', 'D'][idx],
+            }))
             return {
               id: q.id || undefined,
               action: q.id && !q.action ? 'edit' : q.action || 'add',
               correct: q.correct_answer || '',
-              contents: q.contents || [],
+              contents: sortedContents,
               order: q.order || index + 1,
             }
           })
@@ -317,7 +350,26 @@ document.addEventListener('DOMContentLoaded', async function () {
       })
   }
 
-  // Deleta question 
+  //Delete attachment
+  window.removeAttachment = (index, position) => {
+    if (!questions[index] || !questions[index].contents[position]) {
+      console.error(
+        `Error: Invalid question index ${index} or position ${position}`
+      )
+      return
+    }
+
+    // Delete attachment = null
+    questions[index].contents[position].attachment = null
+    questions[index].contents[position].attachment_id = null
+    console.log(
+      `Removed attachment from questions[${index}].contents[${position}]`
+    )
+
+    renderQuestions()
+  }
+
+  // Delete question
   window.deleteQuestion = async (id) => {
     const index = questions.findIndex((q) => q.id === id)
     if (index === -1) {
@@ -344,7 +396,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
   let isFirstRender = true
 
-  // Show question on ui 
+  // Show question on ui
   const renderQuestions = () => {
     console.log('Update interface with question list:', questions)
 
@@ -381,14 +433,16 @@ document.addEventListener('DOMContentLoaded', async function () {
                 ${q.action === 'delete' ? 'disabled' : ''}
                 onchange="handleMediaUpload(event, ${index}, 0)" />
   
-        <div id="mediaPreview${index}_0" class="mt-2">
-          ${
-            q.contents?.[0]?.attachment
-              ? q.contents[0].attachment.startsWith('data:audio')
-                ? `<audio controls class="mt-2"><source src="${q.contents[0].attachment}" type="audio/mpeg">Your browser does not support the audio element.</audio>`
-                : `<img src="${q.contents[0].attachment}" class="max-w-xs h-auto rounded-lg shadow-md object-contain">`
-              : ''
-          }
+        <div id="mediaPreview${index}_0" class="mt-2 flex justify-center p-2">
+        ${
+          q.contents?.[0]?.attachment
+            ? q.contents[0].attachment.startsWith('data:audio')
+              ? `<audio controls class="mt-2"><source src="${q.contents[0].attachment}" type="audio/mpeg">Your browser does not support the audio element.</audio>
+                 <button class="text-red-500 hover:text-red-700 ml-2" onclick="removeAttachment(${index}, 0)">Delete</button>`
+              : `<img src="${q.contents[0].attachment}" class="max-w-xs h-auto rounded-lg shadow-md object-contain">
+                 <button class="text-red-500 hover:text-red-700 ml-2" onclick="removeAttachment(${index}, 0)">Delete</button>`
+            : ''
+        }
         </div>
   
         <div class="space-y-2">
@@ -416,12 +470,14 @@ document.addEventListener('DOMContentLoaded', async function () {
                       ${q.action === 'delete' ? 'disabled' : ''}
                       onchange="handleMediaUpload(event, ${index}, ${i + 1})" />
   
-              <div id="mediaPreview${index}_${i + 1}" class="mt-2">
+              <div id="mediaPreview${index}_${i + 1}" class="mt-2 flex justify-center p-2">
                 ${
                   option.attachment
                     ? option.attachment.startsWith('data:audio')
-                      ? `<audio controls class="mt-2"><source src="${option.attachment}" type="audio/mpeg">Your browser does not support the audio element.</audio>`
-                      : `<img src="${option.attachment}" class="max-w-xs h-auto rounded-lg shadow-md object-contain">`
+                      ? `<audio controls class="mt-2"><source src="${option.attachment}" type="audio/mpeg">Your browser does not support the audio element.</audio>
+                         <button class="text-red-500 hover:text-red-700 ml-2" onclick="removeAttachment(${index}, ${i + 1})">Delete</button>`
+                      : `<img src="${option.attachment}" class="max-w-xs h-auto rounded-lg shadow-md object-contain">
+                         <button class="text-red-500 hover:text-red-700 ml-2" onclick="removeAttachment(${index}, ${i + 1})">Delete</button>`
                     : ''
                 }
               </div>
@@ -441,11 +497,11 @@ document.addEventListener('DOMContentLoaded', async function () {
           'text-red-500 hover:text-red-700 ml-3 self-start'
         deleteButton.onclick = () => {
           if (q.action === 'delete') {
-            q.action = q.id ? 'edit' : 'add' // Khôi phục
+            q.action = q.id ? 'edit' : 'add'
           } else if (q.action === 'add') {
-            questions.splice(index, 1) // Xóa câu hỏi mới
+            questions.splice(index, 1)
           } else {
-            q.action = 'delete' // Đánh dấu xóa
+            q.action = 'delete'
           }
           renderQuestions()
         }
@@ -519,7 +575,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
   }
 
-  //Upload attachment and preview it  
+  //Upload attachment and preview it
   window.handleMediaUpload = async (event, idOrIndex, position) => {
     const file = event.target.files[0]
     if (!file) {
@@ -626,10 +682,10 @@ document.addEventListener('DOMContentLoaded', async function () {
           }
 
           if (isTextEmpty && !isAttachmentEmpty) {
-            q.contents[j].text = ''
+            q.contents[j].text = undefined
           }
           if (!isTextEmpty && isAttachmentEmpty) {
-            q.contents[j].attachment = null
+            q.contents[j].attachment = undefined
           }
         }
         if (!['A', 'B', 'C', 'D'].includes(q.correct)) {
@@ -642,7 +698,11 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
       }
     }
-// Data upload
+
+    //Log before sending data
+    console.log('Questions before sending:', JSON.stringify(questions, null, 2))
+
+    // Data upload
     const updatedData = {
       document: Number(documentId),
       title: docNameInput.value.trim(),
@@ -677,12 +737,10 @@ document.addEventListener('DOMContentLoaded', async function () {
                       : q.action === 'add'
                         ? ' '
                         : null,
+                  attachment:
+                    attachmentBase64 === undefined ? null : attachmentBase64, // Set attachment to null if it is undefined
                 }
 
-                // Only add attachment if it is a valid data URI
-                if (attachmentBase64 && attachmentBase64.startsWith('data:')) {
-                  contentData.attachment = attachmentBase64
-                }
                 if (q.action === 'add') {
                   contentData.type =
                     c.type || (idx === 0 ? 'Q' : ['A', 'B', 'C', 'D'][idx - 1])
@@ -733,5 +791,5 @@ document.addEventListener('DOMContentLoaded', async function () {
     await loadDocument()
   })()
   popupMenu()
-  userInfo() 
+  userInfo()
 })
