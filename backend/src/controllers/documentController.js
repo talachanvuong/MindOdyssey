@@ -433,9 +433,13 @@ const editDocument = async (req, res) => {
 
               // Check content empty
               const isTextEmpty =
-                tempContent.text === null && content.attachment === null
+                !content.text &&
+                content.attachment === null &&
+                tempContent.text === null
               const isAttachmentEmpty =
-                content.text === null && tempContent.attachment_id === null
+                content.text === null &&
+                !content.attachment &&
+                tempContent.attachment_id === null
               if (isTextEmpty || isAttachmentEmpty) {
                 return sendResponse(
                   res,
