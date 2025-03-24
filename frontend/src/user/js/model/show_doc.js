@@ -271,20 +271,20 @@ async function showPracticeSocket(id, data) {
 
   if (data.question) {
     const questionText = document.createElement('p')
-    questionText.textContent = 'Question :' + data.question
+    questionText.textContent = 'Question :' + data.question.text
     questionText.className = 'font-bold'
     question.appendChild(questionText)
   }
-  if (data.attachmentQues) {
-    let type = await typeChecker(data.attachmentQues)
+  if (data.question.attachment) {
+    let type = await typeChecker(data.question.attachment)
     if(type === "image"){
       const questionImage = document.createElement('img')
-      questionImage.src = data.attachmentQues
+      questionImage.src = data.question.attachment
       question.appendChild(questionImage)
     }
     if(type === "audio"){
       const questionAudio = document.createElement('audio')
-      questionAudio.src = data.attachmentQues
+      questionAudio.src = data.question.attachment
       questionAudio.controls = true
       question.appendChild(questionAudio)
     }
