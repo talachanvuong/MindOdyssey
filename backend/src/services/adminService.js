@@ -15,7 +15,7 @@ const getAdminByDisplayName = async (display_name) => {
 
 const getPendingDocuments = async (pagination, keyword, filter) => {
   const conditions = []
-  const refs = ['Chưa duyệt']
+  const refs = ['Pending']
   let index = 2
 
   if (keyword) {
@@ -137,7 +137,7 @@ const reviewDocument = async (
   document_id
 ) => {
   const updates = ['admin_id = $2', 'status = $3']
-  const refs = [document_id, admin_id, isApproved ? 'Đã duyệt' : 'Từ chối']
+  const refs = [document_id, admin_id, isApproved ? 'Approved' : 'Rejected']
 
   if (reject_reason !== undefined) {
     updates.push(`reject_reason = $4`)

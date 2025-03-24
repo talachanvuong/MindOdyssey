@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       statusContainer.textContent = `Status: ${doc.status || 'No status'}`
       statusContainer.className = 'text-gray-500'
 
-      if (doc.status === 'Từ chối') {
+      if (doc.status === 'Rejected') {
         statusContainer.className = 'text-red-500'
         if (doc.reject_reason) {
           rejectReason.textContent = `Reason: ${doc.reject_reason}`
@@ -89,9 +89,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
       } else {
         rejectReason.style.display = 'none'
-        if (doc.status === 'Chưa duyệt') {
+        if (doc.status === 'Pending') {
           statusContainer.className = 'text-yellow-500'
-        } else if (doc.status === 'Đã duyệt') {
+        } else if (doc.status === 'Approved') {
           statusContainer.className = 'text-green-500'
         }
       }

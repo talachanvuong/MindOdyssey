@@ -152,7 +152,7 @@ const updateDocument = async (document_id) => {
     `UPDATE documents
      SET
       last_updated = NOW(),
-      status = 'Chưa duyệt',
+      status = 'Pending',
       admin_id = NULL,
       reject_reason = NULL
      WHERE document_id = $1;`,
@@ -253,7 +253,7 @@ const isDocumentApprove = async (document_id) => {
   const result = await client.query(
     `SELECT 1
      FROM documents
-     WHERE status = 'Đã duyệt'
+     WHERE status = 'Approved'
      AND document_id = $1
      LIMIT 1;`,
     [document_id]
@@ -266,7 +266,7 @@ const isDocumentReview = async (document_id) => {
   const result = await client.query(
     `SELECT 1
      FROM documents
-     WHERE status <> 'Chưa duyệt'
+     WHERE status <> 'Pending'
      AND document_id = $1
      LIMIT 1;`,
     [document_id]

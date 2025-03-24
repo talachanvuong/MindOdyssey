@@ -14,9 +14,9 @@ CREATE TYPE "content_type" AS ENUM (
 );
 
 CREATE TYPE "document_status" AS ENUM (
-  'Đã duyệt',
-  'Chưa duyệt',
-  'Từ chối'
+  'Approved',
+  'Pending',
+  'Rejected'
 );
 
 CREATE TABLE "users" (
@@ -42,7 +42,7 @@ CREATE TABLE "documents" (
   "user_id" INT NOT NULL,
   "created_at" TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP),
   "last_updated" TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP),
-  "status" document_status NOT NULL DEFAULT ('Chưa duyệt'),
+  "status" document_status NOT NULL DEFAULT ('Pending'),
   "admin_id" INT,
   "reject_reason" VARCHAR(2048)
 );
