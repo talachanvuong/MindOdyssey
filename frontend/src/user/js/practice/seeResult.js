@@ -90,8 +90,4 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   gainHistory()
   userInfo()
-
-  callApi.checkAttachmentType(
-    'https://res.cloudinary.com/dpcvmuxz8/video/upload/v1742264305/fgrd2tltqafgkddm3nke.mp3'
-  )
 })
