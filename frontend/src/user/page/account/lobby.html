@@ -7,24 +7,30 @@
   </head>
   <body class="bg-stone-200">
     <header
-      class="flex h-20 flex-row justify-between rounded-bl-2xl rounded-br-2xl bg-cyan-300 p-2 shadow-md shadow-gray-600 sm:h-14"
+      class="flex h-fit flex-row justify-between rounded-bl-2xl rounded-br-2xl bg-cyan-300 p-2 shadow-md shadow-gray-600 sm:h-14"
     >
-      <button id="logout">
+      <button class="group relative"  id="logout">
         <img src="../img/logout.png" class="h-16 sm:h-10" />
+        <p id="logoutText" class="group-hover:opacity-100 opacity-0 border pointer-events-none border-black  rounded-md px-1 shadow-md bg-black text-white my-1">Log out</p>
       </button>
-      <a class="flex" href="user_information.html" id="userInfor">
-        <img src="../img/user.png" />
+      <a id="user" class=" group relative flex flex-row items-center gap-2 p-2 hover:shadow-md rounded-lg transition-all  hover:bg-cyan-200 " href="user_information.html" id="userInfor">
+        <img src="../img/user.png" class="h-8 " />
+        <p id="userName"></p>
+        <p id="infoText" class="absolute top-12 border border-black bg-black pointer-events-none text-white  group-hover:opacity-100 opacity-0  rounded-md shadow-md px-2">see your info</p>
       </a>
     </header>
-    <main class="mt-5 flex min-h-screen items-center">
+    <main id="main"  class="flex min-h-screen items-center invisible -translate-y-2 opacity-0">
       <div
         class="mx-4 flex h-fit flex-col gap-3 rounded-xl bg-white p-5 shadow-md shadow-gray-700 sm:mx-auto sm:w-2/5"
       >
         <!-- title -->
-        <p class="text-center text-6xl font-semibold sm:text-7xl mb-3">
-          Trắc Nghiệm Trực Tuyến
-        </p>
-
+        <div >
+          <p class="font-serif mb-3 text-center text-4xl font-semibold sm:text-5xl">
+           MindOdyssey
+          </p>
+          <p class="font-serif text-center text-2xl">Online Test</p>
+          
+        </div>
         <!-- searching box -->
         <div
           id="searching"
@@ -32,59 +38,73 @@
         >
           <form class="flex flex-col items-center gap-5">
             <input
-            id="searchInput"
-              class="focus:ring-cyan-300 h-12 w-11/12 rounded-lg border bg-[url('../img/searching.png')] bg-[length:20px] bg-[left_0.5rem_center] bg-no-repeat p-2 pl-10 opacity-70 shadow-md shadow-gray-700 outline-none placeholder:text-gray-700 focus:ring-2"
+              id="searchInput"
+              class="h-12 w-11/12 rounded-lg border bg-[url('../img/searching.png')] bg-[length:20px] bg-[left_0.5rem_center] bg-no-repeat p-2 pl-10 opacity-70 shadow-md shadow-gray-700 outline-none placeholder:text-gray-700 focus:ring-2 focus:ring-cyan-300"
               type="text"
-              placeholder="Hôm nay ôn gì đây ?"
+              placeholder="Which document you want to practice?"
             />
             <button
+
               id="searchButton"
-              class="w-11/12 rounded-lg border border-gray-600 bg-cyan-200 text-3xl font-bold shadow-md shadow-gray-700"
+              class="font-serif hover:scale-105 hover:bg-cyan-100 flex w-11/12 flex-col items-center rounded-lg  bg-cyan-200 text-3xl shadow-xl"
             >
-              Tìm kiếm
+              Search
             </button>
           </form>
         </div>
 
         <!-- feature -->
-        <div
-          class="mt-10 grid grid-cols-2 grid-rows-[100px_100px] gap-4  p-4"
-        >
-
+        <div class="mt-10 grid grid-cols-2 grid-rows-[100px_100px] gap-4 p-4">
           <!-- create document -->
           <a
             href="../document/create.html"
             id="create_doc"
-            class="flex flex-col justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700"
+            class="p-2 hover:scale-105 flex flex-col justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700"
           >
             <img
               src="../img/create_doc_feature.png"
-              class="m-auto w-1/2 object-contain sm:w-1/3"
+              class="m-auto w-1/2 h-fit object-contain sm:w-1/3"
             />
+            <p class="text-center font-bold">Create Document</p>
           </a>
 
           <!-- storage -->
           <a
             href="../practice/searchDoc.html"
             id="storage"
-            class="flex flex-col justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700"
+            class="flex  flex-col hover:scale-105 justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700"
           >
             <img
               src="../img/storage.png"
               class="m-auto w-1/2 object-contain sm:w-1/3"
             />
+            <p class="text-center font-bold">Library</p>
           </a>
 
           <!-- completed_doc -->
           <a
-            href="#"
+            href="../practice/practiceHistory.html"
             id="completed_doc"
-            class="flex flex-col justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700"
+            class="hover:scale-105 flex flex-col justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700"
           >
             <img
-              src="../img/completed_document.png"
+              src="../img/history.png"
               class="m-auto w-1/2 object-contain sm:w-1/3"
             />
+            <p class="text-center font-bold">Practice History</p>
+          </a>
+
+          <!-- manage document -->
+          <a
+          id="manage"
+            href="../document/manage.html"
+            class="flex hover:scale-105 flex-col justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700"
+          >
+            <img
+              src="../img/uploaded_doc.png"
+              class="m-auto w-1/2 object-contain sm:w-1/3"
+            />
+            <p class="text-center font-bold">Document Manage</p>
           </a>
         </div>
       </div>
@@ -93,7 +113,8 @@
     <footer
       class="mt-5 flex h-20 flex-col justify-center rounded-tl-2xl rounded-tr-2xl bg-cyan-300 p-2 shadow-md shadow-gray-600"
     >
-    <p class="text-4xl font-bold mx-auto">About Us: Group 1</p></footer>
+      <p class="mx-auto text-3xl text-green-500 font-bold font-serif">MindOdyssey</p>
+    </footer>
     <script type="module" src="../../js/account/lobby.js"></script>
   </body>
 </html>

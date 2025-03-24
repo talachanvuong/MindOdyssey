@@ -6,14 +6,15 @@
     <title>Document</title>
   </head>
   <body class="bg-stone-200">
-    <header class="flex h-12 flex-row justify-between bg-cyan-300 pr-5">
-      <div class="ml-2 mt-1 flex cursor-pointer flex-row gap-2">
-        <a href="../account/lobby.html">
+    <header class="flex h-14 flex-row justify-between items-center bg-cyan-300 pr-5">
+      <div class="ml-2 mt-1 flex cursor-pointer flex-row gap-2 items-center ">
+        <a id="homeBtn" href="../account/lobby.html" class="duration-500 hover:bg-cyan-200 rounded-md hover:shadow-md  p-1 ">
           <img src="../img/home.png" class="h-10 w-full" />
         </a>
       </div>
+      </div>
 
-      <div id="user" class="h-12">
+      <div id="user" class="h-12 group hover:scale-105 hover:bg-cyan-200 rounded-md hover:shadow-md duration-500">
         <a
           href="../account/user_information.html"
           class="flex flex-row items-center justify-between gap-2 p-1"
@@ -22,12 +23,16 @@
           <!-- call API to get user name -->
           <div id="userName" class="font-bold"></div>
         </a>
+        <p id="userInfoBlackText" class="bg-black text-white rounded-md px-2 mt-2 pointer-events-none z-10 group-hover:opacity-100 opacity-0">See your information</p>
       </div>
     </header>
     <main
-      class="sm:mx-auto sm:w-4/6 mx-auto mt-3 pb-10 flex h-fit w-11/12 flex-col rounded-xl bg-white px-2 py-2 shadow-md shadow-gray-500"
+    id="main"
+    class="invisible mx-auto mt-3 flex h-fit w-6/12 flex-col rounded-xl scale-90 bg-white px-2 py-2 pb-10 shadow-md shadow-gray-500 sm:mx-auto"
     >
-      <p class="text-center text-4xl font-bold italic mb-4">Congratulation</p>
+      <p class="mb-4 text-center font-serif text-4xl font-bold italic">
+        Congratulation
+      </p>
 
       <!-- result -->
       <div
@@ -39,61 +44,98 @@
           <div class="flex flex-row items-center gap-3">
             <img src="../img/score.png" class="h-10" />
             <div class="flex flex-row">
-              <p class="flex flex-row">Score</p>
-              <div>30</div>
+              <p class="mr-2 flex flex-row font-bold">Score:</p>
+              <p id="score"></p>
             </div>
           </div>
           <!-- timer -->
           <div class="flex flex-row items-center gap-3">
             <img src="../img/timer.png" class="h-10" />
             <div class="flex flex-row">
-              <p class="flex flex-row">Time:</p>
-              <div>25m</div>
+              <p class="mr-2 flex flex-row font-bold">Time:</p>
+              <p id="time"></p>
+            </div>
+          </div>
+
+          <div class="flex flex-row items-center gap-3">
+            <img src="../img/quantity.png" class="h-10" />
+            <div class="flex flex-row gap-2">
+              <p class="font-bold">Total:</p>
+              <p id="total" class="font-bold"></p>
             </div>
           </div>
 
           <!-- corrected answer -->
-          <div class="flex flex-row items-center gap-3">
-            <img src="../img/done.png" class="h-10" />
-            <div class="flex flex-row">
-              <p class="flex flex-row">Correct:</p>
-              <div>25/30</div>
+          <div class="flex flex-row items-center gap-14">
+            <div class="flex- flex items-center gap-3">
+              <img src="../img/done.png" class="h-10" />
+              <div class="flex flex-row">
+                <p class="mr-2 flex flex-row font-bold">Correct:</p>
+                <div id="correctAns" class="font-bold"></div>
+              </div>
+            </div>
+            <div class="flex flex-row items-center gap-3">
+              <img src="../img/incorrect.png" class="h-10" />
+              <div class="flex flex-row">
+                <p class="mr-2 font-bold">Incorrect:</p>
+                <div id="incorrectAns" class="font-bold"></div>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- grade -->
         <div>
-          <img src="../img/gradeA.png" class="mx-auto mt-4 h-32" />
+          <img id="rank" src="" class="mx-auto mt-4 h-32" />
         </div>
       </div>
 
       <!-- navigation -->
-      <div class="h-fit w-full grid grid-cols-2 grid-rows-2 mt-3 gap-3">
-        <a href="practiceUI.html" class="bg-gray-200 flex flex-row  items-center  rounded-md shadow-gray-500 shadow-md">
-            <img src="../img/refresh.png" class="h-10 ml-3">
-            <p class="w-full text-center">Again</p>
+      <div class="mx-auto mt-3 grid h-fit w-5/6 grid-cols-2 grid-rows-3 gap-3">
+        <a
+          id="seeDetailResult"
+          href="seeResult.html"
+          class="col-span-2 relative bg-cyan-50 hover:scale-105 row-span-1 flex flex-row items-center rounded-md justify-evenly shadow-md shadow-gray-500"
+        >
+          <img src="../img/seeResult.png" class="ml-3 h-9 w-fit absolute left-2" />
+          <p class="w-full font-bold text-center ">see again</p>
+        </a>
+        <a
+          id="authorDocument"
+          href="author_document.html"
+          class="col-span-1 hover:scale-105  row-span-1 flex cursor-pointer flex-row items-center rounded-md bg-gray-200 shadow-md shadow-gray-500"
+        >
+          <img src="../img/author.png" class="ml-3 h-10" />
+          <p class="w-full text-center">Author's document</p>
+        </a>
+        <a
+          id="replay"
+          href="practiceUI.-html"
+          class="hover:scale-105   col-span-1 row-span-1 flex cursor-pointer flex-row items-center rounded-md bg-gray-200 shadow-md shadow-gray-500"
+        >
+          <img src="../img/refresh.png" class="ml-3 h-10" />
+          <p class="w-full text-center">Again</p>
         </a>
 
-        <a href="searchDoc.html"  class="bg-gray-200 flex flex-row  items-center  rounded-md shadow-gray-500 shadow-md">
-            <img src="../img/newDoc.png" class="h-8 ml-3">
-            <p class="text-center w-full">find more</p>
+        <a
+        id="findMore"
+          href="searchDoc.html"
+          class="hover:scale-105  col-span-1 row-span-1 flex flex-row items-center rounded-md bg-gray-200 shadow-md shadow-gray-500"
+        >
+          <img src="../img/newDoc.png" class="ml-3 h-8" />
+          <p class="w-full text-center">find more</p>
         </a>
 
-        <a href="practiceScreen.html" class="bg-gray-200 flex flex-row  items-center  rounded-md shadow-gray-500 shadow-md">
-            <img src="../img/back.png" class="h-8 ml-3">
-            <p class="text-center w-full">Back</p>
-        </a>
-
-        <a href="seeResult.html" class="bg-gray-200 flex flex-row  items-center  rounded-md shadow-gray-500 shadow-md">
-            <img src="../img/seeResult.png" class="h-9 ml-3">
-            <p class="text-center  w-full">see again</p>
+        <a
+          id="goBack"
+          href="practiceScreen.html"
+          class="hover:scale-105   col-span-1 row-span-1 flex flex-row items-center rounded-md bg-gray-200 shadow-md shadow-gray-500"
+        >
+          <img src="../img/back.png" class="ml-3 h-8" />
+          <p class="w-full text-center">Back</p>
         </a>
       </div>
     </main>
-    <script
-      type="module"
-      src="../../js/practice/practiceResult.js"
-    ></script>
+    <script type="module" src="../../js/practice/practiceResult.js"></script>
   </body>
 </html>

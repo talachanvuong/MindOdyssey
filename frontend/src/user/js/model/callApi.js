@@ -83,4 +83,20 @@ const callApi = async (linkApi, body = null, method) => {
   }
 }
 
-export default { callApi, refreshToken }
+const checkAttachmentType = async (url) => {
+  try {
+    const response = await fetch(url, { method: 'HEAD' })
+    const contentType = response.headers.get('Content-Type')
+    if (contentType.startsWith('audio/')) {
+      return "audio"
+    } else if (contentType.startsWith('image/')) {
+      return "image"
+    } else {
+      return "error"
+    }
+  } catch (error) {
+    console.error('Error during checking:', error)
+  }
+}
+
+export default { callApi, refreshToken, checkAttachmentType }

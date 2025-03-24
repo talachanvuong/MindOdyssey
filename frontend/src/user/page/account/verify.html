@@ -14,16 +14,18 @@
 
     <main class="mt-5">
       <div class="mx-5 flex flex-col gap-4 p-4 sm:mx-auto sm:w-2/5">
-        <p class="text-center text-3xl">Xác minh email của bạn</p>
+        <p class="text-center text-3xl">Verify your email</p>
         <form
           class="flex flex-col rounded border border-gray-300 bg-stone-200 p-3 shadow-2xl"
         >
-          <label class="text-2xl">Nhập email</label>
+          <label class="text-2xl">Enter your email</label>
           <input class="rounded border border-black" />
+          <p id="alert"></p>
           <button
-            class="mx-auto mt-3 h-10 w-1/2 rounded bg-orange-300 text-2xl shadow-xl"
+          id="button"
+            class="mx-auto mt-3 h-10 w-1/2 rounded bg-orange-300 text-2xl shadow-xl hover:bg-orange-500 hover:scale-95"
           >
-            Gửi email
+           Send
           </button>
         </form>
       </div>
@@ -115,6 +117,7 @@
       </svg>
       <p>Chúng tôi đang gửi email, xin chờ một chút...</p>
     </div>
+    <div id="popupAlert"></div>
 
     <script type="module" src="../../js/account/verify.js"></script>
   </body>

@@ -1,3 +1,5 @@
+import callApi from "./callApi.js"
+
 function showDocList(id, array) {
   const list = document.getElementById(id)
   list.innerHTML = ''
@@ -34,27 +36,52 @@ function showDocList(id, array) {
 function showAnswerList(id, array) {
   const list = document.getElementById(id)
   list.innerHTML = ``
-  array.forEach((ques, index) => {
+  console.log(array)
+  array.forEach(async (ques, index) => {
     const li = document.createElement('li')
     li.className =
       'h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3'
-
+ 
     //question
     const question = document.createElement('p')
-    question.className = ''
+    question.className = 'border-b-4 border-black pb-1 font-bold'
+
     question.textContent = `Question ${index + 1}: ` + ques.contents[0].text
+    if( ques.contents[0].attachment){
+      let type = await callApi.checkAttachmentType( ques.contents[0].attachment)
+      if(type === "image"){
+        const quesImage = document.createElement('img')
+        quesImage.src = ques.contents[0].attachment
+        question.appendChild(quesImage)
+      }
+      if(type === "audio"){
+        const quesAudio = document.createElement('audio')
+        quesAudio.src =  ques.contents[0].attachment
+        quesAudio.controls = true
+        question.appendChild(quesAudio)
+      }
+     
+    }
 
     const form = document.createElement('form')
     const ul = document.createElement('ul')
 
     //answer
-    ques.contents.slice(1).forEach((ans, i) => {
+    ques.contents.slice(1).forEach(async (ans, i) => {
       const a = document.createElement('li')
-      a.className = 'ml-1 flex flex-row gap-2'
+      const inputAndTextDiv = document.createElement('div')
+      inputAndTextDiv.classList = "flex flex-row gap-2"
+    
+     
+      a.className = 'ml-1 flex flex-col gap-2 my-2'
+    
 
       const input = document.createElement('input')
       input.type = 'radio'
       input.className = 'scale-150 cursor-pointer border border-black'
+
+      const ansContent = document.createElement('p')
+      ansContent.textContent = ans.text
 
       switch (ques.correct_answer) {
         case `A`: {
@@ -79,12 +106,26 @@ function showAnswerList(id, array) {
       }
       input.disabled = true
 
-      const ansContent = document.createElement('p')
-      ansContent.textContent = ans.text
-
-      a.appendChild(input)
-      a.appendChild(ansContent)
+      a.appendChild(inputAndTextDiv)
+      inputAndTextDiv.appendChild(input)
+      inputAndTextDiv.appendChild(ansContent)
+     
       ul.appendChild(a)
+      if(ans.attachment){
+        let type = await callApi.checkAttachmentType(ans.attachment)
+        if(type === "image"){
+          const img = document.createElement('img')
+          img.src = ans.attachment
+          a.appendChild(img)
+        }
+        if(type === "audio"){
+          const audio = document.createElement('audio')
+          audio.src = ans.attachment
+          audio.controls = true
+          a.appendChild(audio)
+        }
+        
+      }
     })
 
     li.appendChild(question)
@@ -93,6 +134,7 @@ function showAnswerList(id, array) {
     form.appendChild(ul)
 
     list.appendChild(li)
+  
   })
 }
 

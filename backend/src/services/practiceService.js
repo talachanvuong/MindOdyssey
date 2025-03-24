@@ -118,7 +118,7 @@ const selectPracticeHistory = async (user_id, limit, page) => {
       practice_histories
     WHERE 
       user_id = $1
-    ORDER BY 
+      ORDER BY 
       start_time DESC
     LIMIT $2 OFFSET $3
   `

@@ -1,6 +1,5 @@
 export class Popup_Modal {
   constructor(id, message) {
-    //console.log(document.getElementById(id))
     this.idModal = document.getElementById(id)
     this.message = message
     if (!this.idModal) {
@@ -22,7 +21,7 @@ export class Popup_Modal {
           <p id="existError" class="mt-5 text-2xl text-center mx-3">${this.message}</p>
           <button
             id="close"
-            class="mb-5 mt-5 h-11 w-2/5 rounded-xl bg-orange-300 text-xl font-bold shadow-xl hover:bg-orange-400"
+            class="mb-5 mt-5 h-11 w-2/5 rounded-xl bg-orange-300 text-xl font-bold shadow-xl hover:bg-orange-400 duration-500"
           >
             OK
           </button>
