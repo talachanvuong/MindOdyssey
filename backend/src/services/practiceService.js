@@ -13,7 +13,7 @@ const selectDocumentforPractice = async (keyword, page, limit, course_id) => {
     FROM documents d
     JOIN courses c ON d.course_id = c.course_id
     JOIN users u ON d.user_id = u.user_id
-    WHERE d.status = 'Đã duyệt'
+    WHERE d.status = 'Approved'
 `
 
   let values = []
@@ -37,7 +37,7 @@ const countDocumentsByKeyword = async (keyword, limit, course_id) => {
   let countQuery = `
         SELECT COUNT(*) AS total
         FROM documents as d
-        WHERE status='Đã duyệt'
+        WHERE status='Approved'
     `
   let values = []
   if (keyword) {
@@ -170,7 +170,7 @@ const selectDocumentbyUserId = async (user_id, limit,page) => {
     JOIN courses c ON d.course_id = c.course_id
     JOIN users u ON d.user_id = u.user_id
     WHERE 
-      d.status = 'Đã duyệt' AND d.user_id = $1
+      d.status = 'Approved' AND d.user_id = $1
     ORDER BY 
       d.created_at DESC
     LIMIT $2 OFFSET $3
@@ -183,7 +183,7 @@ const selectDocumentbyUserId = async (user_id, limit,page) => {
 const countDocumentsByUserId = async (user_id,limit) => {
   const countQuery = `
     SELECT COUNT(*) AS total FROM documents 
-    WHERE status = 'Đã duyệt' AND user_id = $1
+    WHERE status = 'Approved' AND user_id = $1
   `
   const countResult = await client.query(countQuery, [user_id])
   const totalDocs = parseInt(countResult.rows[0].total)
