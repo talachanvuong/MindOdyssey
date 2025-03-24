@@ -2,6 +2,7 @@ import '../../../style.css'
 import callApi from '../model/callApi.js'
 import api from '../config/envConfig.js'
 import show_doc from '../model/show_doc.js'
+import effect from '../model/effect.js'
 
 //get information from url when user want to see specific history
 const urlParams = new URLSearchParams(window.location.search)
@@ -9,6 +10,13 @@ const id = urlParams.get('id')
 const detail = JSON.parse(decodeURIComponent(urlParams.get('detail')))
 
 document.addEventListener('DOMContentLoaded', () => {
+  effect.assignAfterLoading.duration_assign('userInfoBlackText',500,10)
+  effect.assignAfterLoading.duration_assign('back',500,10)
+  effect.assignAfterLoading.duration_assign('homeBtn',500,10)
+  effect.assignAfterLoading.duration_assign('backToPracticeScreen',500,10)
+  effect.assignAfterLoading.duration_assign('findMoreDoc',500,10)
+  effect.assignAfterLoading.duration_assign('user',500,10)
+
   const backToPracticeScreen = document.getElementById('backToPracticeScreen')
 
   async function userInfo() {

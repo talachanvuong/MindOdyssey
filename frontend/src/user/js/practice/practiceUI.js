@@ -3,6 +3,7 @@ import callApi from '../model/callApi.js'
 import api from '../config/envConfig.js'
 import io from 'socket.io-client'
 import show_doc from '../model/show_doc.js'
+import effect from '../model/effect.js'
 
 const quesData = {
   question: null,
@@ -28,6 +29,12 @@ const practiceResult = {
 const socket = io('http://localhost:3000', { withCredentials: true })
 
 document.addEventListener('DOMContentLoaded', () => {
+  effect.assignAfterLoading.duration_assign('nextBtn',500)
+  effect.assignAfterLoading.duration_assign('user',500  )
+  effect.assignAfterLoading.duration_assign('userInfoBlackText',500)
+  effect.assignAfterLoading.duration_assign('back',500)
+  effect.assignAfterLoading.duration_assign('homeBtn',500)
+
   const nextBtn = document.getElementById('nextBtn')
   const currentQues = document.getElementById('quantity')
   const form = document.getElementById('form')
@@ -35,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const urlParams = new URLSearchParams(window.location.search)
   const id = Number(urlParams.get('id'))
+  const author_id = Number(urlParams.get('author_id'))
   let total = Number(urlParams.get('total'))
   let current = 1
   if(total == 1) nextBtn.textContent='Submit'
@@ -134,9 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
           const end_time = new Date(ele.end_time)
           practiceResult.time = Math.floor((end_time - start_time) / 1000)
           practiceResult.score = ele.score
-          console.log(response)
           socket.response = response
-         
+          socket.disconnect()
         })
       })
     },
@@ -153,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
     nextBtn.addEventListener('click', async (e) => {
       e.preventDefault()
       if (form.checkValidity()) {
-        console.log('check')
         current++
         currentQues.textContent = current
         if (current >= total) {
@@ -163,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
             socketEvent.finish()
             isCompleted = true
             setTimeout(() => {
-              window.location.href = `practiceResult.html?total=${total}&time=${practiceResult.time}&score=${practiceResult.score.toFixed(2)}&correct=${practiceResult.correct}&incorrect=${total - practiceResult.correct}&id=${id}`
+              window.location.href = `practiceResult.html?total=${total}&time=${practiceResult.time}&score=${practiceResult.score.toFixed(2)}&correct=${practiceResult.correct}&incorrect=${total - practiceResult.correct}&id=${id}&author_id=${author_id}  `
             }, 100)
           } else {
             socketEvent.getNewQuestion()
@@ -186,22 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
         : 'display_error'
   }
 
-  function popupAlert() {
-    const modal = document.getElementById('alert')
-    const closeBtn = document.getElementById('continueBtn')
 
-    closeBtn.addEventListener('click', () => {
-      modal.classList.add('invisible')
-      document.body.classList.remove('overflow-hidden')
-    })
-
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.classList.add('invisible')
-        document.body.classList.remove('overflow-hidden')
-      }
-    })
-  }
 
   function timer(state = true) {
     let seconds = 0
@@ -228,12 +219,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   socketFunc()
-  popupAlert()
   userInfo()
-  console.log(socket)
 })
-
-export default socket
 
 
 

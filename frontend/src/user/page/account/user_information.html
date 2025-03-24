@@ -53,24 +53,17 @@
 
         <!-- extend information -->
         <div class="grid grid-cols-2 gap-5 sm:grid-cols-4">
-          <!-- completed document -->
-          <a href="#" id="completed_doc" class="duration-500">
-            <div class="flex flex-col rounded-xl bg-yellow-300 p-2 shadow-lg">
-              <img src="../img/completed_document.png" class="m-auto h-5/6" />
-            </div>
-            <p class="text-center font-bold">Completed document</p>
-          </a>
 
           <!-- Uploaded document -->
-          <a href="#" id="uploaded_doc" class="duration-500">
+          <a href="../document/manage.html" id="uploaded_doc" class="duration-500 hover:scale-95">
             <div class="flex flex-col rounded-xl bg-purple-500 shadow-xl">
               <img src="../img/uploaded_doc.png" class="m-auto h-5/6 p-2" />
             </div>
-            <p class="text-center font-bold">Uploaded Document</p>
+            <p class="text-center font-bold">Manage Document</p>
           </a>
 
           <!-- History area -->
-          <a href="../practice/practiceHistory.html" id="history" class="duration-500">
+          <a href="../practice/practiceHistory.html" id="history" class="duration-500 hover:scale-95">
             <div class="flex flex-col rounded-xl bg-red-400 shadow-xl">
               <img src="../img/history.png" class="m-auto h-5/6 p-2" />
             </div>
@@ -85,19 +78,23 @@
       class="flex-3 sm:w-1/3 invisible absolute left-2 top-14 flex h-[20%] w-1/2 origin-top scale-y-0 flex-col justify-between rounded-xl bg-stone-400 p-2 opacity-0 shadow-xl"
       id="menu"
     >
-      <button class="flex h-[30%] rounded-xl bg-white p-1">
+      <button class="flex h-[30%] hover:scale-95 duration-500 rounded-xl bg-white p-1">
         <a class="flex flex-row gap-3" href="lobby.html">
           <img src="../img/home.png" class="h-12 sm:h-10" />
           <p class="my-auto text-center font-bold">back to lobby</p>
         </a>
       </button>
-      <button class="flex h-[30%] flex-row gap-4 rounded-xl bg-white p-1">
-        <img src="../img/combat.png" class="h-full" />
-        <p class="my-auto font-bold">area</p>
+      <button class="flex h-[30%] hover:scale-95 duration-500 flex-row gap-4 rounded-xl bg-white p-1">
+      <a class="flex flex-row gap-3" href = "../practice/searchDoc.html">
+          <img src="../img/searching.png" class="h-full" />
+          <p class="my-auto font-bold">Search Document</p>
+      </a>
       </button>
-      <button class="flex h-[30%] flex-row gap-4 rounded-xl bg-white p-1">
-        <img src="../img/create_doc.png" class="h-full" />
-        <p class="my-auto font-bold">create doc</p>
+      <button class="flex h-[30%] hover:scale-95 duration-500 flex-row gap-4 rounded-xl bg-white p-1">
+       <a class="flex flex-row gap-3" href="../document/create.html">
+         <img src="../img/create_doc.png" class="h-full" />
+         <p class="my-auto font-bold">create doc</p>
+       </a>
       </button>
     </div>
 
@@ -111,19 +108,13 @@
         <li
           class="flex flex-row justify-between rounded-xl bg-white p-2 shadow-xl"
         >
-          <label for="completed_doc">Tài liệu đã làm</label>
-          <input type="checkbox" id="completed_doc_check" class="m-1 h-5 w-5" />
-        </li>
-        <li
-          class="flex flex-row justify-between rounded-xl bg-white p-2 shadow-xl"
-        >
           <label for="uploaded_doc">Tài liệu đã đăng tải</label>
           <input type="checkbox" id="uploaded_doc_check" class="m-1 h-5 w-5" />
         </li>
         <li
           class="flex flex-row justify-between rounded-xl bg-white p-2 shadow-xl"
         >
-          <label for="history">Lịch sử đấu</label>
+          <label for="history">Test history</label>
           <input type="checkbox" id="history_check" class="m-1 h-5 w-5" />
         </li>
         <a href="change_pass.html" class="rounded-xl bg-white p-2 shadow-xl"

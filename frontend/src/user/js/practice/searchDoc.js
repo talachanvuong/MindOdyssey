@@ -3,6 +3,7 @@ import callApi from '../model/callApi.js'
 import api from '../config/envConfig.js'
 import show_doc from '../model/show_doc.js'
 import msgHandle from '../model/messageHandle.js'
+import effect from '../model/effect.js'
 let res = null
 const state = {
   page: 1,
@@ -15,6 +16,8 @@ const state = {
   docs: [],
 }
 document.addEventListener('DOMContentLoaded', () => {
+  effect.assignAfterLoading.duration_assign('user',500)
+  effect.appear.fade_in('listOfDoc',500,10)
   //gain input searching and put it into input box
   const urlParams = new URLSearchParams(window.location.search)
   state.keyword = urlParams.get('searchValue')
@@ -46,14 +49,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //open
     button.addEventListener('click', () => {
-      modal.classList.remove('invisible')
       document.body.classList.add('overflow-hidden')
+      modal.classList.remove("invisible")
     })
 
     //close
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
-        modal.classList.add('invisible')
+         modal.classList.add('invisible')
         document.body.classList.remove('overflow-hidden')
       }
     })
@@ -64,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
   this function will fetch api for each circumstance once it is called
   */
   async function getCourseId(keyword) {
+    //get course id result
     const gcir = await callApi.callApi(
       api.apiGetCourse,
       keyword ? { keyword: keyword } : null,
@@ -75,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
         })
       : (state.course_id = 0)
     console.log('RES fetch course ID:', gcir)
-    //console.log(state)
     await apiCalling()
   }
 
@@ -125,7 +128,8 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     filterBtn.addEventListener('click', () => {
-      filterMenu.classList.toggle('invisible') // Hiện/ẩn dropdown khi bấm vào icon
+      filterMenu.classList.toggle('invisible')
+      effect.appear.drop_down('filterMenu', 500, 10)
     })
 
     // Ẩn dropdown khi click bên ngoài

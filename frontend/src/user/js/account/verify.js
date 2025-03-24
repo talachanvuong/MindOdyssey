@@ -2,7 +2,10 @@ import '../../../style.css'
 import api from '../config/envConfig.js'
 import callApi from '../model/callApi.js'
 import msg from '../model/messageHandle.js'
+import effect from '../model/effect.js'
 document.addEventListener('DOMContentLoaded', () => {
+  effect.assignAfterLoading.duration_assign('button',500)
+
   // ===================LOGIC===================//
 
   const form = document.querySelector('form')

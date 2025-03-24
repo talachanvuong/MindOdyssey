@@ -1,8 +1,21 @@
 import '../../../style.css'
 import api from '../config/envConfig.js'
 import callApi from '../model/callApi.js'
+import effect from '../model/effect.js'
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  effect.assignAfterLoading.duration_assign('storage',500)
+  effect.assignAfterLoading.duration_assign('completed_doc',500)
+  effect.assignAfterLoading.duration_assign('create_doc',500)
+  effect.assignAfterLoading.duration_assign('manage',500)
+  effect.assignAfterLoading.duration_assign('searchButton',500)
+  effect.assignAfterLoading.duration_assign('user',500)
+  effect.assignAfterLoading.duration_assign('logoutText',500)
+  effect.assignAfterLoading.duration_assign('infoText',500)
+  effect.appear.move_down('main',1000,10)
+
+
   //logout button
   function logout() {
     const logout = document.getElementById('logout')
@@ -36,6 +49,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 }
 
+async function getNameUser(){
+  const res = await callApi.callApi(
+    api.apiShowInfo,
+    null,
+    'GET'
+  )
+  document.getElementById('userName').textContent = res.data.display_name
+
+}
+  getNameUser()
   searching()
   logout()
 })

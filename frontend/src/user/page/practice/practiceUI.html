@@ -6,25 +6,27 @@
     <title>Document</title>
   </head>
   <body class="bg-stone-200">
-    <header class="flex h-12 flex-row justify-between bg-cyan-300 pr-5">
-      <div class="ml-2 mt-1 flex cursor-pointer flex-row gap-2">
-        <a id="back" href="">
+    <header class="flex h-14 items-center flex-row justify-between bg-cyan-300 pr-5">
+      <div class="ml-2 mt-1 flex cursor-pointer flex-row gap-2 items-center ">
+        <a id="back" href="" class="hover:bg-cyan-200 rounded-md hover:shadow-md  p-1">
           <img class="h-10" src="../img/back.png" />
         </a>
-        <a href="../account/lobby.html">
+        <a id="homeBtn" href="../account/lobby.html" class="hover:bg-cyan-200 rounded-md hover:shadow-md  p-1 ">
           <img src="../img/home.png" class="h-10 w-full" />
         </a>
       </div>
 
-      <div id="user" class="h-12">
+
+      <div id="user" class="h-12 relative group hover:bg-cyan-200 rounded-md p-1 flex flex-col items-center hover:shadow-md">
         <a
           href="../account/user_information.html"
-          class="flex flex-row items-center justify-between gap-2 p-1"
+          class="flex  flex-row items-center h-fit justify-between gap-2 p-1"
         >
-          <img src="../img/user.png" class="h-10" />
+          <img src="../img/user.png" class="h-7" />
           <!-- call API to get user name -->
           <div id="userName" class="font-bold"></div>
         </a>
+        <p id="userInfoBlackText" class="bg-black top-12 absolute text-white rounded-md px-2 mt-2 pointer-events-none z-10 group-hover:opacity-100 opacity-0">See your info</p>
       </div>
     </header>
 
@@ -84,41 +86,15 @@
           <!-- next question -->
           <button
             id="nextBtn"
-            class="mx-auto w-fit cursor-pointer rounded-md bg-cyan-100 p-2 shadow-md hover:bg-cyan-200"
+            class="hover:scale-105 mx-auto w-fit cursor-pointer hover:bg-orange-300 rounded-md bg-cyan-100 p-2 shadow-md"
           >
-            <p class="text-center">Next Question</p>
+            <p class="text-center font-bold">Next Question</p>
           </button>
         </form>
       </div>
     </main>
 
-    <!-- popup alert submit -->
-    <div
-      id="alert"
-      class="invisible fixed top-0 h-screen w-screen bg-gray-300 bg-opacity-70"
-    >
-      <div
-        class="mx-auto mt-32 flex h-fit w-3/6 flex-col rounded-xl border border-black bg-gray-300 pb-3"
-      >
-        <img src="../img/warning.png" class="mx-auto h-14 w-14" />
-        <p class="mb-4 mt-2 text-center text-2xl">
-          All question are not completed yet!
-        </p>
-        <div
-          id="continueBtn"
-          class="mx-auto mb-2 h-1/6 w-5/6 cursor-pointer rounded-md bg-white py-3 text-center text-2xl font-bold shadow-md shadow-gray-500"
-        >
-          continue
-        </div>
-        <a
-          id="submit"
-          class="mx-auto h-1/6 w-5/6 rounded-lg bg-white py-3 text-center text-2xl font-bold shadow-md shadow-gray-500"
-          href="practiceResult.html"
-          >still Submit</a
-        >
-      </div>
-    </div>
-
+    
     <script type="module" src="../../js/practice/practiceUI.js"></script>
   </body>
 </html>

@@ -6,11 +6,11 @@
     <title>Document</title>
   </head>
   <body class="h-screen w-screen overflow-x-hidden">
-    <header class="flex h-12 flex-row justify-between bg-cyan-300 pr-5">
+    <header class="flex h-14 flex-row justify-between items-center p-2 bg-cyan-300 pr-5">
       <div id="popupMenuBtn" class="ml-2 mt-1 cursor-pointer">
         <img class="h-10" src="../img/menu.png" />
       </div>
-      <div id="user" class="h-12">
+      <div id="user" class="h-12 group hover:bg-cyan-200 rounded-md hover:shadow-md relative">
         <a
           href="../account/user_information.html"
           class="flex flex-row items-center justify-between gap-2 p-1"
@@ -19,11 +19,12 @@
           <!-- call API to get user name -->
           <div id="userName" class="font-bold"></div>
         </a>
+        <p id="blackTextInfo" class="bg-black  text-white group-hover:opacity-100 opacity-0 rounded-md px-2 mt-3 pointer-events-none">See your information</p>
       </div>
     </header>
     <main class="flex h-fit min-h-full flex-col items-center bg-stone-300 p-5">
-      <div class="bg-cyan-300 sm:w-2/3 p-3 rounded-md shadow-md">
-        <p class="text-3xl font-bold text-center">Practice History</p>
+      <div class="rounded-md bg-cyan-300 p-3 shadow-md sm:w-2/3">
+        <p class="text-center text-3xl font-bold">Practice History</p>
       </div>
 
       <!-- list of document -->
@@ -31,24 +32,29 @@
         id="listOfDoc"
         class="mt-10 h-fit w-full rounded-md bg-cyan-300 shadow-md sm:w-2/3"
       >
-        <!-- list -->
-
-        <!-- gaining list via Api -->
-        <ul id="list" class="flex flex-col gap-2 px-2 py-4"></ul>
-
         <!-- pagination -->
         <div
           id="pagination"
           class="flex h-16 flex-row items-center justify-center gap-4"
         >
-          <div id="theFirst" class="cursor-pointer hover:border p-2 rounded-md">
+          <div id="theFirst" class="cursor-pointer rounded-md p-2 hover:border">
             <img src="../img/thefirst.png" class="h-8" />
           </div>
-          <div id="thePrev" class="cursor-pointer hover:border p-2 rounded-md"><img src="../img/back.png" class="h-8" /></div>
+          <div id="thePrev" class="cursor-pointer rounded-md p-2 hover:border">
+            <img src="../img/back.png" class="h-8" />
+          </div>
           <div id="curPage" class="text-2xl font-bold"></div>
-          <div id="theNext" class="cursor-pointer hover:border p-2 rounded-md"><img src="../img/next.png" class="h-8" /></div>
-          <div id="theLast" class="cursor-pointer hover:border p-2 rounded-md"><img src="../img/thelast.png" class="h-8" /></div>
+          <div id="theNext" class="cursor-pointer rounded-md p-2 hover:border">
+            <img src="../img/next.png" class="h-8" />
+          </div>
+          <div id="theLast" class="cursor-pointer rounded-md p-2 hover:border">
+            <img src="../img/thelast.png" class="h-8" />
+          </div>
         </div>
+        <!-- list -->
+
+        <!-- gaining list via Api -->
+        <ul id="list" class="flex flex-col gap-2 px-2 py-4"></ul>
       </div>
 
       <!-- popup Filter -->
@@ -60,39 +66,39 @@
       class="invisible fixed top-0 h-screen w-screen bg-gray-600 bg-opacity-50"
     >
       <div
-        class="ml-2 mt-12 flex h-3/5 w-3/5 flex-col gap-2 rounded-xl bg-white p-2"
+        class="ml-2 mt-12 flex h-2/5 w-2/5 flex-col gap-2 rounded-xl bg-white p-2"
       >
         <a
           id="home"
-          class="flex h-full w-full flex-row items-center gap-2 rounded-lg bg-stone-300 p-2 shadow-md shadow-gray-500"
+          class="hover:scale-105  hover:bg-stone-200 flex h-full w-full flex-row items-center gap-2 rounded-lg bg-stone-300 p-2 shadow-md shadow-gray-500"
           href="../account/lobby.html"
         >
           <img src="../img/home.png" class="h-10" />
-          <p class="w-full">Trở về trang chủ</p>
+          <p class="w-full">Back to Lobby</p>
         </a>
         <a
           href="../document/create.html"
           id="create_doc"
-          class="flex h-full w-full flex-row items-center gap-2 rounded-lg bg-stone-300 p-2 shadow-md shadow-gray-500"
+          class="hover:scale-105 hover:bg-stone-200 flex h-full w-full flex-row items-center gap-2 rounded-lg bg-stone-300 p-2 shadow-md shadow-gray-500"
         >
           <img src="../img/create_doc_feature.png" class="h-10" />
-          <p class="w-full">Tạo tài liệu</p>
+          <p class="w-full">Create Document</p>
         </a>
         <a
-          href="#"
-          id="completed_doc"
-          class="flex h-full w-full flex-row items-center gap-2 rounded-lg bg-stone-300 p-2 shadow-md shadow-gray-500"
+          href="../document/manage.html"
+          id="managed_doc"
+          class="hover:scale-105 hover:bg-stone-200 flex h-full w-full flex-row items-center gap-2 rounded-lg bg-stone-300 p-2 shadow-md shadow-gray-500"
         >
-          <img src="../img/completed_document.png" class="h-10" />
-          <p class="w-full">Xem Tài liệu đã xong</p>
+          <img src="../img/uploaded_doc.png" class="h-10" />
+          <p class="w-full">Document Manage</p>
         </a>
         <a
           href="../library/doc_lib.html"
           id="library_doc"
-          class="flex h-full w-full flex-row items-center gap-2 rounded-lg bg-stone-300 p-2 shadow-md shadow-gray-500"
+          class="hover:scale-105 hover:bg-stone-200 flex h-full w-full flex-row items-center gap-2 rounded-lg bg-stone-300 p-2 shadow-md shadow-gray-500"
         >
           <img src="../img/storage.png" class="h-10" />
-          <p class="w-full">Kho tài liệu</p>
+          <p class="w-full">Library</p>
         </a>
       </div>
     </div>

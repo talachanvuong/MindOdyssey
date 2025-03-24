@@ -6,10 +6,27 @@
     <title>Document</title>
   </head>
   <body >
-    <header class="flex h-14 flex-row items-center bg-cyan-300">
-      <a href="practiceScreen.html">
-        <img src="../img/back.png" class="h-10" />
-      </a>
+    <header class="flex h-14 flex-row justify-between items-center bg-cyan-300 pr-5">
+      <div class="ml-2 mt-1 flex cursor-pointer flex-row gap-2 items-center ">
+        <a id="back" href="searchDoc.html" class="hover:bg-cyan-200 rounded-md hover:shadow-md  p-1">
+          <img class="h-10" src="../img/back.png" />
+        </a>
+        <a id="homeBtn" href="../account/lobby.html" class="hover:bg-cyan-200 rounded-md hover:shadow-md  p-1 ">
+          <img src="../img/home.png" class="h-10 w-full" />
+        </a>
+      </div>
+
+      <div id="user" class="h-12 group hover:scale-105 hover:bg-cyan-200 rounded-md hover:shadow-md duration-500">
+        <a
+          href="../account/user_information.html"
+          class="flex flex-row items-center justify-between gap-2 p-1"
+        >
+          <img src="../img/user.png" class="h-10" />
+          <!-- call API to get user name -->
+          <div id="userName" class="font-bold"></div>
+        </a>
+        <p id="userInfoBlackText" class="bg-black text-white rounded-md px-2 mt-2 pointer-events-none z-10 group-hover:opacity-100 opacity-0">See your information</p>
+      </div>
     </header>
 
     <main class="flex flex-col gap-2 items-center min-h-screen">
@@ -23,9 +40,9 @@
         class="mx-auto mt-4 grid h-fit w-8/12 grid-cols-3 gap-3 rounded-lg border p-3 shadow-lg"
       >
         <div
-          class="flex flex-col items-center gap-2 rounded-md bg-cyan-300 p-2 shadow-md"
+          class="flex flex-col items-center gap-2 rounded-md bg-cyan-300 p-2 shadow-md w-full"
         >
-          <img src="../img/user.png" class="h-10 w-fit" />
+          <img src="../img/author.png" class="h-10 w-fit" />
           <p id="nameOfAuthor" class="truncate border-t border-black">
             Nguyen Van A
           </p>
@@ -33,12 +50,11 @@
 
         <div class="col-span-2 flex flex-col">
           <div>
-            <p class="font-bold">email</p>
+            <p class="font-bold">Total document</p>
             <p
-              id="emailAuthor"
+              id="totalDoc"
               class="rounded-md border bg-gray-100 px-2 py-1 shadow-md"
             >
-              askjdfnkjd@gmail.com
             </p>
           </div>
         </div>

@@ -24,7 +24,7 @@ async function typeChecker(url) {
     a.href = `practiceScreen.html?id=${doc.document_id}`
 
     const imgDot = document.createElement('img')
-    imgDot.className = 'h-7'
+    imgDot.className = 'h-7 hover:scale-105'
     imgDot.src = '../img/threeDot.png'
 
     imgDot.addEventListener
@@ -322,7 +322,6 @@ async function showPracticeSocket(id, data) {
     div.appendChild(checkImage)
 
     if (answer.attachment) {
-      console.log('hello')
       let type = await typeChecker(answer.attachment)
       if(type === "image"){
         const answerImage = document.createElement('img')
@@ -347,7 +346,7 @@ function showListOfHistoryPractice(id, data) {
   data.forEach((ele) => {
     const li = document.createElement('li')
     li.className =
-      'bg-white p-1 rounded-md flex flex-row items-center shadow-md justify-around cursor-pointer hover:scale-105 hover:bg-gray-100 hover:border'
+      'bg-white p-1 rounded-md flex flex-row items-center shadow-md justify-around cursor-pointer hover:scale-95 duration-500 hover:bg-gray-100 hover:border'
     list.appendChild(li)
 
     li.addEventListener('click', () => {
@@ -392,7 +391,7 @@ function showListOfHistoryPractice(id, data) {
     score.className = 'font-bold w-1/4'
 
     li.appendChild(score)
-    score.textContent = 'Score:' + ele.score
+    score.textContent = 'Score:' + ele.score.toFixed(1)
 
     const correctDiv = document.createElement('div')
     correctDiv.className = 'flex flex-row items-center'

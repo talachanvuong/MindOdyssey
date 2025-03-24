@@ -6,22 +6,27 @@
     <title>Document</title>
   </head>
   <body>
-    <header class="flex h-12 flex-row justify-between bg-cyan-300 pr-5">
-      <div class="ml-2 mt-1 flex cursor-pointer flex-row gap-2">
-        <a href="../account/lobby.html">
+    <header class="flex h-14 items-center flex-row justify-between bg-cyan-300 pr-5">
+      <div class="ml-2 mt-1 flex cursor-pointer flex-row gap-2 items-center ">
+        <a id="back" href="" class="hover:bg-cyan-200 rounded-md hover:shadow-md  p-1">
+          <img class="h-10" src="../img/back.png" />
+        </a>
+        <a id="homeBtn" href="../account/lobby.html" class="hover:bg-cyan-200 rounded-md hover:shadow-md  p-1 ">
           <img src="../img/home.png" class="h-10 w-full" />
         </a>
       </div>
 
-      <div id="user" class="h-12">
+
+      <div id="user" class="h-12 relative group  hover:bg-cyan-200 rounded-md p-1 flex flex-col items-center hover:shadow-md">
         <a
           href="../account/user_information.html"
-          class="flex flex-row items-center justify-between gap-2 p-1"
+          class="flex  flex-row items-center h-fit justify-between gap-2 p-1"
         >
-          <img src="../img/user.png" class="h-10" />
+          <img src="../img/user.png" class="h-7" />
           <!-- call API to get user name -->
           <div id="userName" class="font-bold"></div>
         </a>
+        <p id="userInfoBlackText" class="bg-black top-12 absolute text-white rounded-md px-2 mt-2 pointer-events-none z-10 group-hover:opacity-100 opacity-0">See your info</p>
       </div>
     </header>
 
@@ -72,11 +77,12 @@
       </div>
 
       <!-- button -->
-      <div class="flex flex-row justify-around gap-3 mt-2">
-        <a id="backToPracticeScreen" href="" class="bg-orange-300 rounded p-3 w-full  shadow-md shadow-gray-500 text-center font-bold text-2xl">trở về</a>
-        <a href="searchDoc.html" class= "bg-orange-300 rounded p-3 w-full  shadow-md shadow-gray-500 text-center font-bold text-2xl">tìm tài liệu</a>
+      <div class="flex flex-row justify-around items-center gap-20 mt-2">
+        <a id="backToPracticeScreen" href="" class="hover:bg-orange-200 hover:scale-95  bg-orange-300 rounded p-3 w-full ml-10  shadow-md shadow-gray-500 text-center font-bold text-xl">Back</a>
+        <a id="findMoreDoc" href="searchDoc.html" class= "hover:bg-cyan-200 hover:scale-95  bg-cyan-300 rounded p-3 w-full mr-10 shadow-md  shadow-gray-500 text-center font-bold text-xl">Find More</a>
       </div>
     </main>
+    <footer class="h-14 bg-cyan-300 mt-10"></footer>
     <script
       type="module"
       src="../../js/practice/seeResult.js"

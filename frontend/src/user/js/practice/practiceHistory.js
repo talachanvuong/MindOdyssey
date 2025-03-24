@@ -2,6 +2,7 @@ import '../../../style.css'
 import callApi from '../model/callApi'
 import api from '../config/envConfig'
 import show_doc from '../model/show_doc'
+import effect from '../model/effect.js'
 
 const state = {
   perPage: 10,
@@ -15,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const prevPage = document.getElementById('thePrev')
   const lastPage = document.getElementById('theLast')
   const firstPage = document.getElementById('theFirst')
+
+  effect.assignAfterLoading.duration_assign('blackTextInfo',500,10)
   nextPage.addEventListener('click', () => {
     if (state.curPage < res.data.totalPages) {
       state.curPage++
@@ -40,6 +43,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }    
   })
 
+  async function getUserName(){
+    res = await callApi.callApi(
+      api.apiShowInfo,
+      null,
+      'GET'
+    )
+    document.getElementById('userName').textContent = res.data.display_name
+  }
   async function apiCalling() {
     console.log(state.curPage)
     const params = new URLSearchParams({
@@ -72,5 +83,26 @@ document.addEventListener('DOMContentLoaded', () => {
       nextPage.classList.add('invisible')
     }
   }
+
+  function popupMenu() {
+    const button = document.getElementById('popupMenuBtn')
+    const modal = document.getElementById('popupMenu')
+
+    //open
+    button.addEventListener('click', () => {
+      modal.classList.remove('invisible')
+      document.body.classList.add('overflow-hidden')
+    })
+
+    //close
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.add('invisible')
+        document.body.classList.remove('overflow-hidden')
+      }
+    })
+  }
+  getUserName()
+  popupMenu()
   apiCalling()
 })

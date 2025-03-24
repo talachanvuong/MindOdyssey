@@ -1,11 +1,20 @@
 import '../../../style.css'
 import callApi from '../model/callApi.js'
 import api from '../config/envConfig.js'
-import show_doc from '../model/show_doc.js'
+import effect from '../model/effect.js'
 let res = null
 const detail = {
 }
 document.addEventListener('DOMContentLoaded', () => {
+
+  effect.appear.move_down('main',700,0)
+  effect.assignAfterLoading.duration_assign('startBtn',500)
+  effect.assignAfterLoading.duration_assign('authorDocument',500)
+  effect.assignAfterLoading.duration_assign('userInfoBlackText',500)
+  effect.assignAfterLoading.duration_assign('seeAuthorBlackText',500)
+  effect.assignAfterLoading.duration_assign('backBtn',500)
+  effect.assignAfterLoading.duration_assign('homeBtn',500)
+
 
   const urlParams = new URLSearchParams(window.location.search)
     detail.id = Number(urlParams.get('id')) 
@@ -29,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
       {document: detail.id},
       'POST'
     )
+    console.log(res)
     Object.assign(detail, res.data)                           
 
     const docName = document.getElementById('docName')
@@ -38,22 +48,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const quantity = document.getElementById('quantity')
 
     docName.textContent = detail.title
-    authorName.textContent = detail.author
-    courseName.textContent = detail.course.title
+    authorName.textContent = detail.author.display_name
+    courseName.textContent = detail.course
     createAte.textContent = detail.created_at
     quantity.textContent = detail.total_questions 
 
-    show_doc.showAnswerList('list', detail.questions)
-
     //get start if user click 
-    getStart()
+    document.getElementById('startBtn').href = `practiceUI.html?id=${detail.id}&total=${detail.total_questions}&author_id=${detail.author.id}`
+
+    //direct to author's documents
+    document.getElementById('authorDocument').href = `author_document.html?author_name=${detail.author.display_name}&author_id=${detail.author.id}&id_doc=${detail.id}`
   }  
 
-  function getStart(){
-    const startBtn = document.getElementById('startBtn')
-    startBtn.href = `practiceUI.html?id=${detail.id}&total=${detail.total_questions}`
-  }
-  
  getDocInfo()
   userInfo()
 })
