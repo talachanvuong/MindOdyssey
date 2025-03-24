@@ -1,5 +1,6 @@
 import '../../../style.css'
 import callApi from '../model/callApi.js'
+import api from '../config/envConfig.js'
 // ======================== DOM Elements ========================
 const searchInput = document.getElementById('search')
 const filterButton = document.getElementById('filterButton')
@@ -21,11 +22,42 @@ let curPage = 1
 const itemsPerPage = 9
 let allDocuments = []
 
+// ======================== Popup ========================
+ //   popup menu
+ function popupMenu() {
+  const button = document.getElementById('popupMenuBtn')
+  const modal = document.getElementById('popupMenu')
+
+  //open
+  button.addEventListener('click', () => {
+    modal.classList.remove('invisible')
+    document.body.classList.add('overflow-hidden')
+  })
+
+  //close
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.add('invisible')
+      document.body.classList.remove('overflow-hidden')
+    }
+  })
+}
 // ======================== Load Initial Data ========================
 document.addEventListener('DOMContentLoaded', async function () {
   await loadDocuments()
 })
+// ========================get user info ========================
+  async function userInfo() {
+    const userName = document.getElementById('userName')
 
+    const apiResult = await callApi.callApi(api.apiShowInfo, null, 'GET')
+    if (apiResult.status === 'success') {
+      userName.textContent = apiResult.data.display_name
+    } else {
+      console.log(apiResult)
+      userName.textContent = 'display_error'
+    }
+  }
 // ======================== Load and Render Documents ========================
 async function loadDocuments() {
   try {
@@ -47,8 +79,13 @@ async function loadDocuments() {
       throw new Error('Invalid API response structure');
     }
 
-      // Assign documents data to the variable allDocuments
-    allDocuments = responseData.result.documents;
+    // Gán dữ liệu và sắp xếp theo thời gian (mới nhất trước)
+    allDocuments = responseData.result.documents.sort((a, b) => {
+      const dateA = parseDate(a.created_at);
+      const dateB = parseDate(b.created_at);
+      return dateB - dateA; // Sắp xếp giảm dần (mới nhất trước)
+    });
+ 
 
     updateDocumentCount();
     renderDocuments(allDocuments);
@@ -60,9 +97,9 @@ async function loadDocuments() {
 
 
 // ======================== Update Document Count ========================
-function updateDocumentCount() {
+function updateDocumentCount(filteredCount = allDocuments.length) {
   if (docSumElement) {
-    docSumElement.textContent = `Total documents: ${allDocuments.length}`
+    docSumElement.textContent = `Total documents: ${filteredCount}`;
   }
 }
 
@@ -224,10 +261,17 @@ function searchAndFilterDocuments() {
     const matchesDate = !startDate || docDate >= startDate
 
     return matchesQuery && matchesDate
-  })
+  }).sort((a, b) => {
+    const dateA = parseDate(a.created_at);
+    const dateB = parseDate(b.created_at);
+    return dateB - dateA; 
+    // Sort descending (newest first)
+  });
 
-  renderDocuments(filteredDocs)
+  updateDocumentCount(filteredDocs.length);
+  renderDocuments(filteredDocs); 
 }
+
 
 // ======================== Event Listeners ========================
 if (searchInput) searchInput.addEventListener('input', searchAndFilterDocuments)
@@ -258,3 +302,5 @@ if (backButton)
     'click',
     () => (window.location.href = '../home.html')
   )
+  popupMenu()
+  userInfo() 
