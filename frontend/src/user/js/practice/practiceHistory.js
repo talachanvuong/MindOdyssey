@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     )
 
     show_doc.showListOfHistoryPractice('list', res.data.PracticeHistory)
-    console.log(res)
+    console.log(res.data.PracticeHistory)
     pagination()
   }
 

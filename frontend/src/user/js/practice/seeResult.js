@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   effect.assignAfterLoading.duration_assign('findMoreDoc',500,10)
   effect.assignAfterLoading.duration_assign('user',500,10)
 
-  const backToPracticeScreen = document.getElementById('backToPracticeScreen')
+  const backToPracticeScreen = document.getElementById('back')
 
   async function userInfo() {
     const userName = document.getElementById('userName')
@@ -90,8 +90,4 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   gainHistory()
   userInfo()
-
-  callApi.checkAttachmentType(
-    'https://res.cloudinary.com/dpcvmuxz8/video/upload/v1742264305/fgrd2tltqafgkddm3nke.mp3'
-  )
 })

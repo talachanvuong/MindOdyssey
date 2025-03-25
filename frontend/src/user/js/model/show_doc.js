@@ -116,8 +116,26 @@ async function typeChecker(url) {
     list.appendChild(li)
   })
 }
-function showHistoryPractice(id, array) {
-  console.log(array)
+function showHistoryPractice(id, originArray) {
+  const array = originArray.map((question)=>{
+    let sortContent = [
+      question.contents.find((c)=>c.type==='Q') ||  {text:'',attachment:null,type:'Q'},
+      question.contents.find((c)=>c.type==='A') ||  {text:'',attachment:null,type:'A'},
+      question.contents.find((c)=>c.type==='B') ||  {text:'',attachment:null,type:'B'},
+      question.contents.find((c)=>c.type==='C') ||  {text:'',attachment:null,type:'C'},
+      question.contents.find((c)=>c.type==='D') ||  {text:'',attachment:null,type:'D'},
+    ].map((c,index)=>({
+      id:c.id || undefined,
+      text:c.text || '',
+      attachment:c.attachment || null,
+      attachment_id:c.attachment_id || null,
+      type: ['Q', 'A', 'B', 'C', 'D'][index],
+    })) 
+    return{
+      ...question,
+      contents:sortContent
+    }
+  })
   const list = document.getElementById(id)
   list.className = 'flex flex-col gap-3'
   list.innerHTML = ``
@@ -203,7 +221,6 @@ function showHistoryPractice(id, array) {
 
     //answer
     ques.contents.slice(1).forEach(async (ans, i) => {
-      console.log(ans)
       const answer = document.createElement('li')
       answer.className = 'shadow-lg rounded-md p-2 border border-gray-100 bg-white'
       ul.appendChild(answer)
@@ -271,20 +288,20 @@ async function showPracticeSocket(id, data) {
 
   if (data.question) {
     const questionText = document.createElement('p')
-    questionText.textContent = 'Question :' + data.question
+    questionText.textContent = 'Question :' + data.question.text
     questionText.className = 'font-bold'
     question.appendChild(questionText)
   }
-  if (data.attachmentQues) {
-    let type = await typeChecker(data.attachmentQues)
+  if (data.question.attachment) {
+    let type = await typeChecker(data.question.attachment)
     if(type === "image"){
       const questionImage = document.createElement('img')
-      questionImage.src = data.attachmentQues
+      questionImage.src = data.question.attachment
       question.appendChild(questionImage)
     }
     if(type === "audio"){
       const questionAudio = document.createElement('audio')
-      questionAudio.src = data.attachmentQues
+      questionAudio.src = data.question.attachment
       questionAudio.controls = true
       question.appendChild(questionAudio)
     }

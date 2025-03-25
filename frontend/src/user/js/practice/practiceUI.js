@@ -6,8 +6,8 @@ import show_doc from '../model/show_doc.js'
 import effect from '../model/effect.js'
 
 const quesData = {
-  question: null,
-  attachmentQues: '',
+  question:{
+  },
   answers: [  
   ],
   checked: false,
@@ -81,16 +81,22 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     async getNewQuestion() {
       socket.emit('getNewQuestion',async  (question) => {
-        quesData.question = question.contents[0].text
-        quesData.attachmentQues = question.contents[0].attachment
-        // else attachmentQuestion.remove()
-       quesData.answers = question.contents.slice(1).map((ele)=>({
-        text:ele.text,
-        attachment:ele.attachment
-       }))
+        console.log(question)
+        let sortContent = [
+          question.contents.find((c)=>c.type==="Q") || {text:'',attachment:null,type:'Q'},
+          question.contents.find((c)=>c.type==="A") || {text:'',attachment:null,type:'A'},
+          question.contents.find((c)=>c.type==="B") || {text:'',attachment:null,type:'B'},
+          question.contents.find((c)=>c.type==="C") || {text:'',attachment:null,type:'C'},
+          question.contents.find((c)=>c.type==="D") || {text:'',attachment:null,type:'D'},
+        ]
+      
+        quesData.question = sortContent.find((c)=>c.type===`Q`)||null
+        quesData.attachment = quesData.question.attachment || ''
+        quesData.answers  = sortContent.filter((c)=>['A','B','C','D'].includes(c.type))
         quesData.checked = false
         quesData.order = question.order
         await show_doc.showPracticeSocket('list',quesData)
+        console.log(quesData)
         inputController()
       })
      
