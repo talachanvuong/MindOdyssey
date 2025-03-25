@@ -737,10 +737,20 @@ document.addEventListener('DOMContentLoaded', async function () {
                       : q.action === 'add'
                         ? ' '
                         : null,
-                  attachment:
-                    attachmentBase64 === undefined ? null : attachmentBase64, // Set attachment to null if it is undefined
                 }
-
+                // Chỉ thêm attachment nếu nó có giá trị hợp lệ và không phải null/undefined
+                if (q.action === 'add') {
+                  if (
+                    attachmentBase64 !== null &&
+                    attachmentBase64 !== undefined
+                  ) {
+                    contentData.attachment = attachmentBase64
+                  }
+                } else {
+                  // Với action !== 'add', giữ nguyên logic gửi attachment (bao gồm null)
+                  contentData.attachment =
+                    attachmentBase64 === undefined ? null : attachmentBase64
+                }
                 if (q.action === 'add') {
                   contentData.type =
                     c.type || (idx === 0 ? 'Q' : ['A', 'B', 'C', 'D'][idx - 1])

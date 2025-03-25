@@ -300,7 +300,7 @@ if (addButton)
 if (backButton)
   backButton.addEventListener(
     'click',
-    () => (window.location.href = '../home.html')
+    () => (window.location.href = 'lobby.html')
   )
   popupMenu()
   userInfo() 

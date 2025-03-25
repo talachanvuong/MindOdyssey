@@ -103,13 +103,23 @@ document.addEventListener('DOMContentLoaded', loadCourses);
 // ======================== Create New Course ========================
 const createCourse = async () => {
   const courseName = prompt('Enter course name:');
-  if (!courseName || courseName.length < 8) {
+
+  if (courseName === null) {
+    // Nếu người dùng nhấn Cancel, thoát ra mà không báo lỗi
+    console.log('User canceled the input.');
+    return;
+  }
+  
+  if (courseName.trim().length < 8) {
     showPopup('Course name must be at least 8 characters!');
     return;
   }
+  
+  console.log('Course name:', courseName);
+  
 
   try {
-    const response = await callApi.callApi(`${API_COURSE}/get-courses`, null, 'POST');
+    // const response = await callApi.callApi(`${API_COURSE}/get-courses`, null, 'POST');
     const createResponse = await fetch(`${API_COURSE}/create-course`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -189,9 +199,16 @@ const renderQuestions = () => {
       
       <input type="file" accept="image/*,audio/*" class="mb-2 mt-2" onchange="handleMediaUpload(event, ${index}, 0)" />
 
-      <div id="mediaPreview${index}_0" class="mt-2">
-        ${q.contents[0].attachment ? `<img src="${q.contents[0].attachment}" class="max-w-full h-auto">` : ""}
-      </div>
+    <div id="mediaPreview${index}_0" class="mt-2 flex items-center">
+  ${
+    q.contents[0].attachment
+      ? (q.contents[0].attachment.startsWith('data:audio')
+          ? `<audio controls src="${q.contents[0].attachment}"></audio>`
+          : `<img src="${q.contents[0].attachment}" class="max-w-full h-auto">`) +
+        `<button class="text-red-500 hover:text-red-700 ml-2" onclick="removeAttachment(${index}, 0)">Delete</button>`
+      : ""
+  }
+</div>
 
       <div class="space-y-2">
         ${q.contents
@@ -211,9 +228,17 @@ const renderQuestions = () => {
 
             <input type="file" accept="image/*,audio/*" class="ml-6 mt-2" onchange="handleMediaUpload(event, ${index}, ${i + 1})" />
 
-            <div id="mediaPreview${index}_${i + 1}" class="mt-2">
-              ${option.attachment ? `<img src="${option.attachment}" class="max-w-full h-auto">` : ""}
-            </div>
+             <div id="mediaPreview${index}_${i + 1}" class="mt-2 flex justify-center p-2">
+                ${
+                  option.attachment
+                    ? option.attachment.startsWith('data:audio')
+                      ? `<audio controls class="mt-2"><source src="${option.attachment}" type="audio/mpeg">Your browser does not support the audio element.</audio>
+                         <button class="text-red-500 hover:text-red-700 ml-2" onclick="removeAttachment(${index}, ${i + 1})">Delete</button>`
+                      : `<img src="${option.attachment}" class="max-w-xs h-auto rounded-lg shadow-md object-contain">
+                         <button class="text-red-500 hover:text-red-700 ml-2" onclick="removeAttachment(${index}, ${i + 1})">Delete</button>`
+                    : ''
+                }
+              </div>
           </label>
         `
           )
@@ -221,14 +246,14 @@ const renderQuestions = () => {
       </div>
     `;
 
-    // Chỉ hiển thị nút xóa nếu có hơn 1 câu hỏi
+  
     if (questions.length > 1) {
       const deleteButton = document.createElement("button");
       deleteButton.textContent = "X";
       deleteButton.className = "text-red-500 hover:text-red-700 self-start px-2 py-1 rounded-lg";
       deleteButton.onclick = () => deleteQuestion(index);
 
-      // Đặt layout chính
+     
       const questionWrapper = document.createElement("div");
       questionWrapper.className = "flex justify-between items-start";
       questionWrapper.appendChild(questionContent);
@@ -264,13 +289,24 @@ window.handleMediaUpload = async (event, index, position) => {
       file.type.startsWith('audio')
         ? `<audio controls src="${base64String}"></audio>`
         : `<img src="${base64String}" class="max-w-full h-auto">`;
+        renderQuestions();
   };
 
   reader.onerror = (error) => {
     console.error('Error converting file to base64:', error);
   };
 };
-
+// ======================== Remove Attachment ========================
+window.removeAttachment = (index, position) => {
+  if (!questions[index] || !questions[index].contents[position]) {
+    console.error(`Invalid index ${index} or position ${position}`);
+    return;
+  }
+  questions[index].contents[position].attachment = null;
+  questions[index].contents[position].attachment_id = null
+  console.log(`Removed attachment from questions[${index}].contents[${position}]`);
+  renderQuestions(); 
+};
 // Function to automatically expand textarea according to content
 window.autoResize = (element) => {
   element.style.height = 'auto' 
@@ -296,11 +332,11 @@ window.setCorrectAnswer = (index, answer) => {
 addQuestionBtn.addEventListener('click', () => {
   questions.push({
     contents: [
-      { text: '', attachment: '', type: 'Q' },
-      { text: '', attachment: '', type: 'A' },
-      { text: '', attachment: '', type: 'B' },
-      { text: '', attachment: '', type: 'C' },
-      { text: '', attachment: '', type: 'D' },
+      { text: '', attachment: null, type: 'Q' }, 
+      { text: '', attachment: null, type: 'A' },
+      { text: '', attachment: null, type: 'B' },
+      { text: '', attachment: null, type: 'C' },
+      { text: '', attachment: null, type: 'D' },
     ],
     correct: '',
   })
@@ -320,11 +356,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (questions.length === 0) {
     questions.push({
       contents: [
-        { text: '', attachment: '', type: 'Q' },
-        { text: '', attachment: '', type: 'A' },
-        { text: '', attachment: '', type: 'B' },
-        { text: '', attachment: '', type: 'C' },
-        { text: '', attachment: '', type: 'D' },
+        { text: '', attachment: null, type: 'Q' }, 
+        { text: '', attachment: null, type: 'A' },
+        { text: '', attachment: null, type: 'B' },
+        { text: '', attachment: null, type: 'C' },
+        { text: '', attachment: null, type: 'D' },
       ],
       correct: '',
     })
