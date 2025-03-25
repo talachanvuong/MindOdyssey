@@ -5,34 +5,51 @@ async function typeChecker(url) {
 }
 
  function showDocList(id, array) {
+  console.log(array)
   const list = document.getElementById(id)
   list.innerHTML = ''
   array.forEach((doc) => {
     const li = document.createElement('li')
-    li.className =
-      'flex flex-row items-center rounded-md bg-white p-2 shadow-md shadow-gray-300'
+    const achor = document.createElement('a')
+    li.appendChild(achor)
+    achor.href = `practiceScreen.html?id=${doc.document_id}`
+    achor.className =
+      'flex flex-row items-center rounded-md bg-white p-2 shadow-md shadow-gray-300 hover:bg-stone-200 hover:scale-95 duration-500'
 
     const imgIcon = document.createElement('img')
     imgIcon.src = '../img/docIcon.png'
-    imgIcon.className = 'h-10'
+    imgIcon.className = 'h-10 w-1/14'
+    achor.appendChild(imgIcon)
+
+    
 
     const p = document.createElement('p')
     p.className = 'ml-2 w-full'
     p.textContent = doc.document_title
+    achor.appendChild(p)
+
+    const courseDiv = document.createElement('div')
+    courseDiv.classList = "flex flex-row w-1/2 gap-2 mr-4"
+    const course = document.createElement('p')
+    course.className = "font-bold"
+    course.textContent = "Course:"
+    courseDiv.appendChild(course)
+    const courseName = document.createElement('p')
+    courseName.textContent = doc.course_title
+    courseDiv.appendChild(courseName)
+    achor.appendChild(courseDiv)
 
     const a = document.createElement('a')
     a.href = `practiceScreen.html?id=${doc.document_id}`
 
+    
+
     const imgDot = document.createElement('img')
     imgDot.className = 'h-7 hover:scale-105'
     imgDot.src = '../img/threeDot.png'
-
-    imgDot.addEventListener
+      
     a.appendChild(imgDot)
-    li.appendChild(imgIcon)
-    li.appendChild(p)
-    li.appendChild(a)
-
+    achor.appendChild(a)
     list.appendChild(li)
   })
 }
@@ -367,7 +384,9 @@ function showListOfHistoryPractice(id, data) {
     list.appendChild(li)
 
     li.addEventListener('click', () => {
+
       const encodedData = encodeURIComponent(JSON.stringify(ele))
+      console.log(ele)
       window.location.href = `seeResult.html?detail=${encodedData}`
     })
 

@@ -7,6 +7,7 @@ import effect from '../model/effect.js'
 //get information from url when user want to see specific history
 const urlParams = new URLSearchParams(window.location.search)
 const id = urlParams.get('id')
+console.log(urlParams.get('detail'))
 const detail = JSON.parse(decodeURIComponent(urlParams.get('detail')))
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,7 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
   effect.assignAfterLoading.duration_assign('findMoreDoc',500,10)
   effect.assignAfterLoading.duration_assign('user',500,10)
 
-  const backToPracticeScreen = document.getElementById('back')
+  const backToPracticeScreen = document.getElementById('backToPracticeScreen')
+  const backBtn = document.getElementById('back')
 
   async function userInfo() {
     const userName = document.getElementById('userName')
@@ -32,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function gainHistory() {
-    if (!detail) {
+    if (detail == null) {
       const res = await callApi.callApi(
         api.apiPracticeHistory + '?page=1&limit=1',
         null,
@@ -65,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `${hours}:${minutes}:${seconds}s`
 
       backToPracticeScreen.href = `practiceScreen.html?id=${id}`
+        backBtn.href = `practiceScreen.html?id=${id}`
     } else {
       show_doc.showHistoryPractice('list', detail.detail)
       document.getElementById('score').textContent = detail.score
@@ -85,8 +88,12 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('time').textContent =
         `${hours}:` + `${minute}:` + `${second}s`
 
-      backToPracticeScreen.href = `practiceHistory.html`
+      backToPracticeScreen.href = 'practiceHistory.html'
+      backBtn.href = "practiceHistory.html"
+
+      
     }
+    
   }
   gainHistory()
   userInfo()

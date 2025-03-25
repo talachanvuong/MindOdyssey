@@ -3,7 +3,6 @@ import api from '../config/envConfig.js'
 import callApi from '../model/callApi.js'
 import msg from '../model/messageHandle.js'
 
-
 document.addEventListener('DOMContentLoaded', () => {
   //================== EFFECT ===============================//
   const user_zone = document.getElementById('user_zone')
@@ -149,50 +148,61 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 
   //display checkbox function
-  function displayCheckBox(){checkbox.forEach((checkbox) => {
-    const elementId = checkboxToContentMap[checkbox.id]
-    const element = document.getElementById(elementId)
-    if (element) {
-      if (checkbox.checked) {
-        element.classList.remove('invisible')
-        setTimeout(() => {
-          element.classList.remove('opacity-0', 'scale-0')
-          element.classList.add('opacity-100', 'scale-100')
-        }, 10)
-      } else {
-        element.classList.add('opacity-0', 'scale-0')
-        element.classList.remove('opacity-100', 'scale-100')
-        setTimeout(() => {
-          element.classList.add('invisible')
-        }, 300)
+  function displayCheckBox() {
+    checkbox.forEach((checkbox) => {
+      const elementId = checkboxToContentMap[checkbox.id]
+      const element = document.getElementById(elementId)
+      if (element) {
+        if (checkbox.checked) {
+          element.classList.remove('invisible')
+          setTimeout(() => {
+            element.classList.remove('opacity-0', 'scale-0')
+            element.classList.add('opacity-100', 'scale-100')
+          }, 10)
+        } else {
+          element.classList.add('opacity-0', 'scale-0')
+          element.classList.remove('opacity-100', 'scale-100')
+          setTimeout(() => {
+            element.classList.add('invisible')
+          }, 300)
+        }
       }
-    }
-  })
-
+    })
   }
   //confirmButton.addEventListener('click', ()=>displayCheckBox())
-  document.addEventListener('click',()=>displayCheckBox())
+  document.addEventListener('click', () => displayCheckBox())
   //======================= LOGIC ===============================//
-  const name = document.getElementById('name')
+  //const name = document.getElementById('name')
   const email = document.getElementById('email')
   const display_name = document.getElementById('display_name')
 
   //get user information function
   async function getUserInfo() {
-    const apiResult =await callApi.callApi(api.apiShowInfo,null,'GET')
-    if(apiResult.status === `success`){
-      name.textContent=apiResult.data.display_name
-      email.textContent=apiResult.data.email
-      display_name.textContent=apiResult.data.display_name
-    }
-    else{
+    const apiResult = await callApi.callApi(api.apiShowInfo, null, 'GET')
+    if (apiResult.status === `success`) {
+      email.textContent = apiResult.data.email
+      display_name.textContent = apiResult.data.display_name
+    } else {
       console.log(apiResult)
-      name.textContent='error'
-      email.textContent='error'
-      display_name.textContent='error'
+      name.textContent = 'error'
+      email.textContent = 'error'
+      display_name.textContent = 'error'
     }
   }
   getUserInfo()
+
+  function logout() {
+    const logout = document.getElementById('logout')
+    logout.addEventListener('click', async () => {
+      const result = await callApi.callApi(api.apiLogout, {}, 'POST')
+      if (!result.status === 'success') {
+        alert(result.message)
+      } else {
+        window.location.href = '../home.html'
+      }
+    })
+  }
+  logout()
 
   //change name
   const renameForm = document.getElementById('reNameForm')
@@ -206,23 +216,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //filter if newname is similar to oldname
     if (newName === oldName) {
-      msg.popup(popupAlert,'New name must be different from old name')
+      msg.popup(popupAlert, 'New name must be different from old name')
       return
     }
 
-    msg.redText(error,``)
+    msg.redText(error, ``)
 
-   const apiResult = await callApi.callApi(api.apiUpdate,{new_display_name:newName},'PATCH')
-   if(apiResult.status ===`success`){
-      msg.popup(popupAlert,apiResult.message)
-      name.textContent=newName
-      display_name.textContent =newName 
-   }else {
-    const type=msg.classify(apiResult.message)
-    if(type === 'redText'){
-      msg.redText(error,apiResult.message)
+    const apiResult = await callApi.callApi(
+      api.apiUpdate,
+      { new_display_name: newName },
+      'PATCH'
+    )
+    if (apiResult.status === `success`) {
+      msg.popup(popupAlert, apiResult.message)
+      name.textContent = newName
+      display_name.textContent = newName
+    } else {
+      const type = msg.classify(apiResult.message)
+      if (type === 'redText') {
+        msg.redText(error, apiResult.message)
+      }
     }
-   }
-    
   })
 })
