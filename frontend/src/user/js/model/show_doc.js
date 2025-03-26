@@ -53,87 +53,7 @@ async function typeChecker(url) {
     list.appendChild(li)
   })
 }
- function showAnswerList(id, array) {
-  const list = document.getElementById(id)
-  list.innerHTML = ``
-  array.forEach( async (ques, index) => {
-
-    const li = document.createElement('li')
-    li.className =
-      'h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3x`'
-
-    //question
-    const question = document.createElement('p')
-    question.className = ' border-b border-black pb-2 font-bold'
-    question.textContent = `Question ${index + 1}: ` + ques.contents[0].text
-   
-    if (ques.contents[0].attachment) {
-      const type = await typeChecker(ques.contents[0].attachment) 
-    
-      if(type==="audio"){
-        let audio = document.createElement('audio')
-        audio.src = ques.contents[0].attachment
-        audio.controls= true
-        question.appendChild(audio)
-      }
-      if(type==="image"){
-        const attachment = document.createElement('img')
-        attachment.src = ques.contents[0].attachment
-        question.appendChild(attachment)
-      }
-    
-    }
-
-    const form = document.createElement('form')
-    const ul = document.createElement('ul')
-
-    //answer
-    ques.contents.slice(1).forEach(async (ans)=> {
-      const a = document.createElement('li')
-      const inputAndTextDiv = document.createElement('div')
-      inputAndTextDiv.classList = 'flex flex-row gap-2'
-
-      a.className = 'ml-1 flex flex-col gap-2 my-2'
-
-      const input = document.createElement('input')
-      input.type = 'radio'
-      input.className = 'scale-150 cursor-pointer border border-black'
-
-      const ansContent = document.createElement('p')
-      ansContent.textContent = ans.text
-
-      input.disabled = true
-
-      a.appendChild(inputAndTextDiv)
-      inputAndTextDiv.appendChild(input)
-      inputAndTextDiv.appendChild(ansContent)
-
-      ul.appendChild(a)
-      if (ans.attachment) {
-        const type = await typeChecker(ans.attachment)
-        if(type==="image"){
-          const img = document.createElement('img')
-          img.src = ans.attachment
-          a.appendChild(img)
-        }
-        if(type === "audio"){
-          let audio = document.createElement('audio')
-          audio.src = ans.attachment
-          audio.controls = true 
-          a.appendChild(audio)
-        }
-      }
-    })
-
-    li.appendChild(question)
-    li.appendChild(form)
-
-    form.appendChild(ul)
-
-    list.appendChild(li)
-  })
-}
-function showHistoryPractice(id, originArray) {
+async function showHistoryPractice(id, originArray) {
   const array = originArray.map((question)=>{
     let sortContent = [
       question.contents.find((c)=>c.type==='Q') ||  {text:'',attachment:null,type:'Q'},
@@ -156,12 +76,12 @@ function showHistoryPractice(id, originArray) {
   const list = document.getElementById(id)
   list.className = 'flex flex-col gap-3'
   list.innerHTML = ``
-  array.forEach(async (ques, index) => {
+  for(const [index, ques] of array.entries()){
     let correctAnswer
     let userAnswer
     const li = document.createElement('li')
     li.className =
-      'h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3'
+      'h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3 overflow-hidden'
 
     const questionDiv = document.createElement('div')
     questionDiv.classList = 'flex flex-col border-b border-black p-2'
@@ -180,6 +100,7 @@ function showHistoryPractice(id, originArray) {
       if(type === "image"){
         const attachment = document.createElement('img')
         attachment.src = ques.contents[0].attachment
+        attachment.className = 'max-h-96 max-w-fit mx-auto rounded-md shadow-xl border '
         questionDiv.appendChild(attachment)
       }
       if(type === "audio"){
@@ -237,9 +158,9 @@ function showHistoryPractice(id, originArray) {
     }
 
     //answer
-    ques.contents.slice(1).forEach(async (ans, i) => {
+    for(const [i,ans] of ques.contents.slice(1).entries()){
       const answer = document.createElement('li')
-      answer.className = 'shadow-lg rounded-md p-2 border border-gray-100 bg-white'
+      answer.className = 'shadow-lg rounded-md p-2 border border-gray-100 bg-white '
       ul.appendChild(answer)
 
       const div = document.createElement('div')
@@ -279,6 +200,7 @@ function showHistoryPractice(id, originArray) {
         if(type === "image"){
           const answerImage = document.createElement('img')
           answerImage.src = ans.attachment
+          answerImage.className = 'max-h-96 max-w-fit mx-auto rounded-md shadow-xl border'
           answer.appendChild(answerImage)
         }
         if(type === "audio"){
@@ -289,12 +211,13 @@ function showHistoryPractice(id, originArray) {
         }
       }
       div.appendChild(imgChecker)
-    })
+    }
     list.appendChild(li)
-  })
+  }
 }
 async function showPracticeSocket(id, data) {
   const list = document.getElementById(id)
+  list.className = 'overflow-hidden p-4'
   list.replaceChildren()
 
   //question
@@ -314,6 +237,7 @@ async function showPracticeSocket(id, data) {
     if(type === "image"){
       const questionImage = document.createElement('img')
       questionImage.src = data.question.attachment
+      questionImage.className ='max-h-96 max-w-fit mx-auto rounded-md shadow-xl border'
       question.appendChild(questionImage)
     }
     if(type === "audio"){
@@ -324,8 +248,7 @@ async function showPracticeSocket(id, data) {
     }
   
   }
-
-  data.answers.forEach(async (answer, index) => {
+  for (const [index, answer] of data.answers.entries()){
     const li = document.createElement('li')
     li.className = "my-3 shadow-lg rounded-md p-2 border-gray-200 border"
     list.appendChild(li)
@@ -360,6 +283,7 @@ async function showPracticeSocket(id, data) {
       if(type === "image"){
         const answerImage = document.createElement('img')
         answerImage.src = answer.attachment
+        answerImage.className ='max-h-96 max-w-fit mx-auto rounded-md shadow-xl border'
         li.appendChild(answerImage)
       }
       if(type === "audio"){
@@ -368,10 +292,8 @@ async function showPracticeSocket(id, data) {
         answerAudio.controls = true
         li.appendChild(answerAudio)
       }
-        
-    
     }
-  })
+  }
 }
 function showListOfHistoryPractice(id, data) {
   const list = document.getElementById(id)
@@ -448,7 +370,6 @@ function showListOfHistoryPractice(id, data) {
 
 export default {
   showDocList,
-  showAnswerList,
   showHistoryPractice,
   showPracticeSocket,
   showListOfHistoryPractice,

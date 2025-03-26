@@ -7,7 +7,6 @@ import effect from '../model/effect.js'
 //get information from url when user want to see specific history
 const urlParams = new URLSearchParams(window.location.search)
 const id = urlParams.get('id')
-console.log(urlParams.get('detail'))
 const detail = JSON.parse(decodeURIComponent(urlParams.get('detail')))
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -34,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function gainHistory() {
-    if (detail == null) {
+    if (!detail) {
       const res = await callApi.callApi(
         api.apiPracticeHistory + '?page=1&limit=1',
         null,

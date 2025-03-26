@@ -33,109 +33,87 @@ function showDocList(id, array) {
   })
 }
 
-function showAnswerList(id, array) {
-  const list = document.getElementById(id)
-  list.innerHTML = ``
-  console.log(array)
-  array.forEach(async (ques, index) => {
-    const li = document.createElement('li')
-    li.className =
-      'h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3'
- 
-    //question
-    const question = document.createElement('p')
-    question.className = 'border-b-4 border-black pb-1 font-bold'
+async function showAnswerList(id, array) {
+  const list = document.getElementById(id);
+  list.innerHTML = ``;
+  console.log(array);
 
-    question.textContent = `Question ${index + 1}: ` + ques.contents[0].text
-    if( ques.contents[0].attachment){
-      let type = await callApi.checkAttachmentType( ques.contents[0].attachment)
-      if(type === "image"){
-        const quesImage = document.createElement('img')
-        quesImage.src = ques.contents[0].attachment
-        question.appendChild(quesImage)
+  for (const [index, ques] of array.entries()) {
+    const li = document.createElement("li");
+    li.className =
+      "h-fit w-full rounded-xl border border-black bg-white bg-opacity-60 px-2 pb-2 pt-3 overflow-hidden";
+
+    // Question
+    const question = document.createElement("p");
+    question.className = "border-b-4 border-black pb-1 font-bold";
+    question.textContent = `Question ${index + 1}: ` + ques.contents[0].text;
+
+    // Xử lý ảnh/audio câu hỏi (nếu có)
+    if (ques.contents[0].attachment) {
+      let type = await callApi.checkAttachmentType(ques.contents[0].attachment);
+      if (type === "image") {
+        const quesImage = document.createElement("img");
+        quesImage.src = ques.contents[0].attachment;
+        quesImage.className = 'max-h-96 max-w-fit mx-auto rounded-md shadow-xl border'
+        question.appendChild(quesImage);
+      } else if (type === "audio") {
+        const quesAudio = document.createElement("audio");
+        quesAudio.src = ques.contents[0].attachment;
+        quesAudio.controls = true;
+        question.appendChild(quesAudio);
       }
-      if(type === "audio"){
-        const quesAudio = document.createElement('audio')
-        quesAudio.src =  ques.contents[0].attachment
-        quesAudio.controls = true
-        question.appendChild(quesAudio)
-      }
-     
     }
 
-    const form = document.createElement('form')
-    const ul = document.createElement('ul')
+    const form = document.createElement("form");
+    const ul = document.createElement("ul");
 
-    //answer
-    ques.contents.slice(1).forEach(async (ans, i) => {
-      const a = document.createElement('li')
-      const inputAndTextDiv = document.createElement('div')
-      inputAndTextDiv.classList = "flex flex-row gap-2"
-    
-     
-      a.className = 'ml-1 flex flex-col gap-2 my-2'
-    
+    // Duyệt đáp án
+    for (const [i, ans] of ques.contents.slice(1).entries()) {
+      const a = document.createElement("li");
+      a.className = "ml-1 flex flex-col gap-2 my-2";
 
-      const input = document.createElement('input')
-      input.type = 'radio'
-      input.className = 'scale-150 cursor-pointer border border-black'
+      const inputAndTextDiv = document.createElement("div");
+      inputAndTextDiv.classList = "flex flex-row gap-2";
 
-      const ansContent = document.createElement('p')
-      ansContent.textContent = ans.text
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.className = "scale-150 cursor-pointer border border-black";
+      input.disabled = true;
 
-      switch (ques.correct_answer) {
-        case `A`: {
-          if (i == 0) input.checked = true
-          break
-        }
-        case `B`: {
-          if (i == 1)  input.checked = true
-          break
-        }
-        case `C`: {
-          if (i == 2)  input.checked = true
-          break
-        }
-        case `D`: {
-          if (i == 3)  input.checked = true
-          break
-        }
-        default: {
-          console.log('error in gaining answer')
+      // Chọn đáp án đúng
+      if ("ABCD"[i] === ques.correct_answer) input.checked = true;
+
+      const ansContent = document.createElement("p");
+      ansContent.textContent = ans.text;
+
+      inputAndTextDiv.append(input, ansContent);
+      a.appendChild(inputAndTextDiv);
+      ul.appendChild(a);
+
+      // Xử lý ảnh/audio của đáp án (nếu có)
+      if (ans.attachment) {
+        let type = await callApi.checkAttachmentType(ans.attachment);
+        if (type === "image") {
+          const img = document.createElement("img");
+          img.className = 'max-h-96 max-w-fit mx-auto rounded-md shadow-xl border'
+          img.src = ans.attachment;
+          a.appendChild(img);
+        } else if (type === "audio") {
+          const audio = document.createElement("audio");
+          audio.src = ans.attachment;
+          audio.controls = true;
+          a.appendChild(audio);
         }
       }
-      input.disabled = true
+    }
 
-      a.appendChild(inputAndTextDiv)
-      inputAndTextDiv.appendChild(input)
-      inputAndTextDiv.appendChild(ansContent)
-     
-      ul.appendChild(a)
-      if(ans.attachment){
-        let type = await callApi.checkAttachmentType(ans.attachment)
-        if(type === "image"){
-          const img = document.createElement('img')
-          img.src = ans.attachment
-          a.appendChild(img)
-        }
-        if(type === "audio"){
-          const audio = document.createElement('audio')
-          audio.src = ans.attachment
-          audio.controls = true
-          a.appendChild(audio)
-        }
-        
-      }
-    })
+    li.append(question, form);
+    form.appendChild(ul);
+    list.appendChild(li);
 
-    li.appendChild(question)
-    li.appendChild(form)
-
-    form.appendChild(ul)
-
-    list.appendChild(li)
-  
-  })
+    console.log(`Append question: ${index}`);
+  }
 }
+
 
 export default { showDocList, showAnswerList }
