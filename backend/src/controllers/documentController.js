@@ -482,10 +482,10 @@ const editDocument = async (req, res) => {
           break
         }
       }
-    }
 
-    // Update total questions
-    await documentService.updateTotalQuestions(document)
+      // Update total questions
+      await documentService.updateTotalQuestions(document)
+    }
   }
 
   // Update document
