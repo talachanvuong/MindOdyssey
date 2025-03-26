@@ -91,22 +91,23 @@ export const verifyEmail = async (req, res) => {
     'host'
   )}/api/user/verifyemail?token=${registerToken}`
 
-  const subject = 'Xác thực đăng ký MindOdysey'
-  const text = 'Xác thực đăng ký MindOdysey link chỉ có hiệu lực trong 5 phút'
-  const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-        <h1 style="text-align: center; background-color: #4CAF50; color: white; padding: 10px; border-radius: 8px 8px 0 0;">Welcome to MindOdysey!</h1>
-        <p style="margin: 20px 0; line-height: 1.6; color: #333;">Hi,</p>
-        <p style="margin: 20px 0; line-height: 1.6; color: #333;">Cảm ơn vì đã chọn chúng tôi. Vui lòng click vào nút ở dưới để hoàn thành quá trình đăng ký:</p>
-        <div style="text-align: center; margin: 20px 0;">
-          <a href="${linkRegister}" target="_blank" style="background-color: #4CAF50; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 16px;">Hoàn thành đăng ký </a>
-        </div>
-        <p style="text-align: center; font-size: 12px; color: #888; margin-top: 20px;">Vui lòng không phản hồi email này.</p>
-        <p style="text-align: center; font-size: 12px; color: #888;">&copy; 2025 MindOdysey. All rights reserved.</p>
-      </div>
-    `
-  await userService.sendEmail(email, subject, text, html)
-  return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.SEND_EMAIL_SUCCESS)
+  const subject = 'MindOdysey Registration Verification';
+const text = 'Your MindOdysey registration verification link is only valid for 5 minutes.';
+const html = `
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+    <h1 style="text-align: center; background-color: #4CAF50; color: white; padding: 10px; border-radius: 8px 8px 0 0;">Welcome to MindOdysey!</h1>
+    <p style="margin: 20px 0; line-height: 1.6; color: #333;">Hi,</p>
+    <p style="margin: 20px 0; line-height: 1.6; color: #333;">Thank you for choosing us. Please click the button below to complete your registration:</p>
+    <div style="text-align: center; margin: 20px 0;">
+      <a href="${linkRegister}" target="_blank" style="background-color: #4CAF50; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 16px;">Complete Registration</a>
+    </div>
+    <p style="text-align: center; font-size: 12px; color: #888; margin-top: 20px;">Please do not reply to this email.</p>
+    <p style="text-align: center; font-size: 12px; color: #888;">&copy; 2025 MindOdysey. All rights reserved.</p>
+  </div>
+`;
+
+await userService.sendEmail(email, subject, text, html);
+return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.SEND_EMAIL_SUCCESS);
 }
 
 export const register = async (req, res) => {
@@ -189,21 +190,22 @@ export const forgetPassword = async (req, res) => {
     'host'
   )}/api/user/forgetpassword?token=${resetpasswordToken}`
 
-  const subject = 'Xác thực đổi mật khẩu MindOdysey'
-  const text = 'Xác thực đăng ký MindOdysey link chỉ có hiệu lực trong 5 phút'
-  const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-      <h1 style="text-align: center; background-color: #4CAF50; color: white; padding: 10px; border-radius: 8px 8px 0 0;">Khôi phục mật khẩu MindOdysey</h1>
-      <p style="margin: 20px 0; line-height: 1.6; color: #333;">Xin chào,</p>
-      <p style="margin: 20px 0; line-height: 1.6; color: #333;">Chúng tôi nhận được yêu cầu khôi phục mật khẩu từ bạn. Vui lòng nhấn vào nút bên dưới để đặt lại mật khẩu của bạn:</p>
-      <div style="text-align: center; margin: 20px 0;">
-        <a href="${linkForgetPass}" target="_blank" style="background-color: #4CAF50; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 16px;">Đặt lại mật khẩu</a>
-      </div>
-      <p style="text-align: center; font-size: 12px; color: #888; margin-top: 20px;">Nếu bạn không yêu cầu khôi phục mật khẩu, vui lòng bỏ qua email này.</p>
-      <p style="text-align: center; font-size: 12px; color: #888;">&copy; 2025 MindOdysey. All rights reserved.</p>
-    </div>`
-  await userService.sendEmail(email, subject, text, html)
-  return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.SEND_EMAIL_SUCCESS)
+  const subject = 'MindOdysey Password Reset Verification';
+const text = 'MindOdysey registration verification link is only valid for 5 minutes.';
+const html = `
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+    <h1 style="text-align: center; background-color: #4CAF50; color: white; padding: 10px; border-radius: 8px 8px 0 0;">MindOdysey Password Recovery</h1>
+    <p style="margin: 20px 0; line-height: 1.6; color: #333;">Hello,</p>
+    <p style="margin: 20px 0; line-height: 1.6; color: #333;">We received a request to reset your password. Please click the button below to reset your password:</p>
+    <div style="text-align: center; margin: 20px 0;">
+      <a href="${linkForgetPass}" target="_blank" style="background-color: #4CAF50; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 16px;">Reset Password</a>
+    </div>
+    <p style="text-align: center; font-size: 12px; color: #888; margin-top: 20px;">If you did not request a password reset, please ignore this email.</p>
+    <p style="text-align: center; font-size: 12px; color: #888;">&copy; 2025 MindOdysey. All rights reserved.</p>
+  </div>`;
+await userService.sendEmail(email, subject, text, html);
+return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.USER.SEND_EMAIL_SUCCESS);
+
 }
 
 export const resetPassword = async (req, res) => {
