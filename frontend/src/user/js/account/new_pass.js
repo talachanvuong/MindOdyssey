@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
           msg.redText(errorReNewPass, apiResult.message)
       }
       if (type === `alert`) {
-        alert('Đã hết phiên đổi mật khẩu, vui lòng gửi lại email')
+        alert('The session has expired. Please resend the email')
         window.location.href = '../home.html'      
       }
     }

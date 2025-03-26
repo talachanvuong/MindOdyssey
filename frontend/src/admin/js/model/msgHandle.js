@@ -19,7 +19,7 @@ const notification = (id) => {
     display.innerHTML = ``
     display.innerHTML = `<div class="  mx-auto w-full bg-white p-2 rounded-xl shadow-gray-300 shadow-md">
           <img src="../img/notfound.png" class="h-20 mx-auto">
-          <p class="text-2xl text-center font-bold">Không tìm thấy tài liệu </p>
+          <p class="text-2xl text-center font-bold">Document not found</p>
          </div>`
   }
 }
