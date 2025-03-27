@@ -163,6 +163,15 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
   }
 
+  const escapeHTML = (str) => {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  };
+
   async function renderQuestions(questions) {
     questionsContainer.innerHTML = ''
 
@@ -191,7 +200,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         <label class="block font-semibold text-lg text-gray-800 mb-2">
           Question ${index + 1}:
         </label>
-        <p class="font-medium">${q.contents[0]?.text || ''}</p>
+        <p class="font-medium">${escapeHTML(q.contents[0].text)}</p>
         
         <div id="mediaPreview${index}_0" class="mt-4 flex justify-center">
           ${mediaHTML}
@@ -217,7 +226,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                   <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-100">
                     <input type="radio" name="question${index}" class="form-radio" value="${optionLetter}"
                     ${q.correct_answer === optionLetter ? 'checked' : ''} disabled />
-                    <span>${option.text || ''}</span>
+                    <span>${escapeHTML(option.text || '')}</span>
                     ${q.correct_answer === optionLetter ? '<span class="text-green-500 font-bold">✅</span>' : ''}
                   </label>
                   <div id="mediaPreview${index}_${i + 1}" class="mt-4 flex justify-center">
