@@ -3,6 +3,26 @@
 
 The journey to get back your memory.
 
+# Info
+
+School: Vietnam Aviation Academy (VAA)
+
+Department: IT
+
+Topic: Building an Online Multiple-Choice Test Review Website
+
+Group: 1
+
+Team members:
+
+- Nguyen Minh Nhut (Leader)
+
+- Nguyen Nhat Khang
+
+- Nguyen Duc Tam
+
+- Vo Hoang Nhat Truong
+
 # Setup
 
 > [!NOTE]
