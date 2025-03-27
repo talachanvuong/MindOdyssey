@@ -110,6 +110,7 @@ const selectPracticeHistory = async (user_id, limit, page) => {
   const offset = (page - 1) * limit
   const query = `
     SELECT 
+      practice_history_id,
       score,
       detail,
       start_time,
