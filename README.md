@@ -7,7 +7,7 @@ The journey to get back your memory.
 
 School: Vietnam Aviation Academy (VAA)
 
-Department: IT
+Department: FitVAA (IT)
 
 Topic: Building an Online Multiple-Choice Test Review Website
 
