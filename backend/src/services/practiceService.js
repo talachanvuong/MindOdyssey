@@ -201,6 +201,18 @@ const isUserIDExist = async (user_id) => {
   const result = await client.query(query, [user_id])
   return result.rowCount > 0
 }
+
+
+const isPracticeHistoryExist = async (practice_history_id) => {
+  const query = `
+        SELECT 1
+        FROM practice_histories
+        WHERE practice_history_id = $1
+        LIMIT 1;
+    `
+  const result = await client.query(query, [practice_history_id])
+  return result.rowCount > 0
+}
 export default {
   selectDocumentforPractice,
   countDocumentsByKeyword,
@@ -211,5 +223,6 @@ export default {
   selectPracticeHistorybyID,
   selectDocumentbyUserId,
   countDocumentsByUserId,
-  isUserIDExist
+  isUserIDExist,
+  isPracticeHistoryExist
 }

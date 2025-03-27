@@ -59,6 +59,14 @@ const user_idSchema = joi.number().integer().positive().required().messages({
   'number.positive': 'user_id must be a positive integer.',
   'any.required': 'user_id is required.',
 })
+
+const practice_history_idSchema = joi.number().integer().positive().required().messages({
+  'number.base': 'Practice history id must be a number.',
+  'number.integer': 'Practice history id must be an integer.',
+  'number.positive': 'Practice history id must be a positive integer.',
+  'any.required': 'Practice history id is required.',
+})
+
 const getDocumentforPraticeValidate = joi.object({
   keyword: keywordSchema,
   page: pageSchema,
@@ -84,11 +92,15 @@ const answerValidate = joi.object({
 const finishedValidate = joi.object({
   score: scoreSchema,
 })
+const getPracticeHistorybyIDValidate = joi.object({
+  practice_history_id: practice_history_idSchema,
+})
 export default {
   getDocumentforPraticeValidate,
   getPracticeHistoryValidate,
   doc_idValidate,
   answerValidate,
   finishedValidate,
-  getDocumentbyUserIDValidate
+  getDocumentbyUserIDValidate,
+  getPracticeHistorybyIDValidate
 }

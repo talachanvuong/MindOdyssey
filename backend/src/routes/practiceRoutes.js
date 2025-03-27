@@ -22,4 +22,12 @@ router.get(
   asyncHandler(practiceController.getDocumentbyUserID),
   errorHandler
 )
+
+
+router.get(
+  '/getpracticehistorybyid',
+  asyncHandler(authMiddleware.verifyUser),
+  asyncHandler(practiceController.getPracticeHistorybyID),
+  errorHandler
+)
 export default router
