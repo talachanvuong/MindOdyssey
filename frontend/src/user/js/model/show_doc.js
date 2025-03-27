@@ -269,7 +269,7 @@ async function showPracticeSocket(id, data) {
   const answerList = document.createElement('div')
   answerList.className = 'flex flex-col h-fit gap-3'
   list.appendChild(answerList)
-  for (const [index, answer] of data.answers.entries()) {
+  for (const answer of data.answers) {
     //create label for input
     const label = document.createElement(`label`)
     label.className = 'border rounded-md shadow-lg hover:bg-gray-200 duration-500 cursor-pointer py-1 px-5'
@@ -315,18 +315,6 @@ async function showPracticeSocket(id, data) {
         label.appendChild(audio)
       }
     }
-
-    /*
-    <div>
-      <question>
-      <list of answer>
-          <label>
-            <input>
-            <p>
-            <checkImg>
-            <img>
-          </label>
-    */
   }
 }
 function showListOfHistoryPractice(id, data) {
