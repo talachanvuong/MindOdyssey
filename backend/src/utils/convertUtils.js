@@ -3,7 +3,7 @@ const timePrefix = (time) => {
 }
 
 export const timeConvert = (time) => {
-  const daysOfWeek = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']
+  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
   const date = new Date(time)
 
   return (
