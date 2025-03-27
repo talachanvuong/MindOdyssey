@@ -25,7 +25,7 @@ const getPendingDocuments = async (pagination, keyword, filter) => {
   }
 
   if (filter) {
-    conditions.push(`created_at >= $${index}`)
+    conditions.push(`last_updated >= $${index}`)
     refs.push(new Date(filter).toISOString())
   }
 
@@ -60,7 +60,7 @@ const getPendingDocuments = async (pagination, keyword, filter) => {
     `SELECT
       document_id,
       title,
-      created_at
+      last_updated
      FROM documents
      WHERE status = $1
      ${conditions.map((condition) => `AND ${condition}`).join(' ')}
@@ -72,7 +72,7 @@ const getPendingDocuments = async (pagination, keyword, filter) => {
     total_pages: totalPages,
     documents: result.rows.map((row) => ({
       ...row,
-      created_at: timeConvert(row.created_at),
+      last_updated: timeConvert(row.last_updated),
     })),
   }
 }
