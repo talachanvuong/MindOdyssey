@@ -90,7 +90,7 @@ const getPendingDocuments = async (req, res) => {
   return sendResponse(
     res,
     STATUS_CODE.SUCCESS,
-    MESSAGE.ADMIN.GET_UNAPPROVED_DOCUMENTS_SUCCESS,
+    MESSAGE.ADMIN.GET_PENDING_DOCUMENTS_SUCCESS,
     pendingDocuments
   )
 }

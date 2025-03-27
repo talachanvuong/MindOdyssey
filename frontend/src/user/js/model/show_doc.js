@@ -246,7 +246,7 @@ async function showPracticeSocket(id, data) {
 
   if (data.question) {
     const questionText = document.createElement('p')
-    questionText.textContent = 'Question :' + data.question.text
+    questionText.textContent = 'Question: ' + data.question.text
     questionText.className = 'font-bold'
     question.appendChild(questionText)
   }
