@@ -134,43 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
 
-  //checkbox
-  const checkboxToContentMap = {
-    completed_doc_check: 'completed_doc',
-    uploaded_doc_check: 'uploaded_doc',
-    history_check: 'history',
-  }
-
-  const checkbox = document.querySelectorAll("#setting input[type='checkbox']")
-
-  checkbox.forEach((checkbox) => {
-    checkbox.checked = true
-  })
-
-  //display checkbox function
-  function displayCheckBox() {
-    checkbox.forEach((checkbox) => {
-      const elementId = checkboxToContentMap[checkbox.id]
-      const element = document.getElementById(elementId)
-      if (element) {
-        if (checkbox.checked) {
-          element.classList.remove('invisible')
-          setTimeout(() => {
-            element.classList.remove('opacity-0', 'scale-0')
-            element.classList.add('opacity-100', 'scale-100')
-          }, 10)
-        } else {
-          element.classList.add('opacity-0', 'scale-0')
-          element.classList.remove('opacity-100', 'scale-100')
-          setTimeout(() => {
-            element.classList.add('invisible')
-          }, 300)
-        }
-      }
-    })
-  }
-  //confirmButton.addEventListener('click', ()=>displayCheckBox())
-  document.addEventListener('click', () => displayCheckBox())
   //======================= LOGIC ===============================//
   //const name = document.getElementById('name')
   const email = document.getElementById('email')

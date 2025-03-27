@@ -19,5 +19,6 @@ export default {
 
     //practice history
     apiPracticeHistory:import.meta.env.VITE_API_PRACTICE_HISTORY,
+    apiPracticeHistoryId:import.meta.env.VITE_API_PRACTICE_HISTORY_ID,
     apiAuthorDocument:import.meta.env.VITE_API_AUTHOR_DOCUMENT
 }

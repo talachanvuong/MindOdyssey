@@ -52,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('userName').textContent = res.data.display_name
   }
   async function apiCalling() {
-    console.log(state.curPage)
     const params = new URLSearchParams({
       page: state.curPage,
       limit: state.perPage,

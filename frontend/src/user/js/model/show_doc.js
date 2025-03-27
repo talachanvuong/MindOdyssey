@@ -1,10 +1,10 @@
-import callApi from "./callApi"
+import callApi from './callApi'
 
 async function typeChecker(url) {
   return await callApi.checkAttachmentType(url)
 }
 
- function showDocList(id, array) {
+function showDocList(id, array) {
   console.log(array)
   const list = document.getElementById(id)
   list.innerHTML = ''
@@ -21,18 +21,16 @@ async function typeChecker(url) {
     imgIcon.className = 'h-10 w-1/14'
     achor.appendChild(imgIcon)
 
-    
-
     const p = document.createElement('p')
     p.className = 'ml-2 w-full'
     p.textContent = doc.document_title
     achor.appendChild(p)
 
     const courseDiv = document.createElement('div')
-    courseDiv.classList = "flex flex-row w-1/2 gap-2 mr-4"
+    courseDiv.classList = 'flex flex-row w-1/2 gap-2 mr-4'
     const course = document.createElement('p')
-    course.className = "font-bold"
-    course.textContent = "Course:"
+    course.className = 'font-bold'
+    course.textContent = 'Course:'
     courseDiv.appendChild(course)
     const courseName = document.createElement('p')
     courseName.textContent = doc.course_title
@@ -42,41 +40,59 @@ async function typeChecker(url) {
     const a = document.createElement('a')
     a.href = `practiceScreen.html?id=${doc.document_id}`
 
-    
-
     const imgDot = document.createElement('img')
     imgDot.className = 'h-7 hover:scale-105'
     imgDot.src = '../img/threeDot.png'
-      
+
     a.appendChild(imgDot)
     achor.appendChild(a)
     list.appendChild(li)
   })
 }
 async function showHistoryPractice(id, originArray) {
-  const array = originArray.map((question)=>{
+  const array = originArray.map((question) => {
     let sortContent = [
-      question.contents.find((c)=>c.type==='Q') ||  {text:'',attachment:null,type:'Q'},
-      question.contents.find((c)=>c.type==='A') ||  {text:'',attachment:null,type:'A'},
-      question.contents.find((c)=>c.type==='B') ||  {text:'',attachment:null,type:'B'},
-      question.contents.find((c)=>c.type==='C') ||  {text:'',attachment:null,type:'C'},
-      question.contents.find((c)=>c.type==='D') ||  {text:'',attachment:null,type:'D'},
-    ].map((c,index)=>({
-      id:c.id || undefined,
-      text:c.text || '',
-      attachment:c.attachment || null,
-      attachment_id:c.attachment_id || null,
+      question.contents.find((c) => c.type === 'Q') || {
+        text: '',
+        attachment: null,
+        type: 'Q',
+      },
+      question.contents.find((c) => c.type === 'A') || {
+        text: '',
+        attachment: null,
+        type: 'A',
+      },
+      question.contents.find((c) => c.type === 'B') || {
+        text: '',
+        attachment: null,
+        type: 'B',
+      },
+      question.contents.find((c) => c.type === 'C') || {
+        text: '',
+        attachment: null,
+        type: 'C',
+      },
+      question.contents.find((c) => c.type === 'D') || {
+        text: '',
+        attachment: null,
+        type: 'D',
+      },
+    ].map((c, index) => ({
+      id: c.id || undefined,
+      text: c.text || '',
+      attachment: c.attachment || null,
+      attachment_id: c.attachment_id || null,
       type: ['Q', 'A', 'B', 'C', 'D'][index],
-    })) 
-    return{
+    }))
+    return {
       ...question,
-      contents:sortContent
+      contents: sortContent,
     }
   })
   const list = document.getElementById(id)
   list.className = 'flex flex-col gap-3'
   list.innerHTML = ``
-  for(const [index, ques] of array.entries()){
+  for (const [index, ques] of array.entries()) {
     let correctAnswer
     let userAnswer
     const li = document.createElement('li')
@@ -97,19 +113,19 @@ async function showHistoryPractice(id, originArray) {
 
     if (ques.contents[0].attachment) {
       let type = await typeChecker(ques.contents[0].attachment)
-      if(type === "image"){
+      if (type === 'image') {
         const attachment = document.createElement('img')
         attachment.src = ques.contents[0].attachment
-        attachment.className = 'max-h-96 max-w-fit mx-auto rounded-md shadow-xl border '
+        attachment.className =
+          'max-h-96 max-w-fit mx-auto rounded-md shadow-xl border '
         questionDiv.appendChild(attachment)
       }
-      if(type === "audio"){
+      if (type === 'audio') {
         let audio = document.createElement('audio')
-        audio.src =ques.contents[0].attachment
-        audio.controls = true 
+        audio.src = ques.contents[0].attachment
+        audio.controls = true
         questionDiv.appendChild(audio)
       }
-     
     }
 
     const ul = document.createElement('ul')
@@ -158,9 +174,10 @@ async function showHistoryPractice(id, originArray) {
     }
 
     //answer
-    for(const [i,ans] of ques.contents.slice(1).entries()){
+    for (const [i, ans] of ques.contents.slice(1).entries()) {
       const answer = document.createElement('li')
-      answer.className = 'shadow-lg rounded-md p-2 border border-gray-100 bg-white '
+      answer.className =
+        'shadow-lg rounded-md p-2 border border-gray-100 bg-white '
       ul.appendChild(answer)
 
       const div = document.createElement('div')
@@ -197,13 +214,14 @@ async function showHistoryPractice(id, originArray) {
       }
       if (ans.attachment) {
         let type = await typeChecker(ans.attachment)
-        if(type === "image"){
+        if (type === 'image') {
           const answerImage = document.createElement('img')
           answerImage.src = ans.attachment
-          answerImage.className = 'max-h-96 max-w-fit mx-auto rounded-md shadow-xl border'
+          answerImage.className =
+            'max-h-96 max-w-fit mx-auto rounded-md shadow-xl border'
           answer.appendChild(answerImage)
         }
-        if(type === "audio"){
+        if (type === 'audio') {
           const answerAudio = document.createElement('audio')
           answerAudio.src = ans.attachment
           answerAudio.controls = true
@@ -234,71 +252,86 @@ async function showPracticeSocket(id, data) {
   }
   if (data.question.attachment) {
     let type = await typeChecker(data.question.attachment)
-    if(type === "image"){
+    if (type === 'image') {
       const questionImage = document.createElement('img')
       questionImage.src = data.question.attachment
-      questionImage.className ='max-h-96 max-w-fit mx-auto rounded-md shadow-xl border'
+      questionImage.className =
+        'max-h-96 max-w-fit mx-auto rounded-md shadow-xl border'
       question.appendChild(questionImage)
     }
-    if(type === "audio"){
+    if (type === 'audio') {
       const questionAudio = document.createElement('audio')
       questionAudio.src = data.question.attachment
       questionAudio.controls = true
       question.appendChild(questionAudio)
     }
-  
   }
-  for (const [index, answer] of data.answers.entries()){
-    const li = document.createElement('li')
-    li.className = "my-3 shadow-lg rounded-md p-2 border-gray-200 border"
-    list.appendChild(li)
+  const answerList = document.createElement('div')
+  answerList.className = 'flex flex-col h-fit gap-3'
+  list.appendChild(answerList)
+  for (const [index, answer] of data.answers.entries()) {
+    //create label for input
+    const label = document.createElement(`label`)
+    label.className = 'border rounded-md shadow-lg hover:bg-gray-200 duration-500 cursor-pointer py-1 px-5'
+    answerList.appendChild(label)
 
-    const div = document.createElement('div')
-    div.className = 'flex flex-row gap-3 items-center mb-2 cursor-pointer'
-    li.appendChild(div)
+    const inputDiv = document.createElement('div')
+    label.appendChild(inputDiv)
+    inputDiv.className = "flex flex-row gap-2"
 
+    //create elements for the label
     const input = document.createElement('input')
     input.type = 'radio'
-    input.className = "cursor-pointer"
     input.name = 'answer'
-    input.required = true
-    input.id = `ans${index + 1}`
-    div.appendChild(input)
-
-    if (answer.text) {
-      const answerText = document.createElement('label')
-      answerText.textContent = answer.text
-      answerText.htmlFor = `ans${index + 1}`
-      div.appendChild(answerText)
-    }
+    input.className = `w-5`
 
     const checkImage = document.createElement('img')
-    checkImage.setAttribute('data-name', 'checker')
-    checkImage.src = ''
-    checkImage.className = 'h-5'
-    div.appendChild(checkImage)
+    checkImage.className = 'h-7'
 
+    inputDiv.appendChild(input)
+    //check if the answer does not have text
+    if (answer.text) {
+      const p = document.createElement(`p`)
+      inputDiv.appendChild(p)
+      p.textContent = answer.text
+      p.className='row-start-1'
+    }
+    inputDiv.appendChild(checkImage)
+
+    //classify type of attachment
     if (answer.attachment) {
-      let type = await typeChecker(answer.attachment)
-      if(type === "image"){
-        const answerImage = document.createElement('img')
-        answerImage.src = answer.attachment
-        answerImage.className ='max-h-96 max-w-fit mx-auto rounded-md shadow-xl border'
-        li.appendChild(answerImage)
+      const type = await typeChecker(answer.attachment)
+      if (type === 'image') {
+        const image = document.createElement('img')
+        image.src = answer.attachment
+        image.className = "h-96 w-fit rounded-md shadow-gray-300 shadow-lg mx-auto mb-3"
+        label.appendChild(image)
       }
-      if(type === "audio"){
-        const answerAudio = document.createElement('audio')
-        answerAudio.src = answer.attachment
-        answerAudio.controls = true
-        li.appendChild(answerAudio)
+      if (type === 'audio') {
+        const audio = document.createElement('audio')
+        audio.controls = true
+        audio.src = answer.attachment
+        audio.classList = "mb-3"
+        label.appendChild(audio)
       }
     }
+
+    /*
+    <div>
+      <question>
+      <list of answer>
+          <label>
+            <input>
+            <p>
+            <checkImg>
+            <img>
+          </label>
+    */
   }
 }
 function showListOfHistoryPractice(id, data) {
   const list = document.getElementById(id)
   list.replaceChildren()
-  console.log(data)
   data.forEach((ele) => {
     const li = document.createElement('li')
     li.className =
@@ -306,10 +339,8 @@ function showListOfHistoryPractice(id, data) {
     list.appendChild(li)
 
     li.addEventListener('click', () => {
-
-      const encodedData = encodeURIComponent(JSON.stringify(ele))
-      console.log(ele)
-      window.location.href = `seeResult.html?detail=${encodedData}`
+      const history_id = ele.practice_history_id
+      window.location.href = `seeResult.html?history_id=${history_id}`
     })
 
     const timeDiv = document.createElement('div')
@@ -339,10 +370,13 @@ function showListOfHistoryPractice(id, data) {
     let time_end = new Date(ele.end_time)
 
     const timer = time_end - time_start
-    const totalSeconds = Math.floor(timer/1000)
-    const hours = String(Math.floor(totalSeconds/3600)).padStart(2,'0')
-    const minute = String(Math.floor((totalSeconds%3600)/60)).padStart(2,'0')
-    const second = String(totalSeconds%60).padStart(2,'0')
+    const totalSeconds = Math.floor(timer / 1000)
+    const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0')
+    const minute = String(Math.floor((totalSeconds % 3600) / 60)).padStart(
+      2,
+      '0'
+    )
+    const second = String(totalSeconds % 60).padStart(2, '0')
     timerValue.textContent = `${hours}:` + `${minute}:` + `${second}s`
 
     const score = document.createElement('p')
