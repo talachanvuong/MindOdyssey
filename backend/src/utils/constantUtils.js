@@ -75,6 +75,7 @@ export const MESSAGE = {
     NOT_FOUND_DOCS: 'No results found for this keyword!',
     NOT_FOUND_DOCS_BY_CREATER: 'No documents found by this creater!',
     NOT_FOUND_HISTORY: 'No practice history found!',
+    INVALID_PRACTICE_HISTORY_ID: 'Invalid practice history ID!',
     PAGE_EXCEEDS_TOTAL: 'The requested page exceeds the total number of pages!',
     NO_QUESTION: 'No more question available',
   },

@@ -86,6 +86,22 @@ const getPracticeHistory = async (req, res) => {
   )
 }
 
+
+
+const getPracticeHistorybyID = async (req, res) => {
+  const {error, value}=practiceSchema.getPracticeHistorybyIDValidate.validate(req.query)
+  if(error){
+    return sendResponse(res, STATUS_CODE.BAD_REQUEST, error.details[0].message)
+  }
+  const {practice_history_id}=value
+  const isPracticeHistoryExist = await practiceService.isPracticeHistoryExist(practice_history_id)
+  if (!isPracticeHistoryExist) {
+    return sendResponse(res, STATUS_CODE.NOT_FOUND, MESSAGE.PRACTICE.INVALID_PRACTICE_HISTORY_ID)
+  }
+  const history = await practiceService.selectPracticeHistorybyID(practice_history_id)
+  return sendResponse(res, STATUS_CODE.SUCCESS, MESSAGE.PRACTICE.GET_PRACTICE_HISTORY_SUCCESS, history)
+}
+
 const getDocumentbyUserID = async (req, res) => {
   const { error, value } =
     //validate mới
@@ -131,4 +147,4 @@ const getDocumentbyUserID = async (req, res) => {
     }
   )
 }
-export default { getDocumentforPratice, getPracticeHistory,getDocumentbyUserID }
+export default { getDocumentforPratice, getPracticeHistory,getDocumentbyUserID,getPracticeHistorybyID }

@@ -4,7 +4,10 @@
 GET {{host}}/getdocsforprac/?keyword=s&page=1&limit=4&course_id=1
 
 ### Get document for practice
-GET {{host}}/getpracticehistory/?page=3&limit=7
+GET {{host}}/getpracticehistory/?page=1&limit=10
+
+### GET practice history by ID
+GET {{host}}/getpracticehistorybyid/?practice_history_id=1
 
 ### Get document by user_id
 GET {{host}}/getdocsbyuserid/?user_id=58&page=1&limit=7
