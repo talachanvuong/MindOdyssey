@@ -1,3 +1,4 @@
+import moment from 'moment-timezone'
 import practiceService from '../services/practiceService.js'
 import documentService from '../services/documentService.js'
 import practiceSchema from '../schemas/practiceSchema.js'
@@ -17,7 +18,7 @@ const getStarted = async (socket, data, callback) => {
   }
   const allQuestion = await practiceService.selectAllQuestions(doc_id)
   socket.allQuestionreuploaded = await cloudinaryService.reuploadAttachments(allQuestion)
-  socket.start_time = new Date().toISOString()
+  socket.start_time = moment().tz("Asia/Ho_Chi_Minh").format()
   socket.questionOrder = []
   callback('ready')
 }
@@ -68,7 +69,7 @@ const finished = async (socket, data, callback) => {
     return socket.emit('error', error.details[0].message)
   }
   const { user_id } = socket.user
-  socket.end_time = new Date().toISOString()
+  socket.end_time = moment().tz("Asia/Ho_Chi_Minh").format()
   const { score } = value
   const practice_history_id = await practiceService.insertPracticeHistory(
     user_id,
