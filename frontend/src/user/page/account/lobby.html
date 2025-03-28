@@ -7,29 +7,39 @@
   </head>
   <body class="bg-stone-200">
     <header
-      class="flex h-fit flex-row justify-between rounded-bl-2xl rounded-br-2xl bg-cyan-300 p-2 shadow-md shadow-gray-600 sm:h-14"
+      class="relative h-fit rounded-bl-2xl rounded-br-2xl bg-cyan-300 p-2 pr-2 shadow-md shadow-gray-600 sm:h-14"
     >
-      <button class="group relative"  id="logout">
-        <img src="../img/logout.png" class="h-16 sm:h-10" />
-        <p id="logoutText" class="group-hover:opacity-100 opacity-0 border pointer-events-none border-black  rounded-md px-1 shadow-md bg-black text-white my-1">Log out</p>
-      </button>
-      <a id="user" class=" group relative flex flex-row items-center gap-2 p-2 hover:shadow-md rounded-lg transition-all  hover:bg-cyan-200 " href="user_information.html" id="userInfor">
-        <img src="../img/user.png" class="h-8 " />
+      <a
+        id="user"
+        class="group absolute right-2 bottom-1 flex w-fit flex-row items-center gap-2 rounded-lg p-2 transition-all hover:bg-cyan-200 hover:shadow-md"
+        href="user_information.html"
+        id="userInfor"
+      >
+        <img src="../img/user.png" class="h-8" />
         <p id="userName"></p>
-        <p id="infoText" class="absolute top-12 border border-black bg-black pointer-events-none text-white  group-hover:opacity-100 opacity-0  rounded-md shadow-md px-2">see your info</p>
+        <p
+          id="infoText"
+          class="pointer-events-none absolute top-12 rounded-md border border-black bg-black px-2 text-white opacity-0 shadow-md group-hover:opacity-100"
+        >
+          see your info
+        </p>
       </a>
     </header>
-    <main id="main"  class="flex min-h-screen items-center invisible -translate-y-2 opacity-0">
+    <main
+      id="main"
+      class="invisible flex min-h-screen -translate-y-2 items-center opacity-0"
+    >
       <div
         class="mx-4 flex h-fit flex-col gap-3 rounded-xl bg-white p-5 shadow-md shadow-gray-700 sm:mx-auto sm:w-2/5"
       >
         <!-- title -->
-        <div >
-          <p class="font-serif mb-3 text-center text-4xl font-semibold sm:text-5xl">
-           MindOdyssey
+        <div>
+          <p
+            class="mb-3 text-center font-serif text-4xl font-semibold sm:text-5xl"
+          >
+            MindOdyssey
           </p>
-          <p class="font-serif text-center text-2xl">Online Test</p>
-          
+          <p class="text-center font-serif text-2xl">Online Test</p>
         </div>
         <!-- searching box -->
         <div
@@ -44,9 +54,8 @@
               placeholder="Which document you want to practice?"
             />
             <button
-
               id="searchButton"
-              class="font-serif hover:scale-105 hover:bg-cyan-100 flex w-11/12 flex-col items-center rounded-lg  bg-cyan-200 text-3xl shadow-xl"
+              class="flex w-11/12 flex-col items-center rounded-lg bg-cyan-200 font-serif text-3xl shadow-xl hover:scale-105 hover:bg-cyan-100"
             >
               Search
             </button>
@@ -59,11 +68,11 @@
           <a
             href="../document/create.html"
             id="create_doc"
-            class="p-2 hover:scale-105 flex flex-col justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700"
+            class="flex flex-col justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 p-2 shadow-md shadow-slate-700 hover:scale-105"
           >
             <img
               src="../img/create_doc_feature.png"
-              class="m-auto w-1/2 h-fit object-contain sm:w-1/3"
+              class="m-auto h-fit w-1/2 object-contain sm:w-1/3"
             />
             <p class="text-center font-bold">Create Document</p>
           </a>
@@ -72,7 +81,7 @@
           <a
             href="../practice/searchDoc.html"
             id="storage"
-            class="flex  flex-col hover:scale-105 justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700"
+            class="flex flex-col justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700 hover:scale-105"
           >
             <img
               src="../img/storage.png"
@@ -85,7 +94,7 @@
           <a
             href="../practice/practiceHistory.html"
             id="completed_doc"
-            class="hover:scale-105 flex flex-col justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700"
+            class="flex flex-col justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700 hover:scale-105"
           >
             <img
               src="../img/history.png"
@@ -96,9 +105,9 @@
 
           <!-- manage document -->
           <a
-          id="manage"
+            id="manage"
             href="../document/manage.html"
-            class="flex hover:scale-105 flex-col justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700"
+            class="flex flex-col justify-center overflow-hidden rounded-md border border-gray-300 bg-stone-300 bg-opacity-60 shadow-md shadow-slate-700 hover:scale-105"
           >
             <img
               src="../img/uploaded_doc.png"
@@ -113,7 +122,9 @@
     <footer
       class="mt-5 flex h-20 flex-col justify-center rounded-tl-2xl rounded-tr-2xl bg-cyan-300 p-2 shadow-md shadow-gray-600"
     >
-      <p class="mx-auto text-3xl text-green-500 font-bold font-serif">MindOdyssey</p>
+      <p class="mx-auto font-serif text-3xl font-bold text-green-500">
+        MindOdyssey
+      </p>
     </footer>
     <script type="module" src="../../js/account/lobby.js"></script>
   </body>

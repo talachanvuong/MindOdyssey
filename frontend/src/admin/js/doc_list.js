@@ -19,75 +19,35 @@ document.addEventListener('DOMContentLoaded', () => {
   const right = document.getElementById('right')
   const left = document.getElementById('left')
 
-  function filterPopup() {
-    const modal = document.getElementById('popup')
-    const Btn = document.getElementById('filter')
-    const closeBtn = document.getElementById('closeBtn')
-
-    Btn.addEventListener('click', () => {
-      modal.classList.remove('invisible')
-    })
-
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) modal.classList.add('invisible')
-    })
-
-    closeBtn.addEventListener('click', () => {
-      modal.classList.add('invisible')
-    })
-  }
-
-  async function apiCalling(keyword = ``, filter = 0) {
-    if (keyword === '') {
-      const result = await callApi.callApi(
-        api.apiApprovedDocument,
-        {
-          pagination: {
-            page: state.page,
-            perPage: state.perPage,
-          },
-          filter: filter,
+  //gain document list
+  async function apiCalling() {
+    try {
+      const payload = {
+        pagination: {
+          page: state.page,
+          perPage: state.perPage,
         },
-        'POST'
-      )
-
-      if (result.status === 'success') {
-        showDocs.showDocList('list', result.result.documents)
-        state.totalPages = result.result.total_pages
-        state.res = result  
-        pagination(result)
-      } else {
-        console.error('error in calling api')
-        pagination(result)
+        filter:state.filterDate,
       }
-    } else {
-      const result = await callApi.callApi(
-        api.apiApprovedDocument,
-        {
-          pagination: {
-            page: state.page,
-            perPage: state.perPage,
-          },
-          keyword,
-          filter,
-        },
-        'POST'
-      )
-
+      if (state.keyword) payload.keyword = state.keyword
+      const result = await callApi.callApi(api.apiApprovedDocument, payload, 'POST')
+  
       if (result.status === 'success') {
         showDocs.showDocList('list', result.result.documents)
         state.totalPages = result.result.total_pages
         state.res = result
-        pagination(result)
       } else {
+        console.error('API Error:', result.message)
         const type = msgHandle.classify(result.message)
-        if (type === 'notification') {
-          pagination(result)
-        }
+        if (type !== 'notification') return
       }
+      pagination(result)
+      console.log(result)
+    } catch (error) {
+      console.error('Unexpected Error:', error)
     }
   }
-
+  
   async function showAll() {
     await apiCalling()
   }
@@ -108,31 +68,54 @@ document.addEventListener('DOMContentLoaded', () => {
     else right.classList.remove('invisible')
   }
 
-  function filterForm(callBack) {
+  function filter() {
+    const modal = document.getElementById('filterMenu')
+    const Btn = document.getElementById('filterBtn')
+    const filterSubmit = document.getElementById('filterSubmit')
     const filterInput = document.getElementById('filterInput')
-    const form = document.getElementById('filterForm')
-    form.addEventListener(`submit`, (e) => {
+    
+     /* DESCRIPTION
+     when user clicking on submit button, it will gain the value
+     in the input field. If it has value, gain it and assign it into state.dateFilter,
+     if not, gain filterDate = 0 
+     */
+    filterSubmit.addEventListener('click',(e)=>{
       e.preventDefault()
-      const filter = filterInput.value
-      if (!filter) {
-        console.log('Date input is null')
-        callBack(0)
-        return
+      const valueOfFilter =filterInput.value ? filterInput.value  : 0
+      if(valueOfFilter){
+        const date = new Date(valueOfFilter)
+        if(isNaN(date.getTime())){
+          console.log('This date is invalid (>_<)!')
+          return
+        }
+        else state.filterDate = date.getTime()
+        console.log(state.filterDate)
+        apiCalling()
       }
-      const date = new Date(filter)
-      if (isNaN(date.getTime())) {
-        console.log('this date is invalid')
-        callBack(0)
-      } else callBack(date)
+      modal.classList.add('invisible')
+    })
+
+    /*DESCRIPTION:
+    close filter popup if clicking outside the modal popup
+    */
+    document.addEventListener('click',(event)=>{
+      if(!Btn.contains(event.target) &&
+          !modal.contains(event.target)){
+            modal.classList.add('invisible')
+          }
+    })
+
+    /*DESCRIPTION:
+    close or open modal if button is clicked on
+     */
+    Btn.addEventListener('click',()=>{
+      modal.classList.toggle('invisible')
     })
   }
 
   function searchDocument() {
     const form = document.getElementById('form')
     const fieldInput = document.getElementById('input')
-    filterForm((date) => {
-      if (date != 0) state.filterDate = date.getTime()
-    })
     form.addEventListener('submit', async (e) => {
       e.preventDefault()
       state.keyword = fieldInput.value.trim()
@@ -173,6 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
   PageController()
   searchDocument()
   showAll()
-  filterPopup()
+  filter()
   logout()
 })

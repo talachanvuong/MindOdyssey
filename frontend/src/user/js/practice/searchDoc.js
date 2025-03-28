@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     // Ẩn dropdown khi click bên ngoài
-    document.addEventListener('click', async (event) => {
+    document.addEventListener('click',(event) => {
       state.course_name = filterInput.value.trim()
 
       if (

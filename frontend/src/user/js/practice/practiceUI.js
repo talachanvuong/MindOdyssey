@@ -49,12 +49,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function inputController(){
     const input = document.querySelectorAll('input[name="answer"]')
+    const label = document.querySelectorAll('label')
     input.forEach((element,index)=>{
       element.addEventListener('change',()=>{
         input.forEach((el)=>{
           quesData.checked = true
           quesData.userAnswer = String.fromCharCode(65 + index)
           el.disabled = true
+        })
+        label.forEach((el)=>{
+          el.classList.remove('hover:bg-gray-200','cursor-pointer')
         })
         socketEvent.postUserAnswer(element)
       })
@@ -148,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
           const end_time = new Date(ele.end_time)
           practiceResult.time = Math.floor((end_time - start_time) / 1000)
           practiceResult.score = ele.score
-          socket.response = response
           socket.disconnect()
         })
       })

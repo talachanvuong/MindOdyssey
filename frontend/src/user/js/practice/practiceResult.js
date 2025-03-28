@@ -52,12 +52,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (score < 25 && score >= 0) rank.src = '../../page/img/gradeF.png'
   }
 
-  function navigation() {
+  function navigation(history_id) {
     document.getElementById('replay').href =
       `practiceUI.html?id=${doc_id}&total=${total}`
     document.getElementById('goBack').href = `practiceScreen.html?id=${doc_id}`
     document.getElementById('seeDetailResult').href =
-      `seeResult.html?id=${doc_id}`
+      `seeResult.html?doc_id=${doc_id}&history_id=${history_id}`
     document.getElementById('authorDocument').href = `author_document?id_doc=${doc_id}&author_id=${author_id}`
   }
 
@@ -73,7 +73,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  navigation()
+
+  /*DESCRIPTION:
+  This function's feature is get the id of the practice history, then send it to seeResult.html 
+  */
+  async function getInstanceResult(){
+    const res = await callApi.callApi(
+      api.apiPracticeHistory,
+      null,
+      'GET'
+    ) 
+    navigation(res.data.PracticeHistory[0].practice_history_id)
+  }
+
+  getInstanceResult()
   showResult()
   userInfo()
 })

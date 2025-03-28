@@ -11,23 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
   effect.assignAfterLoading.duration_assign('manage',500)
   effect.assignAfterLoading.duration_assign('searchButton',500)
   effect.assignAfterLoading.duration_assign('user',500)
-  effect.assignAfterLoading.duration_assign('logoutText',500)
   effect.assignAfterLoading.duration_assign('infoText',500)
   effect.appear.move_down('main',1000,10)
-
-
-  //logout button
-  function logout() {
-    const logout = document.getElementById('logout')
-    logout.addEventListener('click', async () => {
-      const result = await callApi.callApi(api.apiLogout, {}, 'POST')
-      if (!result.status === 'success') {
-        alert(result.message)
-      } else {
-        window.location.href = '../home.html'
-      }
-    })
-  }
 
   //searching directory
   /*DESCRIPTION:
@@ -60,5 +45,4 @@ async function getNameUser(){
 }
   getNameUser()
   searching()
-  logout()
 })
