@@ -2,6 +2,7 @@ import '../../../style.css'
 import callApi from '../model/callApi.js'
 import api from '../config/envConfig.js'
 import effect from '../model/effect.js'
+import { timeConvert } from '../../../utils/convertUtils.js'
 let res = null
 const detail = {
 }
@@ -51,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     docName.textContent = detail.title
     authorName.textContent = detail.author.display_name
     courseName.textContent = detail.course
-    createAte.textContent = detail.last_updated
+    createAte.textContent = timeConvert(detail.last_updated)
     quantity.textContent = detail.total_questions 
     description.textContent = detail.description
 
