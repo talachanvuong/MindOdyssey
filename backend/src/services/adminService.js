@@ -1,5 +1,4 @@
 import client from '../db/db.js'
-import { timeConvert } from '../utils/convertUtils.js'
 
 const getAdminByDisplayName = async (display_name) => {
   const result = await client.query(
@@ -71,10 +70,7 @@ const getPendingDocuments = async (pagination, keyword, filter) => {
 
   return {
     total_pages: totalPages,
-    documents: result.rows.map((row) => ({
-      ...row,
-      last_updated: timeConvert(row.last_updated),
-    })),
+    documents: result.rows
   }
 }
 
@@ -124,11 +120,7 @@ const getPendingDocumentDetail = async (document_id) => {
     [document_id]
   )
 
-  return result.rows.map((row) => ({
-    ...row,
-    created_at: timeConvert(row.created_at),
-    last_updated: timeConvert(row.last_updated),
-  }))[0]
+  return result.rows[0]
 }
 
 const reviewDocument = async (

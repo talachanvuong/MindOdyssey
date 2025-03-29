@@ -1,5 +1,4 @@
 import client from '../db/db.js'
-import { timeConvert } from '../utils/convertUtils.js'
 
 const isDocumentExist = async (document_id) => {
   const result = await client.query(
@@ -87,11 +86,7 @@ const getDocumentDetail = async (document_id) => {
     [document_id]
   )
 
-  return result.rows.map((row) => ({
-    ...row,
-    created_at: timeConvert(row.created_at),
-    last_updated: timeConvert(row.last_updated),
-  }))[0]
+  return result.rows[0]
 }
 
 const deleteDocument = async (document_id) => {
@@ -230,10 +225,7 @@ const getDocuments = async (pagination, keyword, filter, user_id) => {
 
   return {
     total_pages: totalPages,
-    documents: result.rows.map((row) => ({
-      ...row,
-      created_at: timeConvert(row.created_at),
-    })),
+    documents: result.rows
   }
 }
 
@@ -298,11 +290,7 @@ const getDocumentInfo = async (document_id) => {
     [document_id]
   )
 
-  return result.rows.map((row) => ({
-    ...row,
-    created_at: timeConvert(row.created_at),
-    last_updated: timeConvert(row.last_updated),
-  }))[0]
+  return result.rows[0]
 }
 
 export default {
