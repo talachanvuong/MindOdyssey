@@ -13,13 +13,18 @@ document.addEventListener('DOMContentLoaded', () => {
   effect.appear.fade_in('main',700,0)
 
   const urlParams = new URLSearchParams(window.location.search)
-  let time = urlParams.get('time')
+  let time = Number(urlParams.get('time'))
   const score = Number(urlParams.get('score'))
   const numberOfCorrectAns = Number(urlParams.get('correct'))
   const numberOfIncorrectAns = Number(urlParams.get('incorrect'))
   const doc_id = Number(urlParams.get('id'))
   const total = Number(urlParams.get('total'))
   const author_id = Number(urlParams.get('author_id'))
+  
+  if(isNaN(time)){
+    time = 0
+  }
+
 
   function formatTime() {
     let h = Math.floor(time / 3600)

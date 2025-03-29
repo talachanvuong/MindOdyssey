@@ -284,6 +284,7 @@ async function showPracticeSocket(id, data) {
     input.type = 'radio'
     input.name = 'answer'
     input.className = `w-5`
+    input.required = true 
 
     const checkImage = document.createElement('img')
     checkImage.className = 'h-7'
