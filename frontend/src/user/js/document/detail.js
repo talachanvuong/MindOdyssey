@@ -1,6 +1,8 @@
 import '../../../style.css'
 import callApi from '../model/callApi.js'
 import api from '../config/envConfig.js'
+import {timeConvert} from '../../../utils/convertUtils.js'
+
 document.addEventListener('DOMContentLoaded', async function () {
   const API_DOCUMENTS = 'http://localhost:3000/api/document'
 
@@ -71,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       const data = response.data
       const doc = data
       documentTitle.textContent = doc.title || 'No title'
-      documentDate.textContent = doc.created_at || 'There is no creation date'
+      documentDate.textContent = timeConvert(doc.created_at) || 'There is no creation date'
       documentDescription.textContent = `Describe: ${doc.description || 'No description available'}`
       documentCourse.textContent = `Course: ${doc.course?.title || 'No courses'}`
       totalQuestions.textContent = `${doc.questions?.length || 0} questions`
