@@ -21,7 +21,7 @@ let score = 0
 let interval
 
 const practiceResult = {
-  time: null,
+  time: 0,
   score: 0,
   correct: 0,
 }
@@ -204,7 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   function timer(state = true) {
-    let seconds = 0
     let running = state
     function formatTime(sec) {
       let h = String(Math.floor(sec / 3600)).padStart(2, '0')
@@ -215,8 +214,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function startTimer() {
       interval = setInterval(() => {
-        seconds++
-        document.getElementById('timer').innerHTML = formatTime(seconds)
+        practiceResult.time++
+        document.getElementById('timer').innerHTML = formatTime(practiceResult.time)
       }, 1000)
     }
 

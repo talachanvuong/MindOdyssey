@@ -46,12 +46,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const courseName = document.getElementById('subject')
     const createAte =document.getElementById('time')
     const quantity = document.getElementById('quantity')
+    const description = document.getElementById('description')
 
     docName.textContent = detail.title
     authorName.textContent = detail.author.display_name
     courseName.textContent = detail.course
-    createAte.textContent = detail.created_at
+    createAte.textContent = detail.last_updated
     quantity.textContent = detail.total_questions 
+    description.textContent = detail.description
 
     //get start if user click 
     document.getElementById('startBtn').href = `practiceUI.html?id=${detail.id}&total=${detail.total_questions}&author_id=${detail.author.id}`

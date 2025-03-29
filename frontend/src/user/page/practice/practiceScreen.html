@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
   </head>
-  <body class="bg-stone-100">
+  <body class="bg-stone-100 font-serif">
     <header class="flex h-14 flex-row justify-between items-center bg-cyan-300 pr-5">
       <div class="ml-2 mt-1 flex cursor-pointer flex-row gap-2 items-center ">
         <a id="backBtn" href="searchDoc.html" class="hover:bg-cyan-200 rounded-md hover:shadow-md  p-1">
@@ -35,14 +35,14 @@
     >
       <div
         id="infor"
-        class="grid h-fit w-full grid-cols-2 grid-rows-4 gap-2 rounded-md bg-cyan-400 p-2 shadow-md shadow-gray-300"
+        class="grid h-fit w-full grid-cols-2 grid-rows-5 gap-2 rounded-md bg-cyan-400 p-2 shadow-md shadow-gray-300"
       >
         <!-- name of document -->
         <div
-          class="col-span-2 flex w-full flex-row items-center rounded-md bg-cyan-200 p-2 shadow-md shadow-gray-400"
+          class="col-span-2 flex w-full flex-row items-center rounded-md bg-cyan-200  shadow-md shadow-gray-400" 
         >
           <img src="../img/docIcon.png" class="h-10" />
-          <p class="text-xl font-bold">Name:</p>
+          <p class="text-xl font-bold mr-2">Name:</p>
           <p id="docName" class="truncate text-xl"></p>
         </div>
 
@@ -58,6 +58,8 @@
           <p class="absolute top-16 opacity-0 group-hover:opacity-100 z-10 pointer-events-none bg-black text-white rounded-md px-2" id="seeAuthorBlackText">See more author's document</p>
         </a>
 
+
+      
         <!-- subject -->
         <div class="col-span-2 flex flex-row items-center gap-2">
           <img src="../img/subject.png" class="ml-2 h-10" />
@@ -65,11 +67,19 @@
           <p id="subject" class="text-xl"></p>
         </div>
 
+           <!-- subject -->
+           <div class="col-span-2 flex flex-row items-center gap-2">
+            <img src="../img/description.png" class=" h-14" />
+            <p class="text-xl font-bold">Description:</p>
+            <p id="description" class="text-xl"></p>
+          </div>
+  
+
         <!-- time of test -->
-        <div class="col-span-1 flex flex-row items-center gap-2">
-          <img src="../img/timer.png" class="h-10" />
-          <p class="text-xl font-bold">Create time:</p>
-          <p id="time" class="text-xl"></p>
+        <div class="col-span-1 flex flex-row items-center gap-2 overflow-hidden">
+          <img src="../img/timer.png" class="h-10 ml-1" />
+          <p class="text-xl font-bold inline-block whitespace-nowrap">Last Updated:</p>
+          <p id="time" class="text-xl inline-block whitespace-nowrap  "></p>
         </div>
 
         <div class="col-span-1 flex flex-row items-center gap-2">
