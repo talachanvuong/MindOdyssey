@@ -223,6 +223,7 @@ const getDocuments = async (pagination, keyword, filter, user_id) => {
      FROM documents
      WHERE user_id = $1
      ${conditions.map((condition) => `AND ${condition}`).join(' ')}
+     ORDER BY created_at DESC
      ${limit};`,
     refs
   )

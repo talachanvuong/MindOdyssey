@@ -64,6 +64,7 @@ const getPendingDocuments = async (pagination, keyword, filter) => {
      FROM documents
      WHERE status = $1
      ${conditions.map((condition) => `AND ${condition}`).join(' ')}
+     ORDER BY last_updated DESC
      ${limit};`,
     refs
   )
