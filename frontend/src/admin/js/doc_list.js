@@ -3,8 +3,6 @@ import callApi from './model/callApi'
 import api from '../config/envConfig'
 import showDocs from './model/show_doc.js'
 import msgHandle from './model/msgHandle.js'
-import { timeConvert } from '../../utils/convertUtils.js'
-
 const state = {
   filterDate: 0,
   keyword: ``,
@@ -28,11 +26,15 @@ document.addEventListener('DOMContentLoaded', () => {
           page: state.page,
           perPage: state.perPage,
         },
-        filter:state.filterDate,
+        filter: state.filterDate,
       }
       if (state.keyword) payload.keyword = state.keyword
-      const result = await callApi.callApi(api.apiApprovedDocument, payload, 'POST')
-  
+      const result = await callApi.callApi(
+        api.apiApprovedDocument,
+        payload,
+        'POST'
+      )
+
       if (result.status === 'success') {
         showDocs.showDocList('list', result.result.documents)
         state.totalPages = result.result.total_pages
@@ -43,12 +45,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (type !== 'notification') return
       }
       pagination(result)
-      console.log(result)
     } catch (error) {
       console.error('Unexpected Error:', error)
     }
   }
-  
+
   async function showAll() {
     await apiCalling()
   }
@@ -74,24 +75,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const Btn = document.getElementById('filterBtn')
     const filterSubmit = document.getElementById('filterSubmit')
     const filterInput = document.getElementById('filterInput')
-    
-     /* DESCRIPTION
+
+    /* DESCRIPTION
      when user clicking on submit button, it will gain the value
      in the input field. If it has value, gain it and assign it into state.dateFilter,
      if not, gain filterDate = 0 
      */
-    filterSubmit.addEventListener('click',(e)=>{
+    filterSubmit.addEventListener('click', (e) => {
       e.preventDefault()
-      const valueOfFilter =filterInput.value ? filterInput.value  : 0
-      if(valueOfFilter){
-        const date = new Date(valueOfFilter)
-        if(isNaN(date.getTime())){
+      const valueOfFilter = filterInput.value ? filterInput.value : null
+      if (valueOfFilter) {
+        const date = new Date(valueOfFilter+'Z')
+        if (isNaN(date.getTime())) {
           console.log('This date is invalid (>_<)!')
           return
-        }
-        else state.filterDate = date.getTime()
-        console.log(timeConvert(state.filterDate))
-        apiCalling()
+        }  
+        const utcTime = date.getTime()
+          state.filterDate = utcTime
+          apiCalling()
+        
       }
       modal.classList.add('invisible')
     })
@@ -99,17 +101,16 @@ document.addEventListener('DOMContentLoaded', () => {
     /*DESCRIPTION:
     close filter popup if clicking outside the modal popup
     */
-    document.addEventListener('click',(event)=>{
-      if(!Btn.contains(event.target) &&
-          !modal.contains(event.target)){
-            modal.classList.add('invisible')
-          }
+    document.addEventListener('click', (event) => {
+      if (!Btn.contains(event.target) && !modal.contains(event.target)) {
+        modal.classList.add('invisible')
+      }
     })
 
     /*DESCRIPTION:
     close or open modal if button is clicked on
      */
-    Btn.addEventListener('click',()=>{
+    Btn.addEventListener('click', () => {
       modal.classList.toggle('invisible')
     })
   }
@@ -120,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault()
       state.keyword = fieldInput.value.trim()
-      await apiCalling(state.keyword,state.filterDate)
+      await apiCalling(state.keyword, state.filterDate)
     })
   }
 
@@ -144,11 +145,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function logout() {
     const logoutBtn = document.getElementById('logoutBtn')
     const loading = document.getElementById('loading')
-    logoutBtn.addEventListener('click',async  () => {
+    logoutBtn.addEventListener('click', async () => {
       loading.classList.remove('invisible')
-      const res =await callApi.callApi(api.apiLogoutAdmin, {}, 'POST')
-      if(res.status === 'success') window.location.href = 'login.html'
-      else{
+      const res = await callApi.callApi(api.apiLogoutAdmin, {}, 'POST')
+      if (res.status === 'success') window.location.href = 'login.html'
+      else {
         loading.classList.add('invisible')
         console.log(res)
       }
