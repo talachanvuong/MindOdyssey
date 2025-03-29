@@ -87,6 +87,15 @@ const getPendingDocuments = async (req, res) => {
     )
   }
 
+  // Check empty result
+  if (pendingDocuments.total_pages === 0) {
+    return sendResponse(
+      res,
+      STATUS_CODE.NOT_FOUND,
+      MESSAGE.DOCUMENT.EMPTY_RESULT
+    )
+  }
+
   return sendResponse(
     res,
     STATUS_CODE.SUCCESS,

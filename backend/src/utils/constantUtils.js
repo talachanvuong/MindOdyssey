@@ -10,6 +10,7 @@ export const MESSAGE = {
     NOT_OWNED: 'Document not owned!',
     NOT_APPROVED: 'Document not approved!',
     REVIEWED: 'Document already reviews!',
+    EMPTY_RESULT: 'Cannot find the appropriate documents',
     CREATE_DOCUMENT_SUCCESS: 'Create document successfully!',
     GET_DOCUMENT_DETAIL_SUCCESS: 'Get document detail successfully!',
     GET_DOCUMENTS_SUCCESS: 'Get documents successfully!',

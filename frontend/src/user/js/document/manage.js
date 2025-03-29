@@ -1,6 +1,8 @@
 import '../../../style.css'
 import callApi from '../model/callApi.js'
 import api from '../config/envConfig.js'
+import {timeConvert} from '../../../utils/convertUtils.js'
+
 // ======================== DOM Elements ========================
 const searchInput = document.getElementById('search')
 const filterButton = document.getElementById('filterButton')
@@ -127,7 +129,7 @@ function renderDocuments(documents) {
       <div class="flex w-0 flex-1 items-center justify-between">
         <p class="truncate font-medium">${doc.title}</p>
         <br>
-        <p class="  truncate font-thin">(${doc.created_at})</p>
+        <p class="  truncate font-thin">(${timeConvert (doc.created_at)})</p>
       </div>
 
     `
@@ -232,34 +234,58 @@ window.deleteDocument = async function (id) {
 }
 
 // ======================== Search & Filter Documents ========================
-
 function parseDate(dateString) {
-  const parts = dateString.match(
-    /(\d{2}):(\d{2}):(\d{2}) (\w{2}) (\d{2})\/(\d{2})\/(\d{4})/
-  )
-  if (!parts) return null
+  // Nếu là timestamp (số)
+  if (typeof dateString === 'number' || (!isNaN(Number(dateString)) && dateString.match(/^\d+$/))) {
+    return new Date(Number(dateString));
+  }
 
-  const [, hh, mm, ss, , day, month, year] = parts
-  return new Date(`${year}-${month}-${day}T${hh}:${mm}:${ss}`)
+  // Nếu là chuỗi dạng "HH:MM:SS Day DD/MM/YYYY"
+  const parts = dateString.match(
+    /(\d{2}):(\d{2}):(\d{2}) (\w{3}) (\d{2})\/(\d{2})\/(\d{4})/
+  );
+  if (parts) {
+    const [, hh, mm, ss, , day, month, year] = parts;
+    return new Date(`${year}-${month}-${day}T${hh}:${mm}:${ss}`);
+  }
+
+  // Nếu là định dạng khác (ISO, v.v.), thử parse trực tiếp
+  const date = new Date(dateString);
+  if (!isNaN(date.getTime())) return date;
+
+  return null; // Trả về null nếu không parse được
 }
 
-
 function searchAndFilterDocuments() {
-  const query = searchInput.value.toLowerCase()
-  const startDate = startDateInput.value ? new Date(startDateInput.value) : null
+  if (!searchInput || !startDateInput) {
+    console.error('Search input or start date input not found in DOM');
+    return;
+  }
+
+  const query = searchInput.value.toLowerCase();
+  const startDateInputValue = startDateInput.value;
+  const startDate = startDateInputValue ? new Date(startDateInputValue) : null;
+
+  if (startDate && isNaN(startDate.getTime())) {
+    console.warn('Invalid start date:', startDateInputValue);
+    return;
+  }
 
   const filteredDocs = allDocuments.filter((doc) => {
-    const docDate = parseDate(doc.created_at)
-    if (!docDate) return false 
+    const docDate = parseDate(doc.created_at);
+    if (!docDate) {
+      console.warn('Invalid doc.created_at:', doc.created_at);
+      return false;
+    }
 
-    const matchesQuery = doc.title.toLowerCase().includes(query)
-    const matchesDate = !startDate || docDate >= startDate
+    const matchesQuery = doc.title.toLowerCase().includes(query);
+    const matchesDate = !startDate || docDate >= startDate;
 
-    return matchesQuery && matchesDate
-  })
+    return matchesQuery && matchesDate;
+  });
 
-  updateDocumentCount(filteredDocs.length); // Cập nhật tổng số
-  renderDocuments(filteredDocs); // Render danh sách đã lọc
+  updateDocumentCount(filteredDocs.length);
+  renderDocuments(filteredDocs);
 }
 
 
