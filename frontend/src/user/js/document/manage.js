@@ -79,13 +79,8 @@ async function loadDocuments() {
       throw new Error('Invalid API response structure');
     }
 
-    // Gán dữ liệu và sắp xếp theo thời gian (mới nhất trước)
-    allDocuments = responseData.result.documents.sort((a, b) => {
-      const dateA = parseDate(a.created_at);
-      const dateB = parseDate(b.created_at);
-      return dateB - dateA; // Sắp xếp giảm dần (mới nhất trước)
-    });
- 
+      // Assign documents data to the variable allDocuments
+    allDocuments = responseData.result.documents;
 
     updateDocumentCount();
     renderDocuments(allDocuments);
@@ -261,15 +256,10 @@ function searchAndFilterDocuments() {
     const matchesDate = !startDate || docDate >= startDate
 
     return matchesQuery && matchesDate
-  }).sort((a, b) => {
-    const dateA = parseDate(a.created_at);
-    const dateB = parseDate(b.created_at);
-    return dateB - dateA; 
-    // Sort descending (newest first)
-  });
+  })
 
-  updateDocumentCount(filteredDocs.length);
-  renderDocuments(filteredDocs); 
+  updateDocumentCount(filteredDocs.length); // Cập nhật tổng số
+  renderDocuments(filteredDocs); // Render danh sách đã lọc
 }
 
 
