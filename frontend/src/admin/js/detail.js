@@ -3,6 +3,7 @@ import callApi from './model/callApi'
 import api from '../config/envConfig'
 import msgHandle from './model/msgHandle'
 import showQues from './model/show_doc'
+import { timeConvert } from '../../utils/convertUtils'
 
 // Lấy document_id từ URL
 const urlParams = new URLSearchParams(window.location.search)
@@ -32,12 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const nameOfDocDisapprove = document.getElementById('nameDocDisapprove')
 
   function showInfo() {
-    nameOfDoc.textContent = detail.title
+    nameOfDoc.textContent =detail.title
     author.textContent = detail.author
     course.textContent = detail.course
-    lastEdit.textContent = detail.last_updated
+    lastEdit.textContent = timeConvert(detail.last_updated)
     description.textContent = detail.description
-    createTime.textContent = detail.created_at
+    createTime.textContent = timeConvert(detail.created_at)
     quantity.textContent = detail.total_questions
     nameOfDocDisapprove.textContent = detail.title
   }

@@ -1,4 +1,5 @@
 import callApi from './callApi.js'
+import {timeConvert} from '../../../utils/convertUtils.js'
 
 function showDocList(id, array) {
   const list = document.getElementById(id)
@@ -28,7 +29,7 @@ function showDocList(id, array) {
 
     const last_update_date = document.createElement('p')
     last_update_date.className = 'w-fit inline-block whitespace-nowrap'
-    last_update_date.textContent = doc.last_updated
+    last_update_date.textContent = timeConvert(doc.last_updated)
 
     last_update_div.appendChild(last_update_date_title)
     last_update_div.appendChild(last_update_date)

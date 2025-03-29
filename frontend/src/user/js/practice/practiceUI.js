@@ -17,7 +17,6 @@ const quesData = {
 
 
 let isCompleted = false
-let score = 0
 let interval
 
 const practiceResult = {
@@ -85,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     async getNewQuestion() {
       socket.emit('getNewQuestion',async  (question) => {
-        console.log(question)
         let sortContent = [
           question.contents.find((c)=>c.type==="Q") || {text:'',attachment:null,type:'Q'},
           question.contents.find((c)=>c.type==="A") || {text:'',attachment:null,type:'A'},
@@ -100,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
         quesData.checked = false
         quesData.order = question.order
         await show_doc.showPracticeSocket('list',quesData)
-        console.log(quesData)
         inputController()
       })
      
@@ -114,7 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const img = ans.parentElement.querySelector('img')
             if (result === 'Correct') {
               practiceResult.correct++
-              score += 100 / total
+              practiceResult.score += 100 / total
+              //if having text
               if(ans.labels[0]){
                 ans.labels[0].classList.add(
                   'bg-green-200',
@@ -124,6 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 )
                 img.src = '../../page/img/done.png'
               }
+              //if do not have text
               else img.src = '../../page/img/done.png'
               
             } else {
@@ -139,14 +138,13 @@ document.addEventListener('DOMContentLoaded', () => {
               else  img.src = '../../page/img/incorrect.png'
               
             }
-            console.log('hello')
           }
         )
       }
     },
     async finish() {
       timer(false)
-      socket.emit('finished', { score: score }, (response) => {
+      socket.emit('finished', { score: practiceResult.score }, (response) => {
         response.forEach((ele) => {
           const start_time = new Date(ele.start_time)
           const end_time = new Date(ele.end_time)
@@ -200,8 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
         ? apiResult.data.display_name
         : 'display_error'
   }
-
-
 
   function timer(state = true) {
     let running = state

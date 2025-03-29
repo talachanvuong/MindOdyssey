@@ -3,6 +3,7 @@ import callApi from './model/callApi'
 import api from '../config/envConfig'
 import showDocs from './model/show_doc.js'
 import msgHandle from './model/msgHandle.js'
+import { timeConvert } from '../../utils/convertUtils.js'
 
 const state = {
   filterDate: 0,
@@ -89,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
           return
         }
         else state.filterDate = date.getTime()
-        console.log(state.filterDate)
+        console.log(timeConvert(state.filterDate))
         apiCalling()
       }
       modal.classList.add('invisible')
@@ -119,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault()
       state.keyword = fieldInput.value.trim()
-      await apiCalling(state.keyword, state.filterDate)
+      await apiCalling(state.keyword,state.filterDate)
     })
   }
 
