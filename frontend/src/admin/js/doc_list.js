@@ -83,18 +83,16 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     filterSubmit.addEventListener('click', (e) => {
       e.preventDefault()
-      const valueOfFilter = filterInput.value ? filterInput.value : null
-      if (valueOfFilter) {
-        const date = new Date(valueOfFilter+'Z')
-        if (isNaN(date.getTime())) {
-          console.log('This date is invalid (>_<)!')
-          return
-        }  
-        const utcTime = date.getTime()
-          state.filterDate = utcTime
-          apiCalling()
-        
+      const valueOfFilter = filterInput.value ? filterInput.value : 0
+      const date = new Date(valueOfFilter + 'Z')
+      if (isNaN(date.getTime())) {
+        console.log('This date is invalid (>_<)!')
+        return
       }
+      const utcTime = date.getTime()
+      state.filterDate = utcTime
+      console.log(state.filterDate)
+      apiCalling()
       modal.classList.add('invisible')
     })
 
