@@ -434,7 +434,7 @@ VALUES
 ('Danh sách dạng bảng', NULL, NULL, 'C', 27),
 ('Danh sách dạng dropdown', NULL, NULL, 'D', 27),
 
-('Thẻ nào được dùng để tạo dòng phân cách ngang?', 'https://res.cloudinary.com/ddjrp57ag/image/upload/v1742716831/Functions-in-C-_1_-768_lmlu8x.png', '0c46c334f0f566736856790f751c5a29799a6734_s7rys7', 'Q', 28),
+('Thẻ nào được dùng để tạo dòng phân cách ngang?', 'https://res.cloudinary.com/ddjrp57ag/image/upload/v1742717610/0c46c334f0f566736856790f751c5a29799a6734_s7rys7.png', '0c46c334f0f566736856790f751c5a29799a6734_s7rys7', 'Q', 28),
 ('<line>', NULL, NULL, 'A', 28),
 ('<separator>', NULL, NULL, 'B', 28),
 ('<break>', NULL, NULL, 'C', 28),
@@ -495,7 +495,7 @@ VALUES
 ('border: 1px dashed red;', NULL, NULL, 'C', 37),
 ('border: 1px solid red;', NULL, NULL, 'D', 37),
 
-('Pseudo-class nào sau đây dùng để chọn phần tử khi rê chuột qua?', 'https://res.cloudinary.com/ddjrp57ag/image/upload/v1742718071/uss-selectors-pseudo-hover_b95wsy.png', 'css-800x800_qdyt6i', 'Q', 38),
+('Pseudo-class nào sau đây dùng để chọn phần tử khi rê chuột qua?', 'https://res.cloudinary.com/ddjrp57ag/image/upload/v1742718071/uss-selectors-pseudo-hover_b95wsy.png', 'uss-selectors-pseudo-hover_b95wsy', 'Q', 38),
 (':click', NULL, NULL, 'A', 38),
 (':focus', NULL, NULL, 'B', 38),
 (':hover', NULL, NULL, 'C', 38),
@@ -562,8 +562,7 @@ VALUES
 ('Truy cập phần tử bằng chỉ số', NULL, NULL, 'C', 48),
 ('Thay đổi kích thước mảng tĩnh sau khi khai báo', NULL, NULL, 'D', 48),
 
-('Hàm nào so sánh hai chuỗi trong C?', 'https://res.cloudinary.com/ddjrp57ag/image/upload/v1742718513/rIA28EZDS_jqjdbd.png', 'rIA28EZDS_jqjdbd
-', 'Q', 49),
+('Hàm nào so sánh hai chuỗi trong C?', 'https://res.cloudinary.com/ddjrp57ag/image/upload/v1742718513/rIA28EZDS_jqjdbd.png', 'rIA28EZDS_jqjdbd', 'Q', 49),
 ('strcat()', NULL, NULL, 'A', 49),
 ('strcpy()', NULL, NULL, 'B', 49),
 ('strcmp()', NULL, NULL, 'C', 49),
