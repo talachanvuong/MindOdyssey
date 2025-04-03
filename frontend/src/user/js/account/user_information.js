@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
       display_name.textContent = apiResult.data.display_name
     } else {
       console.log(apiResult)
-      name.textContent = 'error'
+      display_name.textContent = 'error'
       email.textContent = 'error'
       display_name.textContent = 'error'
     }
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renameForm.addEventListener('submit', async (e) => {
     e.preventDefault()
     const newName = newNameInput.value.trim()
-    const oldName = name.textContent.trim()
+    const oldName = display_name.textContent.trim()
 
     //filter if newname is similar to oldname
     if (newName === oldName) {
@@ -192,7 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
     )
     if (apiResult.status === `success`) {
       msg.popup(popupAlert, apiResult.message)
-      name.textContent = newName
+      change_name.classList.add('invisible')
+      display_name.textContent = newName
       display_name.textContent = newName
     } else {
       const type = msg.classify(apiResult.message)
