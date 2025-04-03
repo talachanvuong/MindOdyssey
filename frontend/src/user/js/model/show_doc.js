@@ -181,7 +181,7 @@ async function showHistoryPractice(id, originArray) {
       ul.appendChild(answer)
 
       const div = document.createElement('div')
-      div.classList = 'flex flex-row items-center w-fit gap-2 mb-3 '
+      div.classList = 'flex flex-row items-center w-fit gap-2 '
       answer.appendChild(div)
 
       const answerInput = document.createElement('input')
